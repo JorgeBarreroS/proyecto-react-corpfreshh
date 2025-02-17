@@ -1,0 +1,128 @@
+/* Configuración básica */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Fondo similar a Bootstrap */
+}
+
+/* Botón de cerrar */
+.close-button22 {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Buscador */
+.search-container22 {
+    margin: 20px auto;
+    text-align: center;
+    padding: 10px;
+}
+
+.search-bar22 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-bar22 input {
+    width: 80%;
+    max-width: 400px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.search-bar22 button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-bar22 button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Contenedor de productos */
+.product-list22 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Tarjetas de producto */
+.product-card22 {
+    width: 200px;               /* Tamaño reducido para las tarjetas */
+    height: 300px;              /* Altura reducida para todas las tarjetas */
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;              /* Menos padding para hacer las tarjetas más compactas */
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Asegura que el contenido se distribuya */
+    overflow: hidden; /* Evita que el contenido se desborde */
+}
+
+/* Imagen del producto con tamaño fijo */
+.product-card22 img {
+    width: 100%;                /* La imagen ocupa todo el ancho de la tarjeta */
+    height: 120px;              /* Altura reducida para todas las imágenes */
+    object-fit: cover;          /* Asegura que la imagen se recorte correctamente */
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* Títulos de los productos */
+.product-card22 h3 {
+    font-size: 16px;            /* Font-size reducido para los títulos */
+    margin: 10px 0;
+    color: #333;
+    white-space: nowrap;        /* Evita el salto de línea */
+    overflow: hidden;           /* Oculta el texto que se desborda */
+    text-overflow: ellipsis;    /* Muestra '...' si el texto es muy largo */
+    max-width: 100%;            /* Asegura que el título se ajuste al ancho de la tarjeta */
+}
+
+/* Descripción y precio del producto */
+.product-card22 p {
+    font-size: 14px;            /* Font-size reducido para la descripción */
+    color: #666;
+    margin: 10px 0;
+    overflow: hidden;           /* Evita el desbordamiento */
+    text-overflow: ellipsis;    /* Si la descripción es demasiado larga, se corta */
+}
+
+/* Botón de acción */
+.product-card22 button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px;               /* Menos padding para hacer el botón más pequeño */
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.product-card22 button:hover {
+    background-color: #0056b3;
+}

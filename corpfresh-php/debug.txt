@@ -1,0 +1,13 @@
+Array
+(
+    [nombre] => hdgdgd
+    [apellido] => sdsd
+    [telefono] => 3435
+    [email] => hola55@gmail.com
+    [direccion1] => 4444
+    [direccion2] => 4444
+    [ciudad] => fff
+    [pais] => fff
+    [password] => 1234
+    [confirmPassword] => 1234
+)

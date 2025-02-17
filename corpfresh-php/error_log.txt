@@ -1,0 +1,4 @@
+[11-Dec-2024 07:09:05 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "Conexion" not found in C:\xampp\htdocs\corpfresh-php\authenticate.php:38
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\corpfresh-php\authenticate.php on line 38

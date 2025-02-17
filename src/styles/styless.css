@@ -1,0 +1,116 @@
+/* estilos de index */
+
+body {
+    font-family: 'Arial', sans-serif;
+}
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000000 !important;
+}
+.carousel {
+    margin-bottom: 4rem;
+}
+.carousel-item {
+    height: 500px;
+    overflow: hidden;
+}
+.carousel-caption {
+background-color: rgba(0, 0, 0, 0.7);
+border-radius: 10px;
+padding: 20px;
+max-width: 90%;
+margin: 0 auto;
+}
+.carousel-caption h3 {
+    font-size: 2.5rem;
+    color: #4CAF50;
+}
+.carousel-caption p {
+    font-size: 1.1rem;
+}
+
+.carousel-item img {
+height: auto;
+max-height: 500px; 
+}
+.btn-fun {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 25px;
+}
+.btn-fun:hover {
+    background-color: white;
+    color: #4CAF50;
+    border: 2px solid #4CAF50;
+}
+.product-card {
+    transition: transform 0.3s;
+}
+.product-card:hover {
+    transform: scale(1.05);
+}
+footer {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+}
+
+/* pagina visualizar.html */
+
+.product-image {
+    max-width: 100%;
+    height: auto;
+}
+.color-option {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+/* Ajustes específicos para pantallas pequeñas */
+@media (max-width: 576px) {
+.carousel-caption {
+    padding: 10px;
+    max-width: 100%; /* Aprovechar mejor el espacio */
+}
+
+.caption-title {
+    font-size: 1.5rem; /* Tamaño del título más pequeño */
+}
+
+.caption-text {
+    font-size: 1rem; /* Tamaño del texto más pequeño */
+}
+
+.btn-fun {
+    font-size: 0.875rem; /* Botón más pequeño */
+    padding: 8px 16px; /* Botón más compacto */
+}
+}
+
+/* Ajustes específicos para dispositivos entre 400px y 576px */
+@media (max-width: 400px) {
+.caption-title {
+    font-size: 1.2rem; /* Aún más pequeño en dispositivos con pantallas más pequeñas */
+}
+
+.caption-text {
+    font-size: 0.9rem;
+}
+
+.btn-fun {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+}
+}

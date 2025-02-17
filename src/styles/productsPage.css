@@ -1,0 +1,233 @@
+/* Estilo para el filtro de categorías */
+/* Estilo para el contenedor de productos */
+
+  
+  /* Para que el contenedor de productos no quede pegado al borde de la pantalla */
+  .products-container h1 {
+    display: flex;
+    flex-direction: column;  /* Asegura que los elementos estén en una columna */
+    align-items: center;     /* Centra horizontalmente */
+    justify-content: flex-start;
+    margin-top: 10px
+  }
+  
+  
+
+.category-filter {
+    display: flex;
+    justify-content: flex-end; /* Alinea el filtro a la derecha */
+    margin-bottom: 30px;
+    align-items: center;
+  }
+  
+  .category-filter label {
+    margin-right: 10px; /* Espacio entre la etiqueta y el select */
+    font-weight: bold;
+  }
+  
+  .category-filter select {
+    border-color: #212529;
+    box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.25);
+    padding: 8px;
+    font-size: 1rem;
+    min-width: 200px; /* Ancho mínimo para el select */
+    border-radius: 5px; /* Bordes redondeados */
+  }
+  
+  /* Estilo para la paginación */
+  .pagination-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .pagination-buttons button {
+    background-color: #343a40;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .pagination-buttons button:hover {
+    background-color: #212529;
+    transform: scale(1.05);
+  }
+  
+  /* Estilo para los productos */
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .product-item {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .product-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .product-item h3 {
+    font-size: 1.2rem;
+    margin: 10px 0;
+  }
+  
+  .product-item p {
+    font-size: 1rem;
+    color: #343a40;
+  }
+  
+  .product-item img {
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  
+  .error-message {
+    color: red;
+    text-align: center;
+  }
+  
+  .loading-message {
+    text-align: center;
+  }
+  
+  /* Asegura que el filtro de categoría se alinee correctamente */
+  .category-filter {
+    text-align: right; /* Alinea el filtro a la derecha */
+    margin-bottom: 30px;
+  }
+  
+  .category-filter select {
+    border-color: #212529;
+    box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.25);
+    padding: 8px;
+    font-size: 1rem;
+    min-width: 200px;
+    border-radius: 5px;
+  }
+  
+  .product-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pagination-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .pagination-buttons button {
+    margin: 0 10px;
+  }
+  
+  .loading-message,
+  .error-message {
+    text-align: center;
+    font-size: 1.2em;
+  }
+  
+  .btn-dark {
+    transition: all 0.3s ease;
+  }
+  
+  .btn-dark:hover {
+    background-color: #343a40;
+    transform: scale(1.05);
+  }
+
+  /* Estilo para la imagen de los productos */
+.product-item img {
+    width: 100%; /* La imagen ocupa todo el ancho del contenedor */
+    height: 200px; /* Altura fija para mantener consistencia */
+    object-fit: cover; /* Ajusta la imagen sin deformarla */
+    border-top-left-radius: 8px; /* Bordes superiores redondeados */
+    border-top-right-radius: 8px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  .product-item img:hover {
+    transform: scale(1.05); /* Efecto de zoom al pasar el mouse */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Ajuste para el contenedor de cada producto */
+  .product-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .product-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Estilo para los títulos dentro de las tarjetas */
+  .product-item h3 {
+    font-size: 1.2rem;
+    margin: 10px 0;
+    text-align: center;
+    color: #212529;
+  }
+  
+  /* Estilo para el precio del producto */
+  .product-item p {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #495057;
+    text-align: center;
+    margin: 5px 0;
+  }
+  
+  /* Botón dentro de la tarjeta */
+  .product-item a.btn {
+    display: block;
+    margin-top: auto; /* Asegura que el botón quede al final */
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .product-item a.btn:hover {
+    background-color: #212529;
+    transform: scale(1.05);
+  }
+  
+  /* Espaciado entre las tarjetas */
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+  }
+  
+  
