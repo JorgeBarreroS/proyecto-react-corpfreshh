@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Contenedor principal */
+.login-container {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Título */
+.login-container h2 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+/* Contenedor del formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+/* Labels */
+label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Inputs */
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: white;
+    color: #333;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-control::placeholder {
+    color: #999;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Botón principal */
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+/* Texto pequeño */
+.small-text {
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* Enlace */
+.small-text a {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.small-text a:hover {
+    text-decoration: underline;
+}
+
+/* Ajuste responsivo */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 25px;
+        max-width: 320px;
+    }
+}

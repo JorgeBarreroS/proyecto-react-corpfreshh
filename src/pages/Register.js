@@ -84,55 +84,68 @@ const Register = () => {
   };
 
   return (
-    <div className="container">
-      <div className="register-container container">
-        <h2 className="fw-bold text-center mb-3">¡Hola!, regístrate para continuar</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="row">
-            <div className="col-md-6">
-              {[{ label: "Nombre", name: "nombre" },
-                { label: "Apellido", name: "apellido" },
-                { label: "Teléfono", name: "telefono", type: "tel" },
-                { label: "Correo Electrónico", name: "email", type: "email" },
-                { label: "Dirección 1", name: "direccion1" }].map(({ label, name, type = "text" }) => (
-                <div className="mb-3" key={name}>
-                  <label htmlFor={name} className="form-label">{label}</label>
-                  <input
-                    type={type}
-                    className="form-control"
-                    id={name}
-                    name={name}
-                    value={formData[name]}
-                    onChange={handleChange}
-                  />
+    
+    <div className="register-container">
+        <h2 className="fw-bold">Registro</h2>
+        <form className="form-container">
+            
+            <div className="form-row">
+                <div className="form-group">
+                    <label className="form-label">Nombre</label>
+                    <input type="text" className="form-control" placeholder="Tu nombre" />
                 </div>
-              ))}
-            </div>
-            <div className="col-md-6">
-              {[{ label: "Dirección 2", name: "direccion2" },
-                { label: "Ciudad", name: "ciudad" },
-                { label: "País", name: "pais" },
-                { label: "Contraseña", name: "password", type: "password" },
-                { label: "Confirmar Contraseña", name: "confirmPassword", type: "password" }].map(({ label, name, type = "text" }) => (
-                <div className="mb-3" key={name}>
-                  <label htmlFor={name} className="form-label">{label}</label>
-                  <input
-                    type={type}
-                    className="form-control"
-                    id={name}
-                    name={name}
-                    value={formData[name]}
-                    onChange={handleChange}
-                  />
+                <div className="form-group">
+                    <label className="form-label">Dirección 2</label>
+                    <input type="text" className="form-control" placeholder="Dirección 2" />
                 </div>
-              ))}
             </div>
-          </div>
-          <div className="d-grid">
-            <button type="submit" className="btn btn-primary">Registrarme</button>
-          </div>
+
+            <div className="form-row">
+                <div className="form-group">
+                    <label className="form-label">Apellido</label>
+                    <input type="text" className="form-control" placeholder="Tu apellido" />
+                </div>
+                <div className="form-group">
+                    <label className="form-label">Ciudad</label>
+                    <input type="text" className="form-control" placeholder="Ciudad" />
+                </div>
+            </div>
+
+            <div className="form-row">
+                <div className="form-group">
+                    <label className="form-label">Teléfono</label>
+                    <input type="text" className="form-control" placeholder="Teléfono" />
+                </div>
+                <div className="form-group">
+                    <label className="form-label">País</label>
+                    <input type="text" className="form-control" placeholder="País" />
+                </div>
+            </div>
+
+            <div className="form-row">
+                <div className="form-group">
+                    <label className="form-label">Correo Electrónico</label>
+                    <input type="email" className="form-control" placeholder="Correo" />
+                </div>
+                <div className="form-group">
+                    <label className="form-label">Contraseña</label>
+                    <input type="password" className="form-control" placeholder="Contraseña" />
+                </div>
+            </div>
+
+            <div className="form-row">
+                <div className="form-group">
+                    <label className="form-label">Dirección 1</label>
+                    <input type="text" className="form-control" placeholder="Dirección 1" />
+                </div>
+                <div className="form-group">
+                    <label className="form-label">Confirmar Contraseña</label>
+                    <input type="password" className="form-control" placeholder="Confirmar" />
+                </div>
+            </div>
+
+            <button className="btn-primary">Registrarme</button>
         </form>
-      </div>
     </div>
   );
 };
