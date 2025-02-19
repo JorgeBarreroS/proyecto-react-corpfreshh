@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import FormInput from "../components/FormInput";
+import "../styles/sytles3.css";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -42,42 +43,57 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="login-container container">
-      <h2 className="fw-bold text-center mb-4">Recupera tu contraseña</h2>
-      <form onSubmit={handleSubmit}>
-        <FormInput
-          label="Correo Electrónico"
-          type="email"
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <FormInput
-          label="Nueva Contraseña"
-          type="password"
-          name="newPassword"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-        <FormInput
-          label="Confirmar Nueva Contraseña"
-          type="password"
-          name="confirmPassword"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <div className="d-grid">
-          <button type="submit" className="btn btn-primary">
-            Reestablecer Contraseña
-          </button>
-        </div>
-        <div className="text-center small-text mt-3">
-            <p>
-              Ir a <a href="/login">Iniciar sesión</a>
-            </p>
-          </div>
-      </form>
+    <div className="login-container">
+  <h2 className="fw-bold text-center mb-4">Recupera tu contraseña</h2>
+  <form onSubmit={handleSubmit}>
+    <div className="form-group">
+      <label>Correo Electrónico</label>
+      <input
+        type="email"
+        className="form-control"
+        name="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Ingrese su correo"
+        required
+      />
     </div>
+    
+    <div className="form-group">
+      <label>Nueva Contraseña</label>
+      <input
+        type="password"
+        className="form-control"
+        name="newPassword"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+        placeholder="Ingrese su nueva contraseña"
+        required
+      />
+    </div>
+    
+    <div className="form-group">
+      <label>Confirmar Nueva Contraseña</label>
+      <input
+        type="password"
+        className="form-control"
+        name="confirmPassword"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        placeholder="Confirme su contraseña"
+        required
+      />
+    </div>
+
+    <button type="submit" className="btn btn-primary">
+      Restablecer Contraseña
+    </button>
+
+    <div className="text-center small-text mt-3">
+      <p>Ir a <a href="/login">Iniciar sesión</a></p>
+    </div>
+  </form>
+</div>
   );
 };
 

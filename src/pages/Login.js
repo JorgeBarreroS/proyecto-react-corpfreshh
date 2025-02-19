@@ -5,7 +5,6 @@ import { useAuth } from "../services/AuthContext";
 import GoogleLogin from "react-google-login";
 import { gapi } from "gapi-script";
 import "../styles/Login.css";
-import "../styles/sytles2.css";
 import logo from "../imagenes/corp-freshh.jfif"; 
 
 const clientID = "590045182886-8jfebo35qqi7mpc4dtldu48m3skpu6ne.apps.googleusercontent.com";
@@ -111,7 +110,6 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
       <div className="login-container">
         <div className="login-header">
           <img src={logo} alt="Corp Freshh" />
@@ -170,7 +168,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

@@ -1,162 +1,94 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-
-
-.login-container {
-    width: 30%;
-    background-color: #ffffff; 
-    border-radius: 8px;
-    padding: 20px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-}
-
-.register-container {
-    width: 30%;
-    background-color: #ffffff; 
-    border-radius: 8px;
-    padding: 20px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-     
-}
-
-
-::after,
-::before {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-a {
-    text-decoration: none;
-}
-
-li {
-    list-style: none;
-}
-
-h1 {
-    font-weight: 600;
-    font-size: 1.5rem;
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-}
-
-.wrapper {
+.container {
     display: flex;
-}
-
-.main {
+    justify-content: center;
+    align-items: center;
     min-height: 100vh;
-    width: 100%;
-    overflow: hidden;
-    transition: all 0.35s ease-in-out;
-    background-color: #fafbfe;
+    padding: 20px;
 }
 
-#sidebar {
-    width: 70px;
-    min-width: 70px;
-    z-index: 1000;
-    transition: all .25s ease-in-out;
-    background-color: #0e2238;
+/* Estilo de la tarjeta */
+.register-container {
+    width: 100%;
+    max-width: 500px;
+    background: white; /* Contenedor blanco */
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo del formulario */
+.form-container {
     display: flex;
     flex-direction: column;
+    gap: 15px;
 }
 
-#sidebar.expand {
-    width: 260px;
-    min-width: 260px;
+/* Estilo para las filas de dos columnas */
+.form-row {
+    display: flex;
+    gap: 10px;
 }
 
-.toggle-btn {
-    background-color: transparent;
-    cursor: pointer;
-    border: 0;
-    padding: 1rem 1.5rem;
+.form-row .form-group {
+    flex: 1;
 }
 
-.toggle-btn i {
-    font-size: 1.5rem;
-    color: #FFF;
-}
-
-.sidebar-logo {
-    margin: auto 0;
-}
-
-.sidebar-logo a {
-    color: #FFF;
-    font-size: 1.15rem;
+/* Labels */
+.form-label {
+    font-size: 14px;
     font-weight: 600;
-}
-
-#sidebar:not(.expand) .sidebar-logo,
-#sidebar:not(.expand) a.sidebar-link span {
-    display: none;
-}
-
-.sidebar-nav {
-    padding: 2rem 0;
-    flex: 1 1 auto;
-}
-
-a.sidebar-link {
-    padding: .625rem 1.625rem;
-    color: #FFF;
+    color: #333; /* Texto oscuro para contraste */
+    text-align: left;
     display: block;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    border-left: 3px solid transparent;
 }
 
-.sidebar-link i {
-    font-size: 1.1rem;
-    margin-right: .75rem;
-}
-
-a.sidebar-link:hover {
-    background-color: rgba(255, 255, 255, .075);
-    border-left: 3px solid #3b7ddd;
-}
-
-.sidebar-item {
-    position: relative;
-}
-
-#sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
-    position: absolute;
-    top: 0;
-    left: 70px;
-    background-color: #0e2238;
-    padding: 0;
-    min-width: 15rem;
-    display: none;
-}
-
-#sidebar:not(.expand) .sidebar-item:hover .has-dropdown+.sidebar-dropdown {
-    display: block;
-    max-height: 15em;
+/* Inputs */
+.form-control {
     width: 100%;
-    opacity: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc; /* Borde gris claro */
+    background: white;
+    color: #333;
+    outline: none;
+    transition: all 0.3s ease;
 }
 
-#sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after {
-    border: solid;
-    border-width: 0 .075rem .075rem 0;
-    content: "";
-    display: inline-block;
-    padding: 2px;
-    position: absolute;
-    right: 1.5rem;
-    top: 1.4rem;
-    transform: rotate(-135deg);
-    transition: all .2s ease-out;
+.form-control::placeholder {
+    color: #999;
 }
 
-#sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
-    transform: rotate(45deg);
-    transition: all .2s ease-out;
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Botón */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #007bff; /* Azul */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #0056b3; /* Azul más oscuro al pasar el mouse */
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+}
+
+/* Ajuste responsivo */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
 }
