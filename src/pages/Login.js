@@ -124,7 +124,7 @@ const Login = () => {
           <h2>¡Bienvenido a CorpFreshh!</h2>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
+          <div className="mb-2">
             <label htmlFor="email" className="form-label">Correo Electrónico</label>
             <input
               id="email"
@@ -134,7 +134,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-2">
             <label htmlFor="password" className="form-label">Contraseña</label>
             <input
               id="password"
@@ -144,7 +144,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="form-check mb-3">
+          <div className="form-check mb-2">
             <input
               type="checkbox"
               className="form-check-input"
