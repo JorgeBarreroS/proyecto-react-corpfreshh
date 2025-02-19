@@ -1,7 +1,9 @@
 import { createContext, useState, useContext, useEffect } from "react";
 
+// Creamos el contexto de usuario
 const UserContext = createContext();
 
+// Proveedor del contexto de usuario para envolver la aplicación
 export const UserProvider = ({ children }) => {
   // Intenta recuperar el usuario del localStorage al cargar la aplicación
   const [user, setUser] = useState(() => {
@@ -9,7 +11,7 @@ export const UserProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // Cada vez que el usuario cambie, guarda la información en localStorage
+  // Cada vez que el usuario cambie, guardamos la información en localStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -17,6 +19,7 @@ export const UserProvider = ({ children }) => {
       localStorage.removeItem("user");
     }
   }, [user]);
+
   // Función para cerrar sesión
   const logout = () => {
     setUser(null);
@@ -30,6 +33,7 @@ export const UserProvider = ({ children }) => {
   );
 };
 
+// Hook personalizado para acceder al contexto del usuario
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
