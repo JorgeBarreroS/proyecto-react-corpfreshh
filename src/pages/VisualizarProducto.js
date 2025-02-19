@@ -15,6 +15,8 @@ const VisualizarProducto = () => {
     const [comentarios, setComentarios] = useState([]);
     const [nuevoComentario, setNuevoComentario] = useState('');
     const [nuevaPuntuacion, setNuevaPuntuacion] = useState(5);
+    const [paginaActual, setPaginaActual] = useState(1);
+    const comentariosPorPagina = 5;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -76,6 +78,10 @@ const VisualizarProducto = () => {
         }
     };
 
+    const promedioEstrellas = comentarios.length ? (comentarios.reduce((acc, c) => acc + Number(c.puntuacion), 0) / comentarios.length).toFixed(1) : "0";
+
+    const comentariosPaginados = comentarios.slice((paginaActual - 1) * comentariosPorPagina, paginaActual * comentariosPorPagina);
+
     if (loading) return <div className="text-center mt-5">Cargando...</div>;
     if (error) return <div className="alert alert-danger">Error: {error}</div>;
     if (!producto) return <div className="alert alert-warning">No se encontró el producto.</div>;
@@ -95,6 +101,7 @@ const VisualizarProducto = () => {
                         <p><strong>Color:</strong> {producto.color_producto}</p>
                         <p><strong>Marca:</strong> {producto.nombre_marca}</p>
                         <p><strong>Talla:</strong> {producto.talla}</p>
+                        <p><strong>Calificación promedio:</strong> {promedioEstrellas} ⭐</p>
                         <form onSubmit={handleAddToCart}>
                             <div className="mb-3">
                                 <label className="form-label">Cantidad:</label>
@@ -122,7 +129,7 @@ const VisualizarProducto = () => {
                     }}>Agregar Comentario</button>
                 </div>
                 <ul className="list-group mt-3">
-                    {comentarios.map(comentario => (
+                    {comentariosPaginados.map(comentario => (
                         <li key={comentario.id} className="list-group-item d-flex justify-content-between align-items-center">
                             <div>
                                 <p className="mb-0">{comentario.texto}</p>
@@ -132,6 +139,10 @@ const VisualizarProducto = () => {
                         </li>
                     ))}
                 </ul>
+                <div className="mt-3">
+                    <button className="btn btn-secondary me-2" disabled={paginaActual === 1} onClick={() => setPaginaActual(paginaActual - 1)}>Anterior</button>
+                    <button className="btn btn-secondary" disabled={paginaActual * comentariosPorPagina >= comentarios.length} onClick={() => setPaginaActual(paginaActual + 1)}>Siguiente</button>
+                </div>
             </div>
             <Footer />
         </div>
