@@ -1,12 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
 /* Contenedor del login */
-.container {
+
+
+.login-page {
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
 }
 
 /* Estilo general del formulario */
@@ -41,7 +43,7 @@
 }
 
 /* Botón de inicio de sesión */
-.btn-primary {
+/* .btn-primary {
     width: 100%;
     padding: 10px;
     border-radius: 5px;
@@ -54,7 +56,7 @@
 
 .btn-primary:hover {
     background-color: #0056b3;
-}
+} */
 
 /* Ajuste de los enlaces del formulario */
 .small-text a {

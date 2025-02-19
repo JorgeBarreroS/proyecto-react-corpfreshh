@@ -1,11 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-.container {
+
+
+.register-page {
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 20px;
+    background: linear-gradient(135deg, #3c72a1, #5298d6);
 }
 
 /* Estilo de la tarjeta */
@@ -68,23 +70,23 @@
 }
 
 /* Botón */
-.btn-primary {
+/* .btn-primary {
     width: 100%;
     padding: 14px;
     border-radius: 8px;
     font-size: 18px;
     font-weight: bold;
     background: #007bff; /* Azul */
-    color: white;
+    /* color: white;
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
-}
+}  */
 
-.btn-primary:hover {
+/* .btn-primary:hover {
     background: #0056b3; /* Azul más oscuro al pasar el mouse */
-    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
-}
+    /* box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+}  */
 
 /* Ajuste responsivo */
 @media (max-width: 768px) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import "../styles/sytles2.css";
 
@@ -16,18 +16,27 @@ const Register = () => {
     confirmPassword: "",
   });
 
+  useEffect(() => {
+    document.body.style.background = "linear-gradient(135deg, #3c72a1, #5298d6)";
+    return () => {
+      document.body.style.background = "";
+    };
+  }, []);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    console.log("Datos enviados:", formData); // <-- Agregar este console.log
-  
+
     for (let key in formData) {
       if (!formData[key]) {
-        Swal.fire({ icon: "error", title: "Error", text: "Por favor, llena todos los campos" });
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Por favor, llena todos los campos",
+        });
         return;
       }
     }
@@ -84,68 +93,70 @@ const Register = () => {
   };
 
   return (
-    
-    <div className="register-container">
+    <div className="register-page">
+      <div className="register-container">
         <h2 className="fw-bold">Registro</h2>
-        <form className="form-container">
-            
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Nombre</label>
-                    <input type="text" className="form-control" placeholder="Tu nombre" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Dirección 2</label>
-                    <input type="text" className="form-control" placeholder="Dirección 2" />
-                </div>
+        <form className="form-container" onSubmit={handleSubmit}>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Nombre</label>
+              <input type="text" name="nombre" className="form-control" placeholder="Tu nombre" value={formData.nombre} onChange={handleChange} />
             </div>
-
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Apellido</label>
-                    <input type="text" className="form-control" placeholder="Tu apellido" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Ciudad</label>
-                    <input type="text" className="form-control" placeholder="Ciudad" />
-                </div>
+            <div className="form-group">
+              <label className="form-label">Dirección 2</label>
+              <input type="text" name="direccion2" className="form-control" placeholder="Dirección 2" value={formData.direccion2} onChange={handleChange} />
             </div>
+          </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Teléfono</label>
-                    <input type="text" className="form-control" placeholder="Teléfono" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">País</label>
-                    <input type="text" className="form-control" placeholder="País" />
-                </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Apellido</label>
+              <input type="text" name="apellido" className="form-control" placeholder="Tu apellido" value={formData.apellido} onChange={handleChange} />
             </div>
-
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Correo Electrónico</label>
-                    <input type="email" className="form-control" placeholder="Correo" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Contraseña</label>
-                    <input type="password" className="form-control" placeholder="Contraseña" />
-                </div>
+            <div className="form-group">
+              <label className="form-label">Ciudad</label>
+              <input type="text" name="ciudad" className="form-control" placeholder="Ciudad" value={formData.ciudad} onChange={handleChange} />
             </div>
+          </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Dirección 1</label>
-                    <input type="text" className="form-control" placeholder="Dirección 1" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Confirmar Contraseña</label>
-                    <input type="password" className="form-control" placeholder="Confirmar" />
-                </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Teléfono</label>
+              <input type="text" name="telefono" className="form-control" placeholder="Teléfono" value={formData.telefono} onChange={handleChange} />
             </div>
+            <div className="form-group">
+              <label className="form-label">País</label>
+              <input type="text" name="pais" className="form-control" placeholder="País" value={formData.pais} onChange={handleChange} />
+            </div>
+          </div>
 
-            <button className="btn-primary">Registrarme</button>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Correo Electrónico</label>
+              <input type="email" name="email" className="form-control" placeholder="Correo" value={formData.email} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Contraseña</label>
+              <input type="password" name="password" className="form-control" placeholder="Contraseña" value={formData.password} onChange={handleChange} />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Dirección 1</label>
+              <input type="text" name="direccion1" className="form-control" placeholder="Dirección 1" value={formData.direccion1} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Confirmar Contraseña</label>
+              <input type="password" name="confirmPassword" className="form-control" placeholder="Confirmar" value={formData.confirmPassword} onChange={handleChange} />
+            </div>
+          </div>
+
+          <div className="d-grid">
+            <button type="submit" className="btn btn-primary">Registrarme</button>
+          </div>
         </form>
+      </div>
     </div>
   );
 };

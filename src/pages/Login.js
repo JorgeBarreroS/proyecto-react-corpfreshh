@@ -17,6 +17,13 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.body.style.background = "linear-gradient(135deg, #1e3c72, #2a5298)";
+    return () => {
+        document.body.style.background = ""; // Resetear cuando salga del login
+    };
+}, []);
+
+  useEffect(() => {
     const start = async () => {
       try {
         await gapi.load("client:auth2", () => {
@@ -110,6 +117,7 @@ const Login = () => {
   };
 
   return (
+    <div className="login-page">
       <div className="login-container">
         <div className="login-header">
           <img src={logo} alt="Corp Freshh" />
@@ -168,6 +176,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+    </div>
   );
 };
 
