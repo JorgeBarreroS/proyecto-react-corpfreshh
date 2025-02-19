@@ -1,19 +1,21 @@
-// components/VisualizarProducto.js
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Importa useNavigate
-import Swal from 'sweetalert2'; // Librería para mostrar mensajes emergentes
+import { useParams, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/visualizarProducto.css';
-import { addToCart } from '../services/carritoService'; // Importa desde el servicio
+import { addToCart } from '../services/carritoService';
 
 const VisualizarProducto = () => {
-    const { id } = useParams(); // Obtener el ID del producto de la URL
+    const { id } = useParams();
     const [producto, setProducto] = useState(null);
-    const [cantidad, setCantidad] = useState(1); // Variable para la cantidad seleccionada
+    const [cantidad, setCantidad] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const navigate = useNavigate(); // Hook para la navegación
+    const [comentarios, setComentarios] = useState([]);
+    const [nuevoComentario, setNuevoComentario] = useState('');
+    const [nuevaPuntuacion, setNuevaPuntuacion] = useState(5);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducto = async () => {
@@ -38,66 +40,45 @@ const VisualizarProducto = () => {
                 setLoading(false);
             }
         };
-
         fetchProducto();
     }, [id]);
 
-    // Función para manejar la adición al carrito
     const handleAddToCart = async (e) => {
         e.preventDefault();
-      
         if (cantidad < 1) {
-          Swal.fire('Error', 'La cantidad debe ser al menos 1', 'error');
-          return;
+            Swal.fire('Error', 'La cantidad debe ser al menos 1', 'error');
+            return;
         }
-      
         const productData = {
-          id_producto: producto.id_producto,
-          nombre: producto.nombre_producto,
-          precio: producto.precio_producto,
-          imagen: producto.imagen_producto,
-          cantidad,
+            id_producto: producto.id_producto,
+            nombre: producto.nombre_producto,
+            precio: producto.precio_producto,
+            imagen: producto.imagen_producto,
+            cantidad,
         };
-      
         try {
-          console.log('Datos a enviar al carrito:', productData);
-          
-          const response = await addToCart(productData);
-          
-          console.log('Respuesta de addToCart:', response);
-      
-          if (response.error) {
-            Swal.fire('Error', response.error, 'error');
-          } else {
-            Swal.fire({
-              title: 'Producto agregado',
-              text: 'El producto se ha añadido al carrito.',
-              icon: 'success',
-              confirmButtonText: 'Ver el carrito',
-              showCancelButton: true,
-              preConfirm: () => {
-                navigate('/carrito');
-              }
-            });
-          }
+            const response = await addToCart(productData);
+            if (response.error) {
+                Swal.fire('Error', response.error, 'error');
+            } else {
+                Swal.fire({
+                    title: 'Producto agregado',
+                    text: 'El producto se ha añadido al carrito.',
+                    icon: 'success',
+                    confirmButtonText: 'Ver el carrito',
+                    showCancelButton: true,
+                    preConfirm: () => navigate('/carrito'),
+                });
+            }
         } catch (error) {
-          console.error('Error completo al añadir al carrito:', error);
-          Swal.fire('Error', 'Hubo un problema con la solicitud. Intenta nuevamente.', 'error');
+            console.error(error);
+            Swal.fire('Error', 'Hubo un problema con la solicitud. Intenta nuevamente.', 'error');
         }
-      };
-    
-    
-    if (loading) {
-        return <div>Cargando...</div>;
-    }
+    };
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (!producto) {
-        return <div>No se encontró el producto.</div>;
-    }
+    if (loading) return <div className="text-center mt-5">Cargando...</div>;
+    if (error) return <div className="alert alert-danger">Error: {error}</div>;
+    if (!producto) return <div className="alert alert-warning">No se encontró el producto.</div>;
 
     return (
         <div>
@@ -105,11 +86,7 @@ const VisualizarProducto = () => {
             <div className="container mt-5">
                 <div className="row">
                     <div className="col-md-6">
-                        <img
-                            src={`http://localhost/corpfresh-php/${producto.imagen_producto}`}
-                            className="img-fluid w-75"
-                            alt={producto.nombre_producto}
-                        />
+                        <img src={`http://localhost/corpfresh-php/${producto.imagen_producto}`} className="img-fluid w-75" alt={producto.nombre_producto} />
                     </div>
                     <div className="col-md-6">
                         <h2>{producto.nombre_producto}</h2>
@@ -118,30 +95,43 @@ const VisualizarProducto = () => {
                         <p><strong>Color:</strong> {producto.color_producto}</p>
                         <p><strong>Marca:</strong> {producto.nombre_marca}</p>
                         <p><strong>Talla:</strong> {producto.talla}</p>
-
-                        <form id="addToCartForm" onSubmit={handleAddToCart}>
-                            <input type="hidden" name="id_producto" value={producto.id_producto} />
-                            <input type="hidden" name="nombre" value={producto.nombre_producto} />
-                            <input type="hidden" name="precio" value={producto.precio_producto} />
-                            <input type="hidden" name="imagen" value={producto.imagen_producto} />
-                            
+                        <form onSubmit={handleAddToCart}>
                             <div className="mb-3">
-                                <label htmlFor="quantity" className="form-label">Cantidad:</label>
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    id="quantity"
-                                    name="cantidad"
-                                    value={cantidad}
-                                    onChange={(e) => setCantidad(e.target.value)}
-                                    min="1"
-                                    required
-                                />
+                                <label className="form-label">Cantidad:</label>
+                                <input type="number" className="form-control" value={cantidad} onChange={(e) => setCantidad(e.target.value)} min="1" required />
                             </div>
-                            <button type="submit" className="btn btn-primary btn-lg mt-3">Añadir al carrito</button>
+                            <button type="submit" className="btn btn-primary btn-lg">Añadir al carrito</button>
                         </form>
                     </div>
                 </div>
+                <hr />
+                <h3>Comentarios y Reseñas</h3>
+                <div className="mb-3">
+                    <textarea className="form-control mt-2" placeholder="Escribe un comentario" value={nuevoComentario} onChange={(e) => setNuevoComentario(e.target.value)} />
+                    <select className="form-select mt-2" value={nuevaPuntuacion} onChange={(e) => setNuevaPuntuacion(e.target.value)}>
+                        {[1, 2, 3, 4, 5].map(num => (
+                            <option key={num} value={num}>{'⭐'.repeat(num)}</option>
+                        ))}
+                    </select>
+                    <button className="btn btn-success mt-2" onClick={() => {
+                        if (nuevoComentario.trim() !== '') {
+                            setComentarios([...comentarios, { id: Date.now(), texto: nuevoComentario, puntuacion: nuevaPuntuacion }]);
+                            setNuevoComentario('');
+                            setNuevaPuntuacion(5);
+                        }
+                    }}>Agregar Comentario</button>
+                </div>
+                <ul className="list-group mt-3">
+                    {comentarios.map(comentario => (
+                        <li key={comentario.id} className="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <p className="mb-0">{comentario.texto}</p>
+                                <p className="mb-0 text-warning">{'⭐'.repeat(comentario.puntuacion)}</p>
+                            </div>
+                            <button className="btn btn-danger btn-sm" onClick={() => setComentarios(comentarios.filter(c => c.id !== comentario.id))}>Eliminar</button>
+                        </li>
+                    ))}
+                </ul>
             </div>
             <Footer />
         </div>
