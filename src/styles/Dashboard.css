@@ -1,0 +1,18 @@
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    background-color: green;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    box-shadow: 0 0 5px rgba(0, 128, 0, 0.7);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .status-indicator:hover {
+    transform: scale(1.2);
+  }
+  
