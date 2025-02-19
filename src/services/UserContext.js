@@ -1,17 +1,21 @@
 import { createContext, useState, useContext, useEffect } from "react";
 
-// Creamos el contexto de usuario
+// Crear el contexto de usuario
 const UserContext = createContext();
 
-// Proveedor del contexto de usuario para envolver la aplicación
+// Proveedor de usuario para envolver la aplicación
 export const UserProvider = ({ children }) => {
-  // Intenta recuperar el usuario del localStorage al cargar la aplicación
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Error al recuperar el usuario:", error);
+      return null;
+    }
   });
 
-  // Cada vez que el usuario cambie, guardamos la información en localStorage
+  // Sincroniza el usuario en localStorage cuando cambia el estado
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -20,10 +24,21 @@ export const UserProvider = ({ children }) => {
     }
   }, [user]);
 
+  // Sincroniza el estado si cambia en otra pestaña
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event.key === "user") {
+        setUser(event.newValue ? JSON.parse(event.newValue) : null);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   // Función para cerrar sesión
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user"); // Eliminar usuario del almacenamiento
+    localStorage.removeItem("user");
   };
 
   return (
@@ -33,7 +48,7 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-// Hook personalizado para acceder al contexto del usuario
+// Hook para acceder al contexto del usuario
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {

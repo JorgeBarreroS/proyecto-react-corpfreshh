@@ -1,32 +1,33 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../services/AuthContext"; // Usar AuthContext
-6
+import { useAuth } from "../services/AuthContext"; 
+
 const Dashboard = () => {
-  const { user, logout } = useAuth(); // Obtener el estado global de autenticación
+  const { authState, logout } = useAuth(); 
   const navigate = useNavigate();
 
-  // Redirigir al login si el usuario no está autenticado
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
+    if (!authState) {
+      navigate("/login", { replace: true });
     }
-  }, [user, navigate]);
+  }, [authState, navigate]);
 
-  // Manejo del cierre de sesión
-  const handleLogout = () => {
-    logout(); // Eliminar usuario del contexto y localStorage
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await logout(); 
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
   };
 
-  // Si el usuario no está autenticado, no se muestra nada
-  if (!user) return null;
+  if (!authState) return null; 
 
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h1>Bienvenido al Dashboard</h1>
-        <p>Hola, {user.name}</p> {/* Muestra el nombre del usuario */}
+        <p>Hola, {authState.name}</p> 
       </div>
 
       <div className="dashboard-content">

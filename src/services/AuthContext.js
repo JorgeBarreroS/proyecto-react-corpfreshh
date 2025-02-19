@@ -1,18 +1,35 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
-// Crea el contexto
+// Crear el contexto de autenticación
 const AuthContext = createContext();
 
-// El proveedor que envolverá tus componentes
+// Proveedor de autenticación
 export const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState(null);
+  const [authState, setAuthState] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem("authUser");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Error al cargar usuario de localStorage:", error);
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (authState) {
+      localStorage.setItem("authUser", JSON.stringify(authState));
+    } else {
+      localStorage.removeItem("authUser");
+    }
+  }, [authState]);
 
   const login = (userData) => {
-    setAuthState(userData); // Establecer el estado de autenticación
+    setAuthState(userData);
   };
 
   const logout = () => {
-    setAuthState(null); // Limpiar el estado al cerrar sesión
+    setAuthState(null);
+    localStorage.removeItem("authUser");
   };
 
   return (
@@ -22,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// El hook que usarás en los componentes
+// Hook para acceder al contexto
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

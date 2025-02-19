@@ -9,11 +9,11 @@ import { AuthProvider } from "./services/AuthContext"; // Asegúrate de importar
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <UserProvider>
-      <AuthProvider>  {/* Asegúrate de envolver todo con AuthProvider */}
+    <AuthProvider>
+      <UserProvider>
         <App />
-      </AuthProvider>
-    </UserProvider>
+      </UserProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
 

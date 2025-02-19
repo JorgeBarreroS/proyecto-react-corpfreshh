@@ -2,49 +2,58 @@ import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
-import { useUser } from "../components/UserContext";
 import GoogleLogin from "react-google-login";
 import { gapi } from "gapi-script";
 import "../styles/Login.css";
 import "../styles/sytles2.css";
+import logo from "../imagenes/corp-freshh.jfif"; 
 
 const clientID = "590045182886-8jfebo35qqi7mpc4dtldu48m3skpu6ne.apps.googleusercontent.com";
 
 const Login = () => {
-  const { login } = useAuth(); // Obtener el estado global de autenticación
+  const { login } = useAuth(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const start = () => {
-      gapi.auth2.init({ client_id: clientID });
+    const start = async () => {
+      try {
+        await gapi.load("client:auth2", () => {
+          gapi.auth2.init({ client_id: clientID });
+        });
+      } catch (error) {
+        console.error("Error al inicializar Google API:", error);
+      }
     };
-    gapi.load("client:auth2", start);
+    start();
   }, []);
 
   const onSuccess = (response) => {
-    const googleUser = {
-      name: response.profileObj.name,
-      email: response.profileObj.email,
-      avatar: response.profileObj.imageUrl,
-    };
-    login(googleUser);
-    navigate("/dashboard");
+    if (response?.profileObj) {
+      const googleUser = {
+        name: response.profileObj.name,
+        email: response.profileObj.email,
+        avatar: response.profileObj.imageUrl,
+      };
+      login(googleUser);
+      navigate("/dashboard", { replace: true });
+    }
   };
 
-  const onFailure = () => {
-    console.log("Error en inicio de sesión con Google");
+  const onFailure = (error) => {
+    console.error("Error en inicio de sesión con Google:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo iniciar sesión con Google.",
+      confirmButtonColor: "#3085d6",
+    });
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
-  };
-
-  const validateEmail = (email) => {
-    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return regex.test(email);
   };
 
   const handleSubmit = async (e) => {
@@ -55,7 +64,6 @@ const Login = () => {
         icon: "error",
         title: "Campos vacíos",
         text: "Por favor, ingresa tus credenciales.",
-        background: "#f7f7f7",
         confirmButtonColor: "#3085d6",
       });
       return;
@@ -76,20 +84,17 @@ const Login = () => {
           icon: "success",
           title: "¡Éxito!",
           text: "Inicio de sesión exitoso",
-          background: "#f7f7f7",
           confirmButtonColor: "#3085d6",
           confirmButtonText: "Continuar",
         }).then(() => {
-          const userData = { name: data.name, email };
-          login(userData);
-          navigate("/dashboard");
+          login({ name: data.name, email });
+          navigate("/dashboard", { replace: true });
         });
       } else {
         Swal.fire({
           icon: "error",
           title: "Inicio no válido",
           text: data.message || "Usuario o contraseña incorrectos",
-          background: "#f7f7f7",
           confirmButtonColor: "#3085d6",
           confirmButtonText: "Volver a intentar",
         });
@@ -100,7 +105,6 @@ const Login = () => {
         icon: "error",
         title: "Error de conexión",
         text: "No se pudo conectar con el servidor.",
-        background: "#f7f7f7",
         confirmButtonColor: "#3085d6",
       });
     }
@@ -108,15 +112,16 @@ const Login = () => {
 
   return (
     <div className="container">
-      <div className="login-container container">
+      <div className="login-container">
         <div className="login-header">
-          <img src="../imagenes/corp-freshh.jfif" alt="Corp Freshh" />
-          <h2> ¡Bienvenido a CorpFreshh!</h2>
+          <img src={logo} alt="Corp Freshh" />
+          <h2>¡Bienvenido a CorpFreshh!</h2>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Correo Electrónico</label>
             <input
+              id="email"
               type="email"
               className="form-control"
               value={email}
@@ -126,6 +131,7 @@ const Login = () => {
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Contraseña</label>
             <input
+              id="password"
               type={showPassword ? "text" : "password"}
               className="form-control"
               value={password}
@@ -158,7 +164,7 @@ const Login = () => {
                 clientId={clientID}
                 onSuccess={onSuccess}
                 onFailure={onFailure}
-                cookiePolicy={'single_host_policy'}
+                cookiePolicy={"single_host_policy"}
               />
             </div>
           </div>

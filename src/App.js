@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from './services/AuthContext'; // Proveedor de autenticación
-import { UserProvider } from './components/UserContext'; // Proveedor de usuario
+import { AuthProvider } from './services/AuthContext'; // Ruta corregida
+import { UserProvider } from './services/UserContext'; // Ruta unificada
 
-import Home from './pages/Home';  
-import Productos from './pages/Productos'; 
-import Contacto from './pages/Contacto'; 
-import Nosotros from './pages/Nosotros'; 
+import Home from './pages/Home';
+import Productos from './pages/Productos';
+import Contacto from './pages/Contacto';
+import Nosotros from './pages/Nosotros';
 import Buscador from './pages/Buscador';
 import VisualizarProducto from './pages/VisualizarProducto';
 import CartPage from './pages/CartPage';
@@ -18,8 +18,8 @@ import Dashboard from './pages/Dashboard';
 
 function App() {
     return (
-        <AuthProvider> {/* Proveedor de autenticación */}
-            <UserProvider> {/* Proveedor de usuario */}
+        <AuthProvider> {/* Primero el proveedor de autenticación */}
+            <UserProvider> {/* Luego el proveedor de usuario */}
                 <Router>
                     <Routes>
                         <Route path="/" element={<Home />} />
@@ -42,3 +42,4 @@ function App() {
 }
 
 export default App;
+
