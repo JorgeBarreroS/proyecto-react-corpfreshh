@@ -36,10 +36,13 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-content">
-        <p>¡Hola!, ya iniciaste sesion exitosamente, puedes volver a la pagina principal, ¡gracias por confiar en CORPFRESH!</p>
+        <p>¡Hola!, ya iniciaste sesion exitosamente, puedes volver a la pagina principal, ¡gracias por confiar en CORPFRESH!
+
+          
+        </p>
         
         <div className="dashboard-actions">
-          <button className="btn btn-success" onClick={() => navigate("/")}>Okey</button>
+          <button className="btn btn-success" onClick={() => navigate("/")}>Volver</button>
         </div>
       </div>
     </div>
