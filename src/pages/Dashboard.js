@@ -27,8 +27,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h1>Bienvenido al Dashboard</h1>
-        <p>Hola, {authState.name}</p> 
+        <h1>INICIO DE SESION EXITOSO</h1> 
         <div 
           className="status-indicator" 
           title="Sesión activa (haz clic para cerrar sesión)"
@@ -37,7 +36,11 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-content">
-        <p>Este es tu panel principal. Aquí puedes ver todas las opciones disponibles.</p>
+        <p>¡Hola!, ya iniciaste sesion exitosamente, puedes volver a la pagina principal, ¡gracias por confiar en CORPFRESH!</p>
+        
+        <div className="dashboard-actions">
+          <button className="btn btn-success" onClick={() => navigate("/")}>Okey</button>
+        </div>
       </div>
     </div>
   );
