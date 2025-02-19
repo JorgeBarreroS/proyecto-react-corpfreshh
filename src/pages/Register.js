@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import Swal from "sweetalert2";
 import "../styles/sytles2.css";
 
@@ -15,6 +15,13 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    document.body.style.background = "linear-gradient(135deg, #3c72a1, #5298d6)";
+    return () => {
+        document.body.style.background = "";
+    };
+}, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -84,68 +91,69 @@ const Register = () => {
   };
 
   return (
-    
-    <div className="register-container">
-        <h2 className="fw-bold">Registro</h2>
-        <form className="form-container">
-            
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Nombre</label>
-                    <input type="text" className="form-control" placeholder="Tu nombre" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Dirección 2</label>
-                    <input type="text" className="form-control" placeholder="Dirección 2" />
-                </div>
-            </div>
+    <div className="register-page">
+      <div className="register-container">
+          <h2 className="fw-bold">Registro</h2>
+          <form className="form-container">
+              
+              <div className="form-row">
+                  <div className="form-group">
+                      <label className="form-label">Nombre</label>
+                      <input type="text" className="form-control" placeholder="Tu nombre" />
+                  </div>
+                  <div className="form-group">
+                      <label className="form-label">Dirección 2</label>
+                      <input type="text" className="form-control" placeholder="Dirección 2" />
+                  </div>
+              </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Apellido</label>
-                    <input type="text" className="form-control" placeholder="Tu apellido" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Ciudad</label>
-                    <input type="text" className="form-control" placeholder="Ciudad" />
-                </div>
-            </div>
+              <div className="form-row">
+                  <div className="form-group">
+                      <label className="form-label">Apellido</label>
+                      <input type="text" className="form-control" placeholder="Tu apellido" />
+                  </div>
+                  <div className="form-group">
+                      <label className="form-label">Ciudad</label>
+                      <input type="text" className="form-control" placeholder="Ciudad" />
+                  </div>
+              </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Teléfono</label>
-                    <input type="text" className="form-control" placeholder="Teléfono" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">País</label>
-                    <input type="text" className="form-control" placeholder="País" />
-                </div>
-            </div>
+              <div className="form-row">
+                  <div className="form-group">
+                      <label className="form-label">Teléfono</label>
+                      <input type="text" className="form-control" placeholder="Teléfono" />
+                  </div>
+                  <div className="form-group">
+                      <label className="form-label">País</label>
+                      <input type="text" className="form-control" placeholder="País" />
+                  </div>
+              </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Correo Electrónico</label>
-                    <input type="email" className="form-control" placeholder="Correo" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Contraseña</label>
-                    <input type="password" className="form-control" placeholder="Contraseña" />
-                </div>
-            </div>
+              <div className="form-row">
+                  <div className="form-group">
+                      <label className="form-label">Correo Electrónico</label>
+                      <input type="email" className="form-control" placeholder="Correo" />
+                  </div>
+                  <div className="form-group">
+                      <label className="form-label">Contraseña</label>
+                      <input type="password" className="form-control" placeholder="Contraseña" />
+                  </div>
+              </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label className="form-label">Dirección 1</label>
-                    <input type="text" className="form-control" placeholder="Dirección 1" />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Confirmar Contraseña</label>
-                    <input type="password" className="form-control" placeholder="Confirmar" />
-                </div>
-            </div>
+              <div className="form-row">
+                  <div className="form-group">
+                      <label className="form-label">Dirección 1</label>
+                      <input type="text" className="form-control" placeholder="Dirección 1" />
+                  </div>
+                  <div className="form-group">
+                      <label className="form-label">Confirmar Contraseña</label>
+                      <input type="password" className="form-control" placeholder="Confirmar" />
+                  </div>
+              </div>
 
-            <button className="btn-primary">Registrarme</button>
-        </form>
+              <button className="btn-primary">Registrarme</button>
+          </form>
+      </div>
     </div>
   );
 };

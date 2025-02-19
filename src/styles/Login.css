@@ -9,6 +9,14 @@
     background-color: #f4f4f4;
 }
 
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+}
+
 /* Estilo general del formulario */
 .login-container {
     width: 100%;
