@@ -1,15 +1,177 @@
-/* carrito de compras */
-   body {
-        background-color: #f8f9fa;
+/* Contenedor general */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 15px;
+  }
+  
+  /* Estilo de la tabla en pantallas grandes */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .cart-table th,
+  .cart-table td {
+    white-space: nowrap;
+    padding: 12px;
+    font-size: 16px;
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  /* Ajuste de imágenes */
+  .cart-table img {
+    max-width: 80px;
+    height: auto;
+    border-radius: 6px;
+  }
+  
+  /* Estilo de los botones */
+  .cart-actions .btn {
+    font-size: 16px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    width: auto;
+  }
+  
+  /* --- ESTILO RESPONSIVE PARA MÓVILES --- */
+  @media (max-width: 768px) {
+    .table-responsive {
+      display: block;
+      width: 100%;
+    }
+  
+    /* Diseño de la tabla en móvil */
+    .cart-table {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+  
+    .cart-table thead {
+      display: none; /* Oculta encabezados en móviles */
+    }
+  
+    .cart-table tbody {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    /* Cada producto en una tarjeta */
+    .cart-table tbody tr {
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      border: 1px solid #ddd;
+    }
+  
+    /* Estilos internos de cada fila */
+    .cart-table tbody td {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      padding: 8px 10px;
+      border-bottom: 1px solid #ddd;
+    }
+  
+    /* Elimina el borde de la última celda */
+    .cart-table tbody td:last-child {
+      border-bottom: none;
+    }
+  
+    /* Ajuste de imágenes en móviles */
+    .cart-table tbody td img {
+      max-width: 70px;
+      height: auto;
+    }
+  
+    /* Organización de los botones */
+    .cart-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: center;
+      margin-top: 15px;
+    }
+  
+    .cart-actions .btn {
+      width: 100%;
+      font-size: 14px;
+      padding: 10px;
+    }
+  
+    /* Organiza los elementos internos */
+    .cart-table tbody tr {
+        display: flex;
+        flex-direction: column;
+        background: #f8f9fa; /* Color uniforme */
+        border-radius: 10px;
+        box-shadow: none; /* Elimina sombras */
+        padding: 15px;
+        border: none; /* Quita bordes */
+    }
+    
+    .cart-table tbody td {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        padding: 10px;
+        border-bottom: none; /* Quita líneas entre filas */
+        background: transparent; /* Mantiene el fondo uniforme */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .cart-table tbody tr {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+  
+    .cart-table tbody td {
+      font-size: 13px;
+    }
+  
+    .cart-actions .btn {
+      font-size: 13px;
+      padding: 10px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .cart-table tbody td {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centra los elementos */
+        text-align: center; /* Asegura que el texto esté alineado */
+        font-size: 14px;
+        padding: 8px 12px;
     }
 
-    .card img {
-        max-height: 150px;
-        object-fit: cover;
+    .mobile-label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 4px;
     }
 
-    #cart-items {
-        max-height: 300px;
-        overflow-y: auto;
+    /* Centrar input */
+    .cart-table tbody td input {
+        width: 60px; /* Ajuste de tamaño */
+        text-align: center;
     }
 
+    /* Centrar el botón eliminar */
+    .cart-table tbody td button {
+        width: 100%;
+        max-width: 150px; /* Para que no sea muy ancho */
+    }
+}
+
+   
