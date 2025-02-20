@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import ResetPassword from './pages/ResetPassword';
 import Perfil from './pages/Perfil';
 import Dashboard from './pages/Dashboard';
+import MiInformacion from "./pages/MiInformacion";
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function App() {
                         <Route path="/reset-password" element={<ResetPassword />} />
                         <Route path="/perfil" element={<Perfil />} />
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/mi-informacion" element={<MiInformacion />} />
                     </Routes>
                 </Router>
             </UserProvider>
