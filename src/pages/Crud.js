@@ -4,6 +4,7 @@ import "../styles/sidebar.css";
 import { useNavigate } from "react-router-dom";
 import Productos from "../componentsCrud/productos";
 import Categorias from "../componentsCrud/categorias";
+import Ordenes from "../componentsCrud/ordenes";
 
   
 export default function App() {
@@ -63,6 +64,7 @@ return (
       <div className="content-wrapper">
       {view === "productos" && <Productos />}
       {view === "categorias" && <Categorias />}
+      {view === "ordenes" && <Ordenes />}
       </div>
     </main>
   </div>
