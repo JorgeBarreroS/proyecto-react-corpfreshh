@@ -3,6 +3,7 @@ import "../styles/bootstrap.min.css.map";
 import "../styles/sidebar.css";
 import { useNavigate } from "react-router-dom";
 import Productos from "../componentsCrud/productos";
+import Categorias from "../componentsCrud/categorias";
 
   
 export default function App() {
@@ -61,6 +62,7 @@ return (
       </header>
       <div className="content-wrapper">
       {view === "productos" && <Productos />}
+      {view === "categorias" && <Categorias />}
       </div>
     </main>
   </div>
