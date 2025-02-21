@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Productos from "../componentsCrud/productos";
 import Categorias from "../componentsCrud/categorias";
 import Ordenes from "../componentsCrud/ordenes";
+import Pedidos from "../componentsCrud/pedidos";
 
   
 export default function App() {
@@ -65,6 +66,7 @@ return (
       {view === "productos" && <Productos />}
       {view === "categorias" && <Categorias />}
       {view === "ordenes" && <Ordenes />}
+      {view === "pedidos" && <Pedidos />}
       </div>
     </main>
   </div>
