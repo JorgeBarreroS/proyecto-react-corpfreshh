@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../styles/bootstrap.min.css.map";
 import "../styles/sidebar.css";
 import { useNavigate } from "react-router-dom";
+import Productos from "../componentsCrud/productos";
 
   
 export default function App() {
@@ -59,7 +60,7 @@ return (
         <h1 className="main-title">Gestión de Recursos</h1>
       </header>
       <div className="content-wrapper">
-        
+      {view === "productos" && <Productos />}
       </div>
     </main>
   </div>
