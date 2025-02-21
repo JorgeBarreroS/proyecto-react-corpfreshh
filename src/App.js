@@ -16,6 +16,7 @@ import ResetPassword from './pages/ResetPassword';
 import Perfil from './pages/Perfil';
 import Dashboard from './pages/Dashboard';
 import MiInformacion from "./pages/MiInformacion";
+import Crud from "./pages/Crud";
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function App() {
                         <Route path="/perfil" element={<Perfil />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/mi-informacion" element={<MiInformacion />} />
+                        <Route path="/crud" element={<Crud/>} />
                     </Routes>
                 </Router>
             </UserProvider>

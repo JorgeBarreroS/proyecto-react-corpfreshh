@@ -75,7 +75,7 @@ const Navbar = () => {
                 {/* Menú desplegable */}
                 {menuOpen && (
                   <div className="dropdown-menu show position-absolute end-0 mt-2 shadow bg-white rounded p-2" style={{ right: 0, zIndex: 10 }}>
-                    <button className="dropdown-item" onClick={() => navigate("/mi-informacion")}>
+                    <button className="dropdown-item" onClick={() => navigate("/dashboard")}>
                       Mi Información
                     </button>
                     <button className="dropdown-item" onClick={() => navigate("/perfil")}>
