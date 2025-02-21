@@ -6,6 +6,7 @@ import Productos from "../componentsCrud/productos";
 import Categorias from "../componentsCrud/categorias";
 import Ordenes from "../componentsCrud/ordenes";
 import Pedidos from "../componentsCrud/pedidos";
+import Usuarios from "../componentsCrud/usuarios";
 
   
 export default function App() {
@@ -67,6 +68,7 @@ return (
       {view === "categorias" && <Categorias />}
       {view === "ordenes" && <Ordenes />}
       {view === "pedidos" && <Pedidos />}
+      {view === "usuarios" && <Usuarios />}
       </div>
     </main>
   </div>
