@@ -163,7 +163,7 @@ const CartPage = () => {
               </Link>
               <TotalPrice total={total} />
               <Link to="/checkout" className="btn btn-primary btn-sm mt-2 mt-md-0">
-                Ir a pagar
+                Ir a pagar 
               </Link>
             </div>
           </div>
