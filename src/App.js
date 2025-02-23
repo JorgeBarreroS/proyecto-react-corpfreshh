@@ -17,6 +17,7 @@ import Perfil from './pages/Perfil';
 import Dashboard from './pages/Dashboard';
 import MiInformacion from "./pages/MiInformacion";
 import Crud from "./pages/Crud";
+import PagoNequi from './pages/PagoNequi'; // Agregada la importación de la página de pago con Nequi
 
 function App() {
     return (
@@ -37,7 +38,8 @@ function App() {
                         <Route path="/perfil" element={<Perfil />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/mi-informacion" element={<MiInformacion />} />
-                        <Route path="/crud" element={<Crud/>} />
+                        <Route path="/crud" element={<Crud />} />
+                        <Route path="/pago-nequi" element={<PagoNequi />} /> {/* Nueva ruta añadida */}
                     </Routes>
                 </Router>
             </UserProvider>
@@ -46,4 +48,3 @@ function App() {
 }
 
 export default App;
-
