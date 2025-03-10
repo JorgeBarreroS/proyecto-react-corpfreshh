@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -19,6 +19,19 @@ const VisualizarProducto = () => {
     const [nuevoComentario, setNuevoComentario] = useState('');
     const [nuevaPuntuacion, setNuevaPuntuacion] = useState(5);
 
+    // Esta función es ahora la única implementación de fetchComentarios
+    const fetchComentarios = async () => {
+        try {
+            const response = await fetch(`http://localhost/corpfresh-php/comentarios.php?id_producto=${id}`);
+            if (!response.ok) throw new Error("Error al cargar comentarios.");
+            const data = await response.json();
+            setComentarios(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error("Error al cargar comentarios", err);
+            setComentarios([]);
+        }
+    };
+
     useEffect(() => {
         const fetchProducto = async () => {
             try {
@@ -30,18 +43,6 @@ const VisualizarProducto = () => {
                 setError(err.message);
             } finally {
                 setLoading(false);
-            }
-        };
-
-        const fetchComentarios = async () => {
-            try {
-                const response = await fetch(`http://localhost/corpfresh-php/comentarios.php?id_producto=${id}`);
-                if (!response.ok) throw new Error("Error al cargar comentarios.");
-                const data = await response.json();
-                setComentarios(Array.isArray(data) ? data : []);
-            } catch (err) {
-                console.error("Error al cargar comentarios", err);
-                setComentarios([]);
             }
         };
 
@@ -82,19 +83,9 @@ const VisualizarProducto = () => {
         }
     };
 
-    const fetchComentarios = async () => {
-        try {
-            const response = await fetch(`http://localhost/corpfresh-php/comentarios.php?id_producto=${id}`);
-            if (!response.ok) throw new Error("Error al cargar comentarios.");
-            const data = await response.json();
-            setComentarios(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error("Error al cargar comentarios", err);
-        }
-    };
-
     const agregarComentario = async () => {
-        if (!authState || !authState.user) {
+        // Verificamos con la estructura correcta de authState
+        if (!authState || !authState.email) {
             Swal.fire('Error', 'Debes iniciar sesión para comentar.', 'error');
             return;
         }
@@ -108,7 +99,12 @@ const VisualizarProducto = () => {
             const response = await fetch('http://localhost/corpfresh-php/comentarios.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_producto: id, texto: nuevoComentario, puntuacion: nuevaPuntuacion, usuario: authState.user })
+                body: JSON.stringify({ 
+                    id_producto: id, 
+                    texto: nuevoComentario, 
+                    puntuacion: nuevaPuntuacion, 
+                    usuario: authState.email // Usando email como identificador de usuario
+                })
             });
 
             const data = await response.json();
@@ -128,6 +124,9 @@ const VisualizarProducto = () => {
     if (error) return <div className="alert alert-danger">Error: {error}</div>;
     if (!producto) return <div className="alert alert-warning">No se encontró el producto.</div>;
 
+    // Verificamos si el usuario está autenticado para depuración
+    console.log("Estado de autenticación:", authState);
+
     return (
         <div>
             <Navbar />
@@ -146,7 +145,7 @@ const VisualizarProducto = () => {
                         <form onSubmit={handleAddToCart}>
                             <div className="mb-3">
                                 <label className="form-label">Cantidad:</label>
-                                <input type="number" className="form-control" value={cantidad} onChange={(e) => setCantidad(e.target.value)} min="1" required />
+                                <input type="number" className="form-control" value={cantidad} onChange={(e) => setCantidad(parseInt(e.target.value))} min="1" required />
                             </div>
                             <button type="submit" className="btn btn-primary btn-lg">Añadir al carrito</button>
                         </form>
@@ -154,7 +153,8 @@ const VisualizarProducto = () => {
                 </div>
                 <hr />
                 <h3>Comentarios y Reseñas</h3>
-                {authState && (
+                {/* Verificar con la estructura correcta de authState */}
+                {authState && authState.email ? (
                     <div className="mb-3">
                         <textarea className="form-control" placeholder="Escribe un comentario" value={nuevoComentario} onChange={(e) => setNuevoComentario(e.target.value)} />
                         <select className="form-select mt-2" value={nuevaPuntuacion} onChange={(e) => setNuevaPuntuacion(parseInt(e.target.value))}>
@@ -163,6 +163,10 @@ const VisualizarProducto = () => {
                             ))}
                         </select>
                         <button className="btn btn-success mt-2" onClick={agregarComentario}>Agregar Comentario</button>
+                    </div>
+                ) : (
+                    <div className="alert alert-info">
+                        Debes <Link to="/login">iniciar sesión</Link> para agregar comentarios.
                     </div>
                 )}
                 <ul className="list-group mt-3">
