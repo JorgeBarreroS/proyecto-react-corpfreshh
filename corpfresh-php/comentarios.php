@@ -25,37 +25,53 @@ try {
         throw new Exception("Clase Conexion no encontrada");
     }
 
-    try {
-        $conn = Conexion::getConexion();
-        if (!$conn) {
-            throw new Exception("No se pudo obtener la conexión a la base de datos");
-        }
-    } catch (Exception $e) {
-        throw new Exception("Error al conectar con la base de datos: " . $e->getMessage());
+    $conn = Conexion::getConexion();
+    if (!$conn) {
+        throw new Exception("No se pudo obtener la conexión a la base de datos");
     }
 
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method === 'GET') {
-        // ... (código GET existente)
+        // Verificar si se recibió el id_producto
+        if (!isset($_GET['id_producto']) || intval($_GET['id_producto']) <= 0) {
+            throw new Exception("Falta el parámetro 'id_producto' válido");
+        }
+
+        $id_producto = intval($_GET['id_producto']);
+
+        // Consulta para obtener los comentarios del producto específico
+        $sql = "SELECT c.id_comentario, c.comentario, c.puntuacion, c.fecha, 
+                       u.correo_usuario AS usuario
+                FROM comentarios c
+                JOIN usuario u ON c.id_usuario = u.id_usuario
+                WHERE c.id_producto = ?
+                ORDER BY c.fecha DESC";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$id_producto]);
+        $comentarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Retornar el resultado en formato JSON
+        echo json_encode($comentarios);
     } elseif ($method === 'POST') {
         $input = file_get_contents("php://input");
         $data = json_decode($input, true);
-        
+
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception("Error al decodificar JSON: " . json_last_error_msg() . ". Input recibido: " . substr($input, 0, 100));
+            throw new Exception("Error al decodificar JSON: " . json_last_error_msg());
         }
-        
+
         if (!isset($data['id_producto']) || !isset($data['puntuacion']) || !isset($data['usuario']) || 
             (!isset($data['texto']) && !isset($data['comentario']))) {
             throw new Exception("Datos incompletos. Recibidos: " . json_encode($data));
         }
-        
+
         $id_producto = intval($data['id_producto']);
         $texto = trim(isset($data['comentario']) ? $data['comentario'] : $data['texto']);
         $puntuacion = intval($data['puntuacion']);
         $usuario = trim($data['usuario']);
-        
+
         if ($id_producto <= 0 || empty($texto) || empty($usuario) || $puntuacion < 1 || $puntuacion > 5) {
             throw new Exception("Datos de comentario no válidos");
         }
@@ -75,7 +91,7 @@ try {
                 VALUES (?, ?, ?, ?, NOW())";
         $stmt = $conn->prepare($sql);
         $result = $stmt->execute([$idUsuario, $id_producto, $texto, $puntuacion]);
-        
+
         if (!$result) {
             throw new Exception("Error al insertar en la base de datos: " . implode(" ", $stmt->errorInfo()));
         }
@@ -91,24 +107,18 @@ try {
             ]
         ]);
     } elseif ($method === 'DELETE') {
-        // ... (código DELETE existente)
+        // Aquí va la lógica para eliminar comentarios
     } else {
         throw new Exception("Método $method no permitido");
     }
 } catch (Exception $e) {
-    // Limpia cualquier salida que ya se haya generado
     ob_clean();
-    
-    // Asegura que el encabezado sea JSON
     header("Content-Type: application/json");
-    
-    // Devuelve el error como JSON válido
     echo json_encode([
         "success" => false, 
         "error" => $e->getMessage()
     ]);
 }
 
-// Finaliza y limpia el buffer de salida
 ob_end_flush();
 ?>

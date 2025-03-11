@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-11-2024 a las 01:21:18
+-- Tiempo de generación: 11-03-2025 a las 02:40:46
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -188,6 +188,37 @@ INSERT INTO `categoria` (`id_categoria`, `nombre_categoria`) VALUES
 (2, 'Pantalones'),
 (3, 'Zapatos'),
 (4, 'Conjuntos');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `comentarios`
+--
+
+DROP TABLE IF EXISTS `comentarios`;
+CREATE TABLE `comentarios` (
+  `id_comentario` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `comentario` text NOT NULL,
+  `puntuacion` int(11) DEFAULT NULL CHECK (`puntuacion` between 1 and 5),
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `comentarios`:
+--   `id_producto`
+--       `producto` -> `id_producto`
+--   `id_usuario`
+--       `usuario` -> `id_usuario`
+--
+
+--
+-- Volcado de datos para la tabla `comentarios`
+--
+
+INSERT INTO `comentarios` (`id_comentario`, `id_usuario`, `id_producto`, `comentario`, `puntuacion`, `fecha`) VALUES
+(7, 1, 3, 'ddd', 5, '2025-03-11 01:18:01');
 
 -- --------------------------------------------------------
 
@@ -449,7 +480,7 @@ INSERT INTO `t_usuario` (`t_id_usuario`, `correo`, `contraseña`, `rol`) VALUES
 (28, 'veronica@example.com', 0x394d7603f120a07a92e3c2276924b689, 2),
 (29, 'martin@example.com', 0x7345e55ceffff10f42fa08b6ec61c3d8, 2),
 (30, 'camila@example.com', 0xea01330604670b991b6b3d6616fa2317, 2),
-(31, 'holabuendia@gmail.com', 0xe486d3e2bd16a7ce61929816a33ef095, 2),
+(31, 'holabuendia@gmail.com', 0x574c7459626d4c2b465754684279746a4449796372673d3d, 2),
 (32, 'perroiguanita@gmail.com', 0x79e3c8fdd1a9cbef317aebc9db28abe5, 2);
 
 -- --------------------------------------------------------
@@ -583,6 +614,14 @@ ALTER TABLE `categoria`
   ADD PRIMARY KEY (`id_categoria`);
 
 --
+-- Indices de la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD PRIMARY KEY (`id_comentario`),
+  ADD KEY `fk_usuario` (`id_usuario`),
+  ADD KEY `fk_producto` (`id_producto`);
+
+--
 -- Indices de la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
@@ -630,6 +669,16 @@ ALTER TABLE `usuario`
   ADD KEY `id_rol` (`id_rol`);
 
 --
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- Restricciones para tablas volcadas
 --
 
@@ -639,6 +688,13 @@ ALTER TABLE `usuario`
 ALTER TABLE `articulos_ordenes`
   ADD CONSTRAINT `articulos_ordenes_ibfk_1` FOREIGN KEY (`id_venta`) REFERENCES `ordenes` (`id_venta`),
   ADD CONSTRAINT `articulos_ordenes_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`);
+
+--
+-- Filtros para la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD CONSTRAINT `fk_producto` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `ordenes`

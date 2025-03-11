@@ -24,22 +24,19 @@ const VisualizarProducto = () => {
         try {
             const response = await fetch(`http://localhost/corpfresh-php/comentarios.php?id_producto=${id}`);
             const text = await response.text();
-            console.log("Respuesta del servidor (comentarios):", text);
+            console.log("Respuesta del servidor (comentarios):", text); // Debug
+    
+            const data = JSON.parse(text);
             
-            try {
-                const data = JSON.parse(text);
-                if (data.success && Array.isArray(data.comentarios)) {
-                    setComentarios(data.comentarios);
-                } else {
-                    setComentarios([]);
-                    console.error("Formato de datos inesperado:", data);
-                }
-            } catch (parseError) {
-                console.error("Error al parsear respuesta:", parseError);
+            if (Array.isArray(data)) { // La API devuelve directamente un array
+                console.log("Comentarios recibidos:", data);
+                setComentarios(data);  // ✅ Asigna directamente el array
+            } else {
                 setComentarios([]);
+                console.warn("Formato de datos inesperado:", data);
             }
         } catch (err) {
-            console.error("Error al cargar comentarios", err);
+            console.error("Error al obtener comentarios:", err);
             setComentarios([]);
         }
     };
@@ -189,13 +186,19 @@ const VisualizarProducto = () => {
                     </div>
                 )}
                 <ul className="list-group mt-3">
-                    {comentarios.length > 0 ? comentarios.map(comentario => (
-                        <li key={comentario.id_comentario} className="list-group-item">
-                            <p>{comentario.comentario}</p>
-                            <p className="text-warning">{'⭐'.repeat(comentario.puntuacion)}</p>
-                        </li>
-                    )) : <p>No hay comentarios aún.</p>}
-                </ul>
+
+    {comentarios.length > 0 ? (
+        comentarios.map(comentario => (
+            <li key={comentario.id_comentario} className="list-group-item">
+                <p><strong>Usuario:</strong> {comentario.usuario}</p>
+                <p>{comentario.comentario}</p>
+                <p className="text-warning">{'⭐'.repeat(comentario.puntuacion)}</p>
+            </li>
+        ))
+    ) : (
+        <p>No hay comentarios aún.</p>
+    )}
+</ul>
             </div>
             <Footer />
         </div>
