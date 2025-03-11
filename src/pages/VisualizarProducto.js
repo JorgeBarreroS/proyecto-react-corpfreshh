@@ -19,13 +19,25 @@ const VisualizarProducto = () => {
     const [nuevoComentario, setNuevoComentario] = useState('');
     const [nuevaPuntuacion, setNuevaPuntuacion] = useState(5);
 
-    // Esta función es ahora la única implementación de fetchComentarios
+    // Función mejorada para obtener comentarios
     const fetchComentarios = async () => {
         try {
             const response = await fetch(`http://localhost/corpfresh-php/comentarios.php?id_producto=${id}`);
-            if (!response.ok) throw new Error("Error al cargar comentarios.");
-            const data = await response.json();
-            setComentarios(Array.isArray(data) ? data : []);
+            const text = await response.text();
+            console.log("Respuesta del servidor (comentarios):", text);
+            
+            try {
+                const data = JSON.parse(text);
+                if (data.success && Array.isArray(data.comentarios)) {
+                    setComentarios(data.comentarios);
+                } else {
+                    setComentarios([]);
+                    console.error("Formato de datos inesperado:", data);
+                }
+            } catch (parseError) {
+                console.error("Error al parsear respuesta:", parseError);
+                setComentarios([]);
+            }
         } catch (err) {
             console.error("Error al cargar comentarios", err);
             setComentarios([]);
@@ -83,49 +95,57 @@ const VisualizarProducto = () => {
         }
     };
 
+    // Función mejorada para agregar comentarios
     const agregarComentario = async () => {
-        // Verificamos con la estructura correcta de authState
         if (!authState || !authState.email) {
             Swal.fire('Error', 'Debes iniciar sesión para comentar.', 'error');
             return;
         }
-
+    
         if (nuevoComentario.trim() === '') {
             Swal.fire('Error', 'El comentario no puede estar vacío.', 'error');
             return;
         }
-
+    
         try {
             const response = await fetch('http://localhost/corpfresh-php/comentarios.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     id_producto: id, 
-                    texto: nuevoComentario, 
+                    comentario: nuevoComentario,
                     puntuacion: nuevaPuntuacion, 
-                    usuario: authState.email // Usando email como identificador de usuario
+                    usuario: authState.email 
                 })
             });
-
-            const data = await response.json();
-            if (data.success) {
-                setNuevoComentario('');
-                setNuevaPuntuacion(5);
-                fetchComentarios(); // Recargar la lista de comentarios
-            } else {
-                Swal.fire('Error', 'No se pudo agregar el comentario.', 'error');
+    
+            const text = await response.text();
+            console.log("Respuesta del servidor (agregar comentario):", text);
+            
+            try {
+                const data = JSON.parse(text);
+                if (data.success) {
+                    setNuevoComentario('');
+                    setNuevaPuntuacion(5);
+                    fetchComentarios();
+                    Swal.fire('Éxito', 'Comentario agregado correctamente.', 'success');
+                } else {
+                    Swal.fire('Error', data.error || 'No se pudo agregar el comentario.', 'error');
+                }
+            } catch (parseError) {
+                console.error("Error al parsear respuesta:", parseError);
+                // Muestra el texto real devuelto por el servidor para ayudar con la depuración
+                Swal.fire('Error', `El servidor devolvió una respuesta inesperada: ${text.substring(0, 100)}...`, 'error');
             }
         } catch (error) {
             console.error("Error al agregar comentario", error);
+            Swal.fire('Error', 'Hubo un problema con la conexión al servidor.', 'error');
         }
     };
 
     if (loading) return <div className="text-center mt-5">Cargando...</div>;
     if (error) return <div className="alert alert-danger">Error: {error}</div>;
     if (!producto) return <div className="alert alert-warning">No se encontró el producto.</div>;
-
-    // Verificamos si el usuario está autenticado para depuración
-    console.log("Estado de autenticación:", authState);
 
     return (
         <div>
@@ -153,7 +173,6 @@ const VisualizarProducto = () => {
                 </div>
                 <hr />
                 <h3>Comentarios y Reseñas</h3>
-                {/* Verificar con la estructura correcta de authState */}
                 {authState && authState.email ? (
                     <div className="mb-3">
                         <textarea className="form-control" placeholder="Escribe un comentario" value={nuevoComentario} onChange={(e) => setNuevoComentario(e.target.value)} />
@@ -171,8 +190,8 @@ const VisualizarProducto = () => {
                 )}
                 <ul className="list-group mt-3">
                     {comentarios.length > 0 ? comentarios.map(comentario => (
-                        <li key={comentario.id} className="list-group-item">
-                            <p>{comentario.texto}</p>
+                        <li key={comentario.id_comentario} className="list-group-item">
+                            <p>{comentario.comentario}</p>
                             <p className="text-warning">{'⭐'.repeat(comentario.puntuacion)}</p>
                         </li>
                     )) : <p>No hay comentarios aún.</p>}
