@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FaSearch, FaTimes } from 'react-icons/fa';  // Importar los íconos
 import '../styles/buscador.css';
-
 
 const SearchBar = ({ searchQuery, onSearchChange, onSearchSubmit }) => (
   <div className="search-container22">
@@ -12,7 +12,7 @@ const SearchBar = ({ searchQuery, onSearchChange, onSearchSubmit }) => (
         placeholder="Buscar productos"
       />
       <button type="submit">
-      <img src="../imagenes/busqueda-de-lupa.png" alt="Buscar" width="20" />
+        <FaSearch size={20} />  {/* Usar el ícono de lupa */}
       </button>
     </form>
   </div>
@@ -75,7 +75,9 @@ const Buscador = () => {
 
   return (
     <div>
-      <button className="close-button22" onClick={() => (window.location.href = '/')}>×</button>
+      <button className="close-button22" onClick={() => (window.location.href = '/')}>
+        <FaTimes size={20} /> {/* Usar el ícono de la X */}
+      </button>
       <SearchBar
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
