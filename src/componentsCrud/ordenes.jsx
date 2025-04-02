@@ -8,7 +8,7 @@
     const [editedOrden, setEditedOrden] = useState({});
 
     useEffect(() => {
-        fetch("http://localhost/ejercicio1/src/bd/obtenerOrdenes.php")
+        fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerOrdenes.php")
         .then((response) => {
             if (!response.ok) {
             throw new Error("Error al obtener órdenes");
@@ -25,7 +25,7 @@
     };
 
     const handleSave = () => {
-        fetch("http://localhost/ejercicio1/src/bd/actualizarOrden.php", {
+        fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarOrden.php", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

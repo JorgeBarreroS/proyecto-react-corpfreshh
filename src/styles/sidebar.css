@@ -138,3 +138,9 @@
   border-color: red !important;
   color: white !important;
 }
+td{
+  max-width: 200px;  /* Ajusta el ancho según necesites */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

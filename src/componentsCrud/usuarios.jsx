@@ -9,7 +9,7 @@ export default function Usuarios() {
   const [editedUser, setEditedUser] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost/ejercicio1/src/bd/obtenerUsuarios.php")
+    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerUsuarios.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener usuarios");
@@ -26,7 +26,7 @@ export default function Usuarios() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/ejercicio1/src/bd/actualizarUsuario.php", {
+    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarUsuario.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

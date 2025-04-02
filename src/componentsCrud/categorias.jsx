@@ -6,9 +6,12 @@ export default function Categorias() {
   const [error, setError] = useState(null);
   const [editingCategoriaId, setEditingCategoriaId] = useState(null);
   const [editedCategoria, setEditedCategoria] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [itemsPerPage, setItemsPerPage] = useState(5); // Elementos por página
 
   useEffect(() => {
-    fetch("http://localhost/ejercicio1/src/bd/obtenerCategorias.php")
+    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerCategorias.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener categorías");
@@ -25,7 +28,7 @@ export default function Categorias() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/ejercicio1/src/bd/actualizarCategoria.php", {
+    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarCategoria.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -55,9 +58,39 @@ export default function Categorias() {
     setEditedCategoria((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Filtrar categorías por búsqueda
+  const filteredCategorias = categorias.filter((categoria) =>
+    categoria.nombre_categoria.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Paginación
+  const indexOfLastCategoria = currentPage * itemsPerPage;
+  const indexOfFirstCategoria = indexOfLastCategoria - itemsPerPage;
+  const currentCategorias = filteredCategorias.slice(
+    indexOfFirstCategoria,
+    indexOfLastCategoria
+  );
+
+  // Cambiar página
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Calcular el total de páginas
+  const totalPages = Math.ceil(filteredCategorias.length / itemsPerPage);
+
   return (
     <div className="overflow-x-auto p-4">
       <h2 className="text-xl font-semibold text-grisOscuro mb-4">Categorías</h2>
+      <input
+        type="text"
+        placeholder="Buscar categorías..."
+        value={searchTerm}
+        onChange={handleSearch}
+        className="mb-4 p-2 border border-gray-300"
+      />
       {error ? (
         <p className="text-red-600">{error}</p>
       ) : (
@@ -70,7 +103,7 @@ export default function Categorias() {
             </tr>
           </thead>
           <tbody>
-            {categorias.map((categoria, index) => (
+            {currentCategorias.map((categoria, index) => (
               <tr
                 key={categoria.id_categoria}
                 className={index % 2 === 0 ? "bg-grisClaro" : "bg-white"}
@@ -111,6 +144,27 @@ export default function Categorias() {
           </tbody>
         </table>
       )}
+
+      {/* Paginación */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 mx-2 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-400"
+        >
+          Anterior
+        </button>
+        <span className="flex items-center mx-2">
+          Página {currentPage} de {totalPages}
+        </span>
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 mx-2 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-400"
+        >
+          Siguiente
+        </button>
+      </div>
     </div>
   );
 }

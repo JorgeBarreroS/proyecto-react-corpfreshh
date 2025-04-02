@@ -8,7 +8,7 @@ export default function Productos() {
   const [editedProducto, setEditedProducto] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost/ejercicio1/src/bd/obtenerProductos.php")
+    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerProductos.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener productos");
@@ -25,7 +25,7 @@ export default function Productos() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/ejercicio1/src/bd/actualizarProducto.php", {
+    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarProducto.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

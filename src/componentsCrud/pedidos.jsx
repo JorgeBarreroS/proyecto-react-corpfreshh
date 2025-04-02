@@ -8,7 +8,7 @@ export default function Pedidos() {
   const [editedPedido, setEditedPedido] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost/ejercicio1/src/bd/obtenerPedidos.php")
+    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerPedidos.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener pedidos");
@@ -25,7 +25,7 @@ export default function Pedidos() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/ejercicio1/src/bd/actualizarPedido.php", {
+    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarPedido.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
