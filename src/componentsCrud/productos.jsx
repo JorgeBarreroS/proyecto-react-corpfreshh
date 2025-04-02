@@ -6,6 +6,9 @@ export default function Productos() {
   const [error, setError] = useState(null);
   const [editingProductoId, setEditingProductoId] = useState(null);
   const [editedProducto, setEditedProducto] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Elementos por página
 
   useEffect(() => {
     fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerProductos.php")
@@ -55,9 +58,35 @@ export default function Productos() {
     setEditedProducto((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Filtrar productos por búsqueda
+  const filteredProductos = productos.filter((producto) =>
+    producto.nombre_producto.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Paginación
+  const indexOfLastProducto = currentPage * itemsPerPage;
+  const indexOfFirstProducto = indexOfLastProducto - itemsPerPage;
+  const currentProductos = filteredProductos.slice(
+    indexOfFirstProducto,
+    indexOfLastProducto
+  );
+
+  // Cambiar página
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Calcular el total de páginas
+  const totalPages = Math.ceil(filteredProductos.length / itemsPerPage);
+
   return (
     <div className="overflow-x-auto p-4">
       <h2 className="text-xl font-semibold text-grisOscuro mb-4">Productos</h2>
+      <input
+        type="text"
+        placeholder="Buscar productos..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="mb-4 p-2 border border-gray-300"
+      />
       {error ? (
         <p className="text-red-600">{error}</p>
       ) : (
@@ -76,7 +105,7 @@ export default function Productos() {
             </tr>
           </thead>
           <tbody>
-            {productos.map((producto, index) => (
+            {currentProductos.map((producto, index) => (
               <tr
                 key={producto.id_producto}
                 className={index % 2 === 0 ? "bg-grisClaro" : "bg-white"}
@@ -195,6 +224,27 @@ export default function Productos() {
           </tbody>
         </table>
       )}
+
+      {/* Paginación */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 mx-2 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-400"
+        >
+          Anterior
+        </button>
+        <span className="flex items-center mx-2">
+          Página {currentPage} de {totalPages}
+        </span>
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 mx-2 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-400"
+        >
+          Siguiente
+        </button>
+      </div>
     </div>
   );
 }
