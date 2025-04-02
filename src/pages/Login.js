@@ -18,13 +18,14 @@ const Login = () => {
   useEffect(() => {
     document.body.style.background = "linear-gradient(135deg, #1e3c72, #2a5298)";
     return () => {
-      document.body.style.background = ""; // Resetear fondo al salir
+      document.body.style.background = "";
     };
   }, []);
 
+  // Inicio de sesión con Google (siempre va a /dashboard)
   const onSuccess = (credentialResponse) => {
     try {
-      const decodedToken = JSON.parse(atob(credentialResponse.credential.split(".")[1])); // Decodificar el token
+      const decodedToken = JSON.parse(atob(credentialResponse.credential.split(".")[1]));
       const googleUser = {
         name: decodedToken.name,
         email: decodedToken.email,
@@ -52,6 +53,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     if (!email || !password) {
       Swal.fire({
         icon: "error",
@@ -61,17 +63,21 @@ const Login = () => {
       });
       return;
     }
-
+  
     try {
       const response = await fetch("http://localhost/corpfresh-php/authenticate.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
-      if (!response.ok) throw new Error(`Error: ${await response.text()}`);
-
+  
       const data = await response.json();
+      console.log("Respuesta del servidor:", data); // DEPURACIÓN
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Error en el servidor");
+      }
+  
       if (data.success) {
         Swal.fire({
           icon: "success",
@@ -80,8 +86,18 @@ const Login = () => {
           confirmButtonColor: "#3085d6",
           confirmButtonText: "Continuar",
         }).then(() => {
-          login({ name: data.name, email });
-          navigate("/dashboard", { replace: true });
+          login({ name: data.user.email, email: data.user.email, rol: data.user.rol });
+
+          const userRole = Number(data.user.rol);
+
+          if (userRole === 1) {
+            navigate("/crud", { replace: true });
+          } else if (userRole === 2) {
+            navigate("/dashboard", { replace: true });
+          } else {
+            console.warn(`Rol desconocido (${data.rol}), redirigiendo a /dashboard`); 
+            navigate("/dashboard", { replace: true });
+          }
         });
       } else {
         Swal.fire({

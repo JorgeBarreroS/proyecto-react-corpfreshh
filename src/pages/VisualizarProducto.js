@@ -18,19 +18,27 @@ const VisualizarProducto = () => {
     const [comentarios, setComentarios] = useState([]);
     const [nuevoComentario, setNuevoComentario] = useState('');
     const [nuevaPuntuacion, setNuevaPuntuacion] = useState(5);
+    const [loadingComentarios, setLoadingComentarios] = useState(false);
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editingCommentText, setEditingCommentText] = useState('');
 
     // Función mejorada para obtener comentarios
     const fetchComentarios = async () => {
+        setLoadingComentarios(true);
         try {
             const response = await fetch(`http://localhost/corpfresh-php/comentarios.php?id_producto=${id}`);
-            const text = await response.text();
-            console.log("Respuesta del servidor (comentarios):", text); // Debug
-    
-            const data = JSON.parse(text);
             
-            if (Array.isArray(data)) { // La API devuelve directamente un array
-                console.log("Comentarios recibidos:", data);
-                setComentarios(data);  // ✅ Asigna directamente el array
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            
+            if (Array.isArray(data)) {
+                setComentarios(data);
+            } else if (data.success === false) {
+                console.warn("Error al cargar comentarios:", data.error);
+                setComentarios([]);
             } else {
                 setComentarios([]);
                 console.warn("Formato de datos inesperado:", data);
@@ -38,6 +46,8 @@ const VisualizarProducto = () => {
         } catch (err) {
             console.error("Error al obtener comentarios:", err);
             setComentarios([]);
+        } finally {
+            setLoadingComentarios(false);
         }
     };
 
@@ -83,6 +93,7 @@ const VisualizarProducto = () => {
                     icon: 'success',
                     confirmButtonText: 'Ver el carrito',
                     showCancelButton: true,
+                    cancelButtonText: 'Seguir comprando',
                     preConfirm: () => navigate('/carrito'),
                 });
             }
@@ -116,38 +127,142 @@ const VisualizarProducto = () => {
                 })
             });
     
-            const text = await response.text();
-            console.log("Respuesta del servidor (agregar comentario):", text);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error ${response.status}: ${errorText}`);
+            }
             
-            try {
-                const data = JSON.parse(text);
-                if (data.success) {
-                    setNuevoComentario('');
-                    setNuevaPuntuacion(5);
-                    fetchComentarios();
-                    Swal.fire('Éxito', 'Comentario agregado correctamente.', 'success');
-                } else {
-                    Swal.fire('Error', data.error || 'No se pudo agregar el comentario.', 'error');
-                }
-            } catch (parseError) {
-                console.error("Error al parsear respuesta:", parseError);
-                // Muestra el texto real devuelto por el servidor para ayudar con la depuración
-                Swal.fire('Error', `El servidor devolvió una respuesta inesperada: ${text.substring(0, 100)}...`, 'error');
+            const data = await response.json();
+            
+            if (data.success) {
+                setNuevoComentario('');
+                setNuevaPuntuacion(5);
+                await fetchComentarios();
+                Swal.fire('Éxito', 'Comentario agregado correctamente.', 'success');
+            } else {
+                Swal.fire('Error', data.error || 'No se pudo agregar el comentario.', 'error');
             }
         } catch (error) {
-            console.error("Error al agregar comentario", error);
-            Swal.fire('Error', 'Hubo un problema con la conexión al servidor.', 'error');
+            console.error("Error al agregar comentario:", error);
+            Swal.fire('Error', `Hubo un problema con la solicitud: ${error.message}`, 'error');
         }
     };
 
-    if (loading) return <div className="text-center mt-5">Cargando...</div>;
+    // Función para eliminar comentario
+    const eliminarComentario = async (idComentario) => {
+        if (!authState || !authState.email) {
+            Swal.fire('Error', 'Debes iniciar sesión para eliminar comentarios.', 'error');
+            return;
+        }
+
+        // Confirmación antes de eliminar
+        const confirmResult = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'No podrás revertir esta acción',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!confirmResult.isConfirmed) {
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost/corpfresh-php/comentarios.php', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_comentario: idComentario })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.success) {
+                await fetchComentarios();
+                Swal.fire('Éxito', 'Comentario eliminado correctamente.', 'success');
+            } else {
+                Swal.fire('Error', data.error || 'No se pudo eliminar el comentario.', 'error');
+            }
+        } catch (error) {
+            console.error("Error al eliminar comentario:", error);
+            Swal.fire('Error', `Hubo un problema al eliminar el comentario: ${error.message}`, 'error');
+        }
+    };
+
+    // Función para iniciar edición de comentario
+    const iniciarEdicionComentario = (comentario) => {
+        setEditingCommentId(comentario.id_comentario);
+        setEditingCommentText(comentario.comentario);
+    };
+
+    // Función para cancelar edición
+    const cancelarEdicionComentario = () => {
+        setEditingCommentId(null);
+        setEditingCommentText('');
+    };
+
+    // Función para guardar edición de comentario
+    const guardarEdicionComentario = async () => {
+        if (!authState || !authState.email) {
+            Swal.fire('Error', 'Debes iniciar sesión para editar comentarios.', 'error');
+            return;
+        }
+
+        if (editingCommentText.trim() === '') {
+            Swal.fire('Error', 'El comentario no puede estar vacío.', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost/corpfresh-php/comentarios.php', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    id_comentario: editingCommentId, 
+                    comentario: editingCommentText 
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.success) {
+                await fetchComentarios();
+                setEditingCommentId(null);
+                setEditingCommentText('');
+                Swal.fire('Éxito', 'Comentario actualizado correctamente.', 'success');
+            } else {
+                Swal.fire('Error', data.error || 'No se pudo actualizar el comentario.', 'error');
+            }
+        } catch (error) {
+            console.error("Error al actualizar comentario:", error);
+            Swal.fire('Error', `Hubo un problema al actualizar el comentario: ${error.message}`, 'error');
+        }
+    };
+
+    // Función para representar las estrellas de puntuación
+    const renderStars = (rating) => {
+        return '⭐'.repeat(rating);
+    };
+
+    if (loading) return <div className="text-center mt-5"><div className="spinner-border" role="status"><span className="visually-hidden">Cargando...</span></div></div>;
     if (error) return <div className="alert alert-danger">Error: {error}</div>;
     if (!producto) return <div className="alert alert-warning">No se encontró el producto.</div>;
 
     return (
         <div>
             <Navbar />
-            <div className="container mt-5">
+            <div className="container mt-5 mb-5">
                 <div className="row">
                     <div className="col-md-6">
                         <img src={`http://localhost/corpfresh-php/${producto.imagen_producto}`} className="img-fluid w-75" alt={producto.nombre_producto} />
@@ -162,43 +277,130 @@ const VisualizarProducto = () => {
                         <form onSubmit={handleAddToCart}>
                             <div className="mb-3">
                                 <label className="form-label">Cantidad:</label>
-                                <input type="number" className="form-control" value={cantidad} onChange={(e) => setCantidad(parseInt(e.target.value))} min="1" required />
+                                <input type="number" className="form-control" value={cantidad} onChange={(e) => setCantidad(parseInt(e.target.value) || 0)} min="1" required />
                             </div>
                             <button type="submit" className="btn btn-primary btn-lg">Añadir al carrito</button>
                         </form>
                     </div>
                 </div>
-                <hr />
-                <h3>Comentarios y Reseñas</h3>
+                <hr className="my-4" />
+                <h3 className="mb-3">Comentarios y Reseñas</h3>
                 {authState && authState.email ? (
-                    <div className="mb-3">
-                        <textarea className="form-control" placeholder="Escribe un comentario" value={nuevoComentario} onChange={(e) => setNuevoComentario(e.target.value)} />
-                        <select className="form-select mt-2" value={nuevaPuntuacion} onChange={(e) => setNuevaPuntuacion(parseInt(e.target.value))}>
-                            {[1, 2, 3, 4, 5].map(num => (
-                                <option key={num} value={num}>{'⭐'.repeat(num)}</option>
-                            ))}
-                        </select>
-                        <button className="btn btn-success mt-2" onClick={agregarComentario}>Agregar Comentario</button>
+                    <div className="mb-4 comment-form">
+                        <textarea 
+                            className="form-control mb-2" 
+                            placeholder="Escribe un comentario" 
+                            value={nuevoComentario} 
+                            onChange={(e) => setNuevoComentario(e.target.value)}
+                            rows="3"
+                        />
+                        <div className="d-flex align-items-center">
+                            <select 
+                                className="form-select me-2" 
+                                value={nuevaPuntuacion} 
+                                onChange={(e) => setNuevaPuntuacion(parseInt(e.target.value))}
+                                style={{ maxWidth: "160px" }}
+                            >
+                                {[1, 2, 3, 4, 5].map(num => (
+                                    <option key={num} value={num}>{renderStars(num)}</option>
+                                ))}
+                            </select>
+                            <button 
+                                className="btn btn-success" 
+                                onClick={agregarComentario}
+                                disabled={nuevoComentario.trim() === ''}
+                            >
+                                Agregar Comentario
+                            </button>
+                        </div>
                     </div>
                 ) : (
-                    <div className="alert alert-info">
+                    <div className="alert alert-info mb-4">
                         Debes <Link to="/login">iniciar sesión</Link> para agregar comentarios.
                     </div>
                 )}
-                <ul className="list-group mt-3">
-
-    {comentarios.length > 0 ? (
-        comentarios.map(comentario => (
-            <li key={comentario.id_comentario} className="list-group-item">
-                <p><strong>Usuario:</strong> {comentario.usuario}</p>
-                <p>{comentario.comentario}</p>
-                <p className="text-warning">{'⭐'.repeat(comentario.puntuacion)}</p>
-            </li>
-        ))
-    ) : (
-        <p>No hay comentarios aún.</p>
-    )}
-</ul>
+                
+                {loadingComentarios ? (
+                    <div className="text-center my-4">
+                        <div className="spinner-border spinner-border-sm" role="status">
+                            <span className="visually-hidden">Cargando comentarios...</span>
+                        </div>
+                        <span className="ms-2">Cargando comentarios...</span>
+                    </div>
+                ) : comentarios.length > 0 ? (
+                    <div className="comments-container">
+                        {comentarios.map(comentario => (
+                            <div key={comentario.id_comentario} className="card mb-3">
+                                <div className="card-body">
+                                    <div className="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h5 className="card-title">{comentario.usuario}</h5>
+                                            <h6 className="card-subtitle mb-2 text-muted">
+                                                {new Date(comentario.fecha).toLocaleDateString('es-ES', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                            </h6>
+                                        </div>
+                                        <div className="rating">{renderStars(comentario.puntuacion)}</div>
+                                    </div>
+                                    
+                                    {editingCommentId === comentario.id_comentario ? (
+                                        <div className="mt-3">
+                                            <textarea 
+                                                className="form-control mb-2" 
+                                                value={editingCommentText} 
+                                                onChange={(e) => setEditingCommentText(e.target.value)}
+                                                rows="3"
+                                            />
+                                            <div className="d-flex gap-2">
+                                                <button 
+                                                    className="btn btn-sm btn-primary" 
+                                                    onClick={guardarEdicionComentario}
+                                                    disabled={editingCommentText.trim() === ''}
+                                                >
+                                                    Guardar
+                                                </button>
+                                                <button 
+                                                    className="btn btn-sm btn-secondary" 
+                                                    onClick={cancelarEdicionComentario}
+                                                >
+                                                    Cancelar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p className="card-text mt-2">{comentario.comentario}</p>
+                                    )}
+                                    
+                                    {authState && authState.email === comentario.usuario && editingCommentId !== comentario.id_comentario && (
+                                        <div className="mt-2 d-flex gap-2">
+                                            <button 
+                                                className="btn btn-sm btn-outline-primary" 
+                                                onClick={() => iniciarEdicionComentario(comentario)}
+                                            >
+                                                Editar
+                                            </button>
+                                            <button 
+                                                className="btn btn-sm btn-outline-danger" 
+                                                onClick={() => eliminarComentario(comentario.id_comentario)}
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="alert alert-light text-center">
+                        No hay comentarios aún. ¡Sé el primero en comentar!
+                    </div>
+                )}
             </div>
             <Footer />
         </div>

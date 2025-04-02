@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-03-2025 a las 02:40:46
+-- Tiempo de generación: 01-04-2025 a las 04:19:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -218,7 +218,7 @@ CREATE TABLE `comentarios` (
 --
 
 INSERT INTO `comentarios` (`id_comentario`, `id_usuario`, `id_producto`, `comentario`, `puntuacion`, `fecha`) VALUES
-(7, 1, 3, 'ddd', 5, '2025-03-11 01:18:01');
+(7, 1, 3, 'ddd ssss', 5, '2025-03-11 01:18:01');
 
 -- --------------------------------------------------------
 
@@ -434,12 +434,12 @@ CREATE TABLE `t_usuario` (
   `t_id_usuario` int(11) NOT NULL,
   `correo` varchar(25) NOT NULL,
   `contraseña` varbinary(228) NOT NULL,
-  `rol` int(11) NOT NULL
+  `t_id_rol` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- RELACIONES PARA LA TABLA `t_usuario`:
---   `rol`
+--   `t_id_rol`
 --       `rol` -> `id_rol`
 --   `t_id_usuario`
 --       `usuario` -> `id_usuario`
@@ -449,7 +449,7 @@ CREATE TABLE `t_usuario` (
 -- Volcado de datos para la tabla `t_usuario`
 --
 
-INSERT INTO `t_usuario` (`t_id_usuario`, `correo`, `contraseña`, `rol`) VALUES
+INSERT INTO `t_usuario` (`t_id_usuario`, `correo`, `contraseña`, `t_id_rol`) VALUES
 (1, 'olamiperro@gmail.com', 0xe87630b5e9724aef90045addab81705a, 1),
 (2, 'maria@example.com', 0xbcd54734740f4a20619dea52561b4dcd, 2),
 (3, 'carlos@example.com', 0x690b6cc7815d16a92dce9d3f84e4f74f, 2),
@@ -657,7 +657,7 @@ ALTER TABLE `t_usuario`
   ADD KEY `t_id_usuario` (`t_id_usuario`),
   ADD KEY `correo` (`correo`),
   ADD KEY `contraseña` (`contraseña`),
-  ADD KEY `rol` (`rol`);
+  ADD KEY `rol` (`t_id_rol`);
 
 --
 -- Indices de la tabla `usuario`
@@ -719,7 +719,7 @@ ALTER TABLE `producto`
 -- Filtros para la tabla `t_usuario`
 --
 ALTER TABLE `t_usuario`
-  ADD CONSTRAINT `t_usuario_ibfk_1` FOREIGN KEY (`rol`) REFERENCES `rol` (`id_rol`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `t_usuario_ibfk_1` FOREIGN KEY (`t_id_rol`) REFERENCES `rol` (`id_rol`) ON UPDATE CASCADE,
   ADD CONSTRAINT `t_usuario_ibfk_2` FOREIGN KEY (`t_id_usuario`) REFERENCES `usuario` (`id_usuario`) ON UPDATE CASCADE;
 
 --
