@@ -147,13 +147,6 @@ const Home = () => {
                         />
                     </div>
                 </div>
-                
-                <div className="text-center mt-5">
-                    <button className="btn btn-dark btn-lg">
-                        Ver Todos los Productos
-                        <i className="fas fa-arrow-right ms-2"></i>
-                    </button>
-                </div>
             </div>
             
             {/* Banner de cuenta regresiva */}
@@ -172,7 +165,7 @@ const Home = () => {
                                 <div className="fs-3 fw-bold">{countdown.hours}</div>
                                 <div className="small text-uppercase">Horas</div>
                             </div>
-                            <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "80px", color: "white"}}>
+                            <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "105px", color: "white"}}>
                                 <div className="fs-3 fw-bold">{countdown.minutes}</div>
                                 <div className="small text-uppercase">Minutos</div>
                             </div>
