@@ -15,12 +15,10 @@ const ResetPassword = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ email })
-        
       });
 
       const text = await res.text();
-console.log("Respuesta cruda:", text);
-const data = JSON.parse(text);
+      const data = JSON.parse(text);
       if (data.success) {
         Swal.fire("Código enviado", data.message, "success");
         setEtapa(2);
@@ -42,8 +40,7 @@ const data = JSON.parse(text);
       });
 
       const text = await res.text();
-console.log("Respuesta cruda:", text);
-const data = JSON.parse(text);
+      const data = JSON.parse(text);
       if (data.success) {
         setEtapa(3);
       } else {
@@ -69,8 +66,7 @@ const data = JSON.parse(text);
       });
 
       const text = await res.text();
-console.log("Respuesta cruda:", text);
-const data = JSON.parse(text);
+      const data = JSON.parse(text);
       if (data.success) {
         Swal.fire("Éxito", "Contraseña actualizada", "success").then(() => {
           window.location.href = "/login";
@@ -85,31 +81,61 @@ const data = JSON.parse(text);
   };
 
   return (
-    <div className="container mt-5">
-      {etapa === 1 && (
-        <>
-          <h3>Ingresa tu correo</h3>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control mb-2" />
-          <button onClick={enviarCodigo} className="btn btn-primary">Enviar código</button>
-        </>
-      )}
+    <div className="container d-flex justify-content-center align-items-center min-vh-100">
+      <div className="card shadow-lg p-4 rounded" style={{ maxWidth: "400px", width: "100%" }}>
+        <div className="text-center mb-4">
+          <h4 className="fw-bold">Recuperar Contraseña</h4>
+        </div>
 
-      {etapa === 2 && (
-        <>
-          <h3>Ingresa el código recibido</h3>
-          <input type="text" value={codigo} onChange={(e) => setCodigo(e.target.value)} className="form-control mb-2" />
-          <button onClick={verificarCodigo} className="btn btn-success">Verificar</button>
-        </>
-      )}
+        {etapa === 1 && (
+          <>
+            <label className="form-label">Correo electrónico</label>
+            <input
+              type="email"
+              value={email}
+              placeholder="Ingresa tu correo"
+              onChange={(e) => setEmail(e.target.value)}
+              className="form-control mb-3"
+            />
+            <button onClick={enviarCodigo} className="btn btn-primary w-100">Enviar código</button>
+          </>
+        )}
 
-      {etapa === 3 && (
-        <>
-          <h3>Nueva contraseña</h3>
-          <input type="password" placeholder="Nueva contraseña" className="form-control mb-2" value={nuevo} onChange={(e) => setNuevo(e.target.value)} />
-          <input type="password" placeholder="Confirmar" className="form-control mb-2" value={confirmar} onChange={(e) => setConfirmar(e.target.value)} />
-          <button onClick={cambiarContrasena} className="btn btn-success">Cambiar contraseña</button>
-        </>
-      )}
+        {etapa === 2 && (
+          <>
+            <label className="form-label">Código de verificación</label>
+            <input
+              type="text"
+              value={codigo}
+              placeholder="Ingresa el código"
+              onChange={(e) => setCodigo(e.target.value)}
+              className="form-control mb-3"
+            />
+            <button onClick={verificarCodigo} className="btn btn-success w-100">Verificar código</button>
+          </>
+        )}
+
+        {etapa === 3 && (
+          <>
+            <label className="form-label">Nueva contraseña</label>
+            <input
+              type="password"
+              placeholder="Nueva contraseña"
+              className="form-control mb-2"
+              value={nuevo}
+              onChange={(e) => setNuevo(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Confirmar contraseña"
+              className="form-control mb-3"
+              value={confirmar}
+              onChange={(e) => setConfirmar(e.target.value)}
+            />
+            <button onClick={cambiarContrasena} className="btn btn-success w-100">Cambiar contraseña</button>
+          </>
+        )}
+      </div>
     </div>
   );
 };
