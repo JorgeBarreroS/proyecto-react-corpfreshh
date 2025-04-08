@@ -1,109 +1,116 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Swal from "sweetalert2";
-import FormInput from "../components/FormInput";
-import "../styles/sytles3.css";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [codigo, setCodigo] = useState("");
+  const [nuevo, setNuevo] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+  const [etapa, setEtapa] = useState(1);
 
+  const enviarCodigo = async () => {
+    try {
+      const res = await fetch('http://localhost/corpfresh-php/sendCode.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email })
+        
+      });
 
-  useEffect(() => {
-      document.body.style.background = "linear-gradient(135deg, #3c72a1, #5298d6)";
-      return () => {
-          document.body.style.background = "";
-      };
-  }, []);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!email || !newPassword || !confirmPassword) {
-      Swal.fire("Error", "Por favor, llena todos los campos", "error");
-      return;
+      const text = await res.text();
+console.log("Respuesta cruda:", text);
+const data = JSON.parse(text);
+      if (data.success) {
+        Swal.fire("Código enviado", data.message, "success");
+        setEtapa(2);
+      } else {
+        Swal.fire("Error", data.message, "error");
+      }
+    } catch (err) {
+      console.error('Error al enviar código:', err);
+      Swal.fire("Error", "No se pudo enviar el código", "error");
     }
+  };
 
-    if (newPassword !== confirmPassword) {
+  const verificarCodigo = async () => {
+    try {
+      const res = await fetch("http://localhost/corpfresh-php/verifyCode.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correo_usuario: email, codigo }),
+      });
+
+      const text = await res.text();
+console.log("Respuesta cruda:", text);
+const data = JSON.parse(text);
+      if (data.success) {
+        setEtapa(3);
+      } else {
+        Swal.fire("Código inválido", data.message, "error");
+      }
+    } catch (err) {
+      console.error('Error al verificar código:', err);
+      Swal.fire("Error", "No se pudo verificar el código", "error");
+    }
+  };
+
+  const cambiarContrasena = async () => {
+    if (nuevo !== confirmar) {
       Swal.fire("Error", "Las contraseñas no coinciden", "error");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost/corpfresh-php/resetPassword.php", {
+      const res = await fetch("http://localhost/corpfresh-php/updatePassword.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, newPassword, confirmPassword }),
+        body: JSON.stringify({ correo_usuario: email, nueva_contrasena: nuevo, codigo }),
       });
 
-      const data = await response.json();
-
+      const text = await res.text();
+console.log("Respuesta cruda:", text);
+const data = JSON.parse(text);
       if (data.success) {
-        Swal.fire("¡Éxito!", data.message, "success").then(() => {
+        Swal.fire("Éxito", "Contraseña actualizada", "success").then(() => {
           window.location.href = "/login";
         });
       } else {
         Swal.fire("Error", data.message, "error");
       }
-    } catch (error) {
-      Swal.fire("Error", "Hubo un problema con la conexión", "error");
+    } catch (err) {
+      console.error('Error al cambiar contraseña:', err);
+      Swal.fire("Error", "No se pudo actualizar la contraseña", "error");
     }
   };
 
   return (
-    <div className="register-page">
-        <div className="login-container">
-      <h2 className="fw-bold text-center mb-4">Recupera tu contraseña</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Correo Electrónico</label>
-          <input
-            type="email"
-            className="form-control"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Ingrese su correo"
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Nueva Contraseña</label>
-          <input
-            type="password"
-            className="form-control"
-            name="newPassword"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="Ingrese su nueva contraseña"
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Confirmar Nueva Contraseña</label>
-          <input
-            type="password"
-            className="form-control"
-            name="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirme su contraseña"
-            required
-          />
-        </div>
+    <div className="container mt-5">
+      {etapa === 1 && (
+        <>
+          <h3>Ingresa tu correo</h3>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control mb-2" />
+          <button onClick={enviarCodigo} className="btn btn-primary">Enviar código</button>
+        </>
+      )}
 
-        <button type="submit" className="btn btn-primary">
-          Restablecer Contraseña
-        </button>
+      {etapa === 2 && (
+        <>
+          <h3>Ingresa el código recibido</h3>
+          <input type="text" value={codigo} onChange={(e) => setCodigo(e.target.value)} className="form-control mb-2" />
+          <button onClick={verificarCodigo} className="btn btn-success">Verificar</button>
+        </>
+      )}
 
-        <div className="text-center small-text mt-3">
-          <p>Ir a <a href="/login">Iniciar sesión</a></p>
-        </div>
-      </form>
+      {etapa === 3 && (
+        <>
+          <h3>Nueva contraseña</h3>
+          <input type="password" placeholder="Nueva contraseña" className="form-control mb-2" value={nuevo} onChange={(e) => setNuevo(e.target.value)} />
+          <input type="password" placeholder="Confirmar" className="form-control mb-2" value={confirmar} onChange={(e) => setConfirmar(e.target.value)} />
+          <button onClick={cambiarContrasena} className="btn btn-success">Cambiar contraseña</button>
+        </>
+      )}
     </div>
-</div>
   );
 };
 

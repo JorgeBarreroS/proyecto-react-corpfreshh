@@ -1,13 +1,13 @@
 Array
 (
-    [nombre] => hdgdgd
-    [apellido] => sdsd
-    [telefono] => 3435
-    [email] => hola55@gmail.com
-    [direccion1] => 4444
-    [direccion2] => 4444
-    [ciudad] => fff
-    [pais] => fff
-    [password] => 1234
-    [confirmPassword] => 1234
+    [nombre_usuario] => melor
+    [apellido_usuario] => shhd
+    [telefono_usuario] => 5224522
+    [correo_usuario] => hola363@gmail.com
+    [direccion1_usuario] => ghghg
+    [direccion2_usuario] => ggg
+    [ciudad_usuario] => ggg
+    [pais_usuario] => ggg
+    [contraseña] => 1234
+    [id_rol] => 2
 )
