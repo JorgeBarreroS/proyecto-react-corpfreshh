@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-04-2025 a las 04:19:58
+-- Tiempo de generación: 08-04-2025 a las 02:57:56
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -188,6 +188,24 @@ INSERT INTO `categoria` (`id_categoria`, `nombre_categoria`) VALUES
 (2, 'Pantalones'),
 (3, 'Zapatos'),
 (4, 'Conjuntos');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `codigos_reset`
+--
+
+DROP TABLE IF EXISTS `codigos_reset`;
+CREATE TABLE `codigos_reset` (
+  `id` int(11) NOT NULL,
+  `correo_usuario` varchar(255) NOT NULL,
+  `codigo` varchar(10) NOT NULL,
+  `creado_en` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `codigos_reset`:
+--
 
 -- --------------------------------------------------------
 
@@ -546,26 +564,12 @@ INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `apellido_usuario`, `tele
 (29, 'Martín', 'Ocampo', '564738291', 'martin@example.com', 'Avenida 787', 'Piso 4', 'Barranquilla', 'Colombia', 0x7345e55ceffff10f42fa08b6ec61c3d8, 2),
 (30, 'Camila', 'Cardenas', '738291056', 'camila@example.com', 'Calle 909', 'Casa 2', 'Cartagena', 'Colombia', 0xea01330604670b991b6b3d6616fa2317, 2),
 (31, 'carlos', 'jimenez', '3159786425', 'holabuendia@gmail.com', 'calle 5', 'calle 6', 'bogota', 'colombia', 0xe486d3e2bd16a7ce61929816a33ef095, 2),
-(32, 'juanito', 'elmascapito', '3159786425', 'perroiguanita@gmail.com', 'calle 6', 'calle 7', 'bogota', 'colombia', 0x79e3c8fdd1a9cbef317aebc9db28abe5, 2);
+(32, 'juanito', 'elmascapito', '3159786425', 'perroiguanita@gmail.com', 'calle 6', 'calle 7', 'bogota', 'colombia', 0x79e3c8fdd1a9cbef317aebc9db28abe5, 2),
+(46, 'jorge', 'barrrero', '232323', 'jorgebarrero44@gmail.com', 'dsdsd', 'sdsds', 'sdsd', 'sdsd', 0xbb3cd2770d5d14c916d3b2f2fe02242af5b1bc6d140ac8e8a7695e95ce4c0815a029d24748326d2babac6b855c885799, 2);
 
 --
 -- Disparadores `usuario`
 --
-DROP TRIGGER IF EXISTS `actualizacion_registro`;
-DELIMITER $$
-CREATE TRIGGER `actualizacion_registro` AFTER UPDATE ON `usuario` FOR EACH ROW BEGIN
-    -- Verificar si el registro existe en t_usuario
-    IF EXISTS (SELECT 1 FROM t_usuario WHERE t_id_usuario = OLD.id_usuario) THEN
-        -- Actualizar el registro en t_usuario
-        UPDATE t_usuario
-        SET correo = NEW.correo_usuario, 
-            contraseña = NEW.contraseña, 
-            rol = NEW.id_rol
-        WHERE t_id_usuario = OLD.id_usuario;
-    END IF;
-END
-$$
-DELIMITER ;
 DROP TRIGGER IF EXISTS `encriptacion`;
 DELIMITER $$
 CREATE TRIGGER `encriptacion` BEFORE INSERT ON `usuario` FOR EACH ROW BEGIN
@@ -574,23 +578,12 @@ CREATE TRIGGER `encriptacion` BEFORE INSERT ON `usuario` FOR EACH ROW BEGIN
 END
 $$
 DELIMITER ;
-DROP TRIGGER IF EXISTS `insertar_registro`;
+DROP TRIGGER IF EXISTS `trigger_encriptar_contrasena`;
 DELIMITER $$
-CREATE TRIGGER `insertar_registro` AFTER INSERT ON `usuario` FOR EACH ROW BEGIN
-    -- Verificar si el registro ya existe en t_usuario
-    IF NOT EXISTS (SELECT 1 FROM t_usuario WHERE t_id_usuario = NEW.id_usuario) THEN
-        -- Insertar el nuevo registro en t_usuario
-        INSERT INTO t_usuario (t_id_usuario, correo, contraseña, rol)
-        VALUES (NEW.id_usuario, NEW.correo_usuario, NEW.contraseña, NEW.id_rol);
+CREATE TRIGGER `trigger_encriptar_contrasena` BEFORE UPDATE ON `usuario` FOR EACH ROW BEGIN
+    IF NEW.contraseña != OLD.contraseña THEN
+        SET NEW.contraseña = AES_ENCRYPT(NEW.contraseña, 'almuerzo');
     END IF;
-END
-$$
-DELIMITER ;
-DROP TRIGGER IF EXISTS `quitar_registro`;
-DELIMITER $$
-CREATE TRIGGER `quitar_registro` AFTER DELETE ON `usuario` FOR EACH ROW BEGIN
-    -- Eliminar el registro correspondiente de t_usuario
-    DELETE FROM t_usuario WHERE t_id_usuario = OLD.id_usuario;
 END
 $$
 DELIMITER ;
@@ -612,6 +605,12 @@ ALTER TABLE `articulos_ordenes`
 --
 ALTER TABLE `categoria`
   ADD PRIMARY KEY (`id_categoria`);
+
+--
+-- Indices de la tabla `codigos_reset`
+--
+ALTER TABLE `codigos_reset`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `comentarios`
@@ -673,10 +672,22 @@ ALTER TABLE `usuario`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `codigos_reset`
+--
+ALTER TABLE `codigos_reset`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT de la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
   MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- Restricciones para tablas volcadas
