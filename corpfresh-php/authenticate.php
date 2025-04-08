@@ -4,13 +4,11 @@ header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-// Manejo de solicitudes OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// Capturar errores
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -20,7 +18,7 @@ $response = [
 ];
 
 try {
-    require 'conexiones.php'; // Asegúrate de que el archivo está correcto
+    require 'conexiones.php';
 
     $data = json_decode(file_get_contents("php://input"), true);
 
@@ -31,18 +29,20 @@ try {
     $email = trim(htmlspecialchars($data['email']));
     $password = trim($data['password']);
 
-    // Conexión a la base de datos
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        throw new Exception("Formato de correo no válido.");
+    }
+
     $cnn = Conexion::getConexion();
 
-    // Modificación: Agregamos `t_id_rol` para obtener el rol del usuario
-    $sentencia = $cnn->prepare("SELECT t_id_usuario, correo, t_id_rol, AES_DECRYPT(contraseña, 'almuerzo') AS contraseña_desencriptada 
-                                FROM t_usuario WHERE correo = :email");
+    $sentencia = $cnn->prepare("SELECT id_usuario, correo_usuario, id_rol, AES_DECRYPT(contraseña, 'almuerzo') AS contraseña_desencriptada 
+                                FROM usuario WHERE correo_usuario = :email");
 
     if (!$sentencia) {
         throw new Exception("Error en la consulta: " . implode(" ", $cnn->errorInfo()));
     }
 
-    $sentencia->execute(['email' => $email]);
+    $sentencia->execute([':email' => $email]);
     $usuario = $sentencia->fetch(PDO::FETCH_OBJ);
 
     if (!$usuario) {
@@ -53,16 +53,15 @@ try {
         throw new Exception("Contraseña incorrecta.");
     }
 
-    // Aseguramos que el rol existe y es numérico
-    $rol = isset($usuario->t_id_rol) ? intval($usuario->t_id_rol) : 0;
+    $rol = isset($usuario->id_rol) ? intval($usuario->id_rol) : 0;
 
     $response = [
         "success" => true,
         "message" => "Autenticación exitosa",
         "user" => [
-            "id" => $usuario->t_id_usuario,
-            "email" => $usuario->correo,
-            "rol" => $rol // Agregamos el rol en la respuesta
+            "id" => $usuario->id_usuario,
+            "email" => $usuario->correo_usuario,
+            "rol" => $rol
         ]
     ];
 } catch (Exception $e) {

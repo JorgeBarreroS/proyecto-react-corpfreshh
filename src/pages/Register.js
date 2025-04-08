@@ -30,9 +30,7 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validar campos obligatorios
     const requiredFields = ["nombre", "apellido", "telefono", "email", "password", "confirmPassword"];
-    
     for (let field of requiredFields) {
       if (!formData[field]) {
         Swal.fire({
@@ -62,7 +60,6 @@ const Register = () => {
       return;
     }
 
-    // Mapear los datos del formulario a los campos que espera el PHP
     const dataToSend = {
       nombre_usuario: formData.nombre,
       apellido_usuario: formData.apellido,
@@ -73,7 +70,7 @@ const Register = () => {
       ciudad_usuario: formData.ciudad || "",
       pais_usuario: formData.pais || "",
       contraseña: formData.password,
-      id_rol: "2" // Valor por defecto para usuarios normales
+      id_rol: "2"
     };
 
     try {
@@ -82,15 +79,12 @@ const Register = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSend),
       });
-    
-      // Capturar la respuesta en texto sin intentar analizarla como JSON primero
+
       const responseText = await response.text();
       console.log("Respuesta del servidor:", responseText);
-      
+
       try {
-        // Intentar analizarla como JSON
         const data = JSON.parse(responseText);
-        
         if (data.success) {
           Swal.fire({
             icon: "success",
@@ -107,7 +101,6 @@ const Register = () => {
           });
         }
       } catch (jsonError) {
-        // Si no es JSON válido, mostrar la respuesta en texto
         console.error("Error al procesar la respuesta JSON:", jsonError);
         Swal.fire({
           icon: "error",
@@ -124,13 +117,16 @@ const Register = () => {
         text: "Hubo un problema con la conexión al servidor"
       });
     }
-  }; // Faltaba cerrar la función handleSubmit aquí
+  };
 
   return (
     <div className="register-page">
       <div className="register-container">
-        <h2 className="fw-bold">Registro</h2>
+        <h2 className="fw-bold text-center">Registro</h2>
         <form className="form-container" onSubmit={handleSubmit}>
+
+          {/* DATOS PERSONALES */}
+          <h5 className="text-center mb-3">Datos Personales</h5>
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Nombre *</label>
@@ -149,10 +145,12 @@ const Register = () => {
             </div>
             <div className="form-group">
               <label className="form-label">Correo Electrónico *</label>
-              <input type="email" name="email" className="form-control" placeholder="Correo" value={formData.email} onChange={handleChange} />
+              <input type="email" name="email" className="form-control" placeholder="Correo electrónico" value={formData.email} onChange={handleChange} />
             </div>
           </div>
 
+          {/* CUENTA */}
+          <h5 className="text-center my-3">Credenciales de Acceso</h5>
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Contraseña *</label>
@@ -160,33 +158,35 @@ const Register = () => {
             </div>
             <div className="form-group">
               <label className="form-label">Confirmar Contraseña *</label>
-              <input type="password" name="confirmPassword" className="form-control" placeholder="Confirmar" value={formData.confirmPassword} onChange={handleChange} />
+              <input type="password" name="confirmPassword" className="form-control" placeholder="Confirmar contraseña" value={formData.confirmPassword} onChange={handleChange} />
             </div>
           </div>
 
+          {/* DIRECCIÓN */}
+          <h5 className="text-center my-3">Dirección (Opcional)</h5>
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Dirección 1</label>
-              <input type="text" name="direccion1" className="form-control" placeholder="Dirección 1 (opcional)" value={formData.direccion1} onChange={handleChange} />
+              <input type="text" name="direccion1" className="form-control" placeholder="Calle principal, número, etc." value={formData.direccion1} onChange={handleChange} />
             </div>
             <div className="form-group">
               <label className="form-label">Dirección 2</label>
-              <input type="text" name="direccion2" className="form-control" placeholder="Dirección 2 (opcional)" value={formData.direccion2} onChange={handleChange} />
+              <input type="text" name="direccion2" className="form-control" placeholder="Apartamento, piso, referencia" value={formData.direccion2} onChange={handleChange} />
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Ciudad</label>
-              <input type="text" name="ciudad" className="form-control" placeholder="Ciudad (opcional)" value={formData.ciudad} onChange={handleChange} />
+              <input type="text" name="ciudad" className="form-control" placeholder="Ciudad" value={formData.ciudad} onChange={handleChange} />
             </div>
             <div className="form-group">
               <label className="form-label">País</label>
-              <input type="text" name="pais" className="form-control" placeholder="País (opcional)" value={formData.pais} onChange={handleChange} />
+              <input type="text" name="pais" className="form-control" placeholder="País" value={formData.pais} onChange={handleChange} />
             </div>
           </div>
 
-          <div className="d-grid">
+          <div className="d-grid mt-3">
             <button type="submit" className="btn btn-primary">Registrarme</button>
           </div>
           <p className="mt-2 text-center"><small>* Campos obligatorios</small></p>

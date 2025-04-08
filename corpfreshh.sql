@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-04-2025 a las 02:57:56
+-- Tiempo de generación: 08-04-2025 a las 03:43:52
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -85,6 +85,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `ObtenerUsuariosDesencriptados` ()  
         AES_DECRYPT(contraseña, 'almuerzo') AS contraseña_desencriptada
     FROM
         t_usuario;
+END$$
+
+DROP PROCEDURE IF EXISTS `ObtenerUsuariosDesencriptados2323`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ObtenerUsuariosDesencriptados2323` ()   BEGIN
+    SELECT
+        id_usuario,
+        correo_usuario,
+        AES_DECRYPT(contraseña, 'almuerzo') AS contraseña_desencriptada
+    FROM
+        usuario;
 END$$
 
 --
@@ -565,7 +575,9 @@ INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `apellido_usuario`, `tele
 (30, 'Camila', 'Cardenas', '738291056', 'camila@example.com', 'Calle 909', 'Casa 2', 'Cartagena', 'Colombia', 0xea01330604670b991b6b3d6616fa2317, 2),
 (31, 'carlos', 'jimenez', '3159786425', 'holabuendia@gmail.com', 'calle 5', 'calle 6', 'bogota', 'colombia', 0xe486d3e2bd16a7ce61929816a33ef095, 2),
 (32, 'juanito', 'elmascapito', '3159786425', 'perroiguanita@gmail.com', 'calle 6', 'calle 7', 'bogota', 'colombia', 0x79e3c8fdd1a9cbef317aebc9db28abe5, 2),
-(46, 'jorge', 'barrrero', '232323', 'jorgebarrero44@gmail.com', 'dsdsd', 'sdsds', 'sdsd', 'sdsd', 0xbb3cd2770d5d14c916d3b2f2fe02242af5b1bc6d140ac8e8a7695e95ce4c0815a029d24748326d2babac6b855c885799, 2);
+(46, 'jorge', 'barrrero', '232323', 'jorgebarrero44@gmail.com', 'dsdsd', 'sdsds', 'sdsd', 'sdsd', 0xe4aff4aa6085c4f2f7c48d09f2aaf65474e79abae1fe930b51e983701b9c274214602c4ca0cf093c2d9047bd9d9ff909f5b1bc6d140ac8e8a7695e95ce4c0815a029d24748326d2babac6b855c885799, 2),
+(47, 'melor', 'shhd', '5224522', 'dsds@gmail.com', 'ghghg', 'fdsf', 'ggg', 'dsfdsf', 0xee2766e6608cb67bbd9624d777ef9ee71c305822042147096e0327826eedf2650464191909dcb4bf171ee65ec4b5c05d772f07ccb93edb765adbf15abd55b982, 2),
+(48, 'sss', 'ssss', '5224522', 'ffsdf@gmail.com', '', '', '', '', 0x31b4044f2c07f05141124b750ca27054b65adab03d8390a843e7fd37ccba2eafd81f7c3ef29554953b51572004231764e213766cc9b83f871090114e19fd0fdb, 2);
 
 --
 -- Disparadores `usuario`
@@ -675,7 +687,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `codigos_reset`
 --
 ALTER TABLE `codigos_reset`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `comentarios`
@@ -687,7 +699,7 @@ ALTER TABLE `comentarios`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- Restricciones para tablas volcadas
