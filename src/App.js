@@ -21,8 +21,8 @@ import PagoNequi from './pages/PagoNequi'; // Agregada la importación de la pá
 
 function App() {
     return (
-        <AuthProvider> {/* Primero el proveedor de autenticación */}
-            <UserProvider> {/* Luego el proveedor de usuario */}
+        <UserProvider> {/* Primero el proveedor de usuario */}
+            <AuthProvider> {/* Luego el proveedor de autenticación */}
                 <Router>
                     <Routes>
                         <Route path="/" element={<Home />} />
@@ -39,11 +39,11 @@ function App() {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/mi-informacion" element={<MiInformacion />} />
                         <Route path="/crud" element={<Crud />} />
-                        <Route path="/pago-nequi" element={<PagoNequi />} /> {/* Nueva ruta añadida */}
+                        <Route path="/pago-nequi" element={<PagoNequi />} />
                     </Routes>
                 </Router>
-            </UserProvider>
-        </AuthProvider>
+            </AuthProvider>
+        </UserProvider>
     );
 }
 
