@@ -13,7 +13,7 @@ const ContactForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const { nombre, email, mensaje } = formData;
 
@@ -25,14 +25,39 @@ const ContactForm = () => {
         confirmButtonText: "OK",
       });
     } else {
-      Swal.fire({
-        icon: "success",
-        title: "¡Mensaje enviado!",
-        text: "Gracias por contactarnos. Te responderemos lo antes posible.",
-        confirmButtonText: "OK",
-      });
+      try {
+        const response = await fetch("http://localhost/corpfresh-php/guardarContacto.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
 
-      setFormData({ nombre: "", email: "", mensaje: "" });
+        const result = await response.json();
+
+        if (result.status === "success") {
+          Swal.fire({
+            icon: "success",
+            title: "¡Mensaje enviado!",
+            text: "Gracias por contactarnos. Te responderemos lo antes posible.",
+            confirmButtonText: "OK",
+          });
+          setFormData({ nombre: "", email: "", mensaje: "" });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: result.message || "Hubo un problema al enviar el mensaje.",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error de red",
+          text: "No se pudo enviar el mensaje. Verifica tu conexión o inténtalo más tarde.",
+        });
+      }
     }
   };
 
