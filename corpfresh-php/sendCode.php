@@ -8,7 +8,7 @@ header("Content-Type: application/json");
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require 'cone444.php'; // Asegúrate que este archivo tenga la función conectar()
+require 'cone444.php';
 $conexion = conectar();
 
 session_start();
@@ -31,6 +31,7 @@ if (!isset($data['email']) || empty($data['email'])) {
 $email = $data['email'];
 $codigo = rand(100000, 999999);
 
+// Verificar si el correo existe
 $verificarSql = "SELECT id_usuario FROM usuario WHERE correo_usuario = ?";
 $verificarStmt = $conexion->prepare($verificarSql);
 $verificarStmt->bind_param("s", $email);
@@ -42,6 +43,7 @@ if ($verificarStmt->num_rows === 0) {
     exit;
 }
 
+// Guardar código
 $sql = "INSERT INTO codigos_reset (correo_usuario, codigo, creado_en) VALUES (?, ?, NOW())";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("ss", $email, $codigo);
@@ -57,14 +59,31 @@ try {
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
     $mail->Username = '';
-    $mail->Password = ''; // Reemplaza por tu clave de aplicación real
+    $mail->Password = ''; // Reemplaza por tu clave real
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
 
     $mail->setFrom('', 'Corpfreshh');
     $mail->addAddress($email);
-    $mail->Subject = 'Código de verificación';
-    $mail->Body = "Tu código de recuperación es: $codigo";
+    $mail->isHTML(true);
+    $mail->Subject = 'Recuperación de contraseña - Corpfreshh';
+
+    $mail->Body = "
+    <div style='font-family: Arial, sans-serif; color: #333; padding: 20px;'>
+        <h2 style='color: #0066cc;'>Solicitud de recuperación de contraseña</h2>
+        <p>Hola,</p>
+        <p>Hemos recibido una solicitud para restablecer tu contraseña asociada a este correo electrónico.</p>
+        <p>Tu código de verificación es:</p>
+        <div style='font-size: 24px; font-weight: bold; margin: 20px 0; color: #0066cc;'>$codigo</div>
+        <p>Este código estará vigente por 10 minutos. Si no solicitaste este cambio, puedes ignorar este mensaje.</p>
+        <br>
+        <p>Gracias,<br><strong>El equipo de Corpfreshh</strong></p>
+        <hr style='margin-top: 30px;'>
+        <small style='color: #888;'>Este correo fue generado automáticamente. Por favor, no respondas a este mensaje.</small>
+    </div>
+    ";
+
+    $mail->AltBody = "Tu código de recuperación es: $codigo. Válido por 10 minutos. Si no lo solicitaste, ignora este mensaje.";
 
     $mail->send();
 

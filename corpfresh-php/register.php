@@ -1,15 +1,14 @@
 <?php
-// Cabeceras necesarias para CORS y JSON
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-require 'conexion.php'; // Asegúrate de que este archivo conecte correctamente con tu BD
+require 'conexion.php';
+require 'encryption.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-// Validar campos requeridos (solo los que vienen desde React como obligatorios)
 $required_fields = [
     "nombre_usuario", "apellido_usuario", "telefono_usuario",
     "correo_usuario", "contraseña"
@@ -22,7 +21,6 @@ foreach ($required_fields as $field) {
     }
 }
 
-// Asignar datos con valores por defecto para campos opcionales
 $nombre     = trim($data["nombre_usuario"]);
 $apellido   = trim($data["apellido_usuario"]);
 $telefono   = trim($data["telefono_usuario"]);
@@ -34,7 +32,6 @@ $pais       = isset($data["pais_usuario"]) ? trim($data["pais_usuario"]) : "";
 $password   = $data["contraseña"];
 $id_rol     = isset($data["id_rol"]) ? intval($data["id_rol"]) : 2;
 
-// Verificar si el correo ya existe
 $sql = "SELECT correo_usuario FROM usuario WHERE correo_usuario = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
@@ -46,10 +43,8 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-// Encriptar contraseña
-$encryptedPassword = password_hash($password, PASSWORD_BCRYPT);
+$encryptedPassword = encryptPassword($password);
 
-// Insertar nuevo usuario
 $sql = "INSERT INTO usuario (
     nombre_usuario, apellido_usuario, telefono_usuario, correo_usuario, 
     direccion1_usuario, direccion2_usuario, ciudad_usuario, pais_usuario, contraseña, id_rol

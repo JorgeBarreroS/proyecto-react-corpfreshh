@@ -16,7 +16,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.body.style.background = "linear-gradient(135deg, #1e3c72, #2a5298)";
     return () => {
       document.body.style.background = "";
     };

@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require 'cone444.php';
+require 'encryption.php';
 $conexion = conectar();
 
 $data = json_decode(file_get_contents("php://input"), true);
@@ -24,7 +25,6 @@ $correo = $data['correo_usuario'];
 $nueva = $data['nueva_contrasena'];
 $codigo = $data['codigo'];
 
-// Verificar que el código exista y sea válido
 $sql = "SELECT * FROM codigos_reset WHERE correo_usuario = ? AND codigo = ? AND creado_en >= NOW() - INTERVAL 10 MINUTE";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("ss", $correo, $codigo);
@@ -36,7 +36,6 @@ if ($result->num_rows === 0) {
     exit();
 }
 
-// Obtener ID del usuario por su correo
 $sql = "SELECT id_usuario FROM usuario WHERE correo_usuario = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("s", $correo);
@@ -51,13 +50,13 @@ if ($result->num_rows === 0) {
 $row = $result->fetch_assoc();
 $id_usuario = $row['id_usuario'];
 
-// Llamar al procedimiento almacenado para encriptar y actualizar contraseña
-$sql = "CALL ENCRIPTAR_CONTRASENA(?, ?)";
+$nueva_cifrada = encryptPassword($nueva);
+
+$sql = "UPDATE usuario SET contraseña = ? WHERE id_usuario = ?";
 $stmt = $conexion->prepare($sql);
-$stmt->bind_param("is", $id_usuario, $nueva);
+$stmt->bind_param("si", $nueva_cifrada, $id_usuario);
 $stmt->execute();
 
-// Eliminar el código usado para que no se reutilice
 $sql = "DELETE FROM codigos_reset WHERE correo_usuario = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("s", $correo);

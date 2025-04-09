@@ -12,14 +12,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+require 'conexiones.php';
+require 'encryption.php';
+
 $response = [
     "success" => false,
     "message" => "Error de autenticación"
 ];
 
 try {
-    require 'conexiones.php';
-
     $data = json_decode(file_get_contents("php://input"), true);
 
     if (!isset($data['email']) || !isset($data['password'])) {
@@ -35,8 +36,7 @@ try {
 
     $cnn = Conexion::getConexion();
 
-    $sentencia = $cnn->prepare("SELECT id_usuario, correo_usuario, id_rol, AES_DECRYPT(contraseña, 'almuerzo') AS contraseña_desencriptada 
-                                FROM usuario WHERE correo_usuario = :email");
+    $sentencia = $cnn->prepare("SELECT id_usuario, correo_usuario, id_rol, contraseña FROM usuario WHERE correo_usuario = :email");
 
     if (!$sentencia) {
         throw new Exception("Error en la consulta: " . implode(" ", $cnn->errorInfo()));
@@ -49,7 +49,9 @@ try {
         throw new Exception("Usuario no encontrado.");
     }
 
-    if ($usuario->contraseña_desencriptada !== $password) {
+    $desencriptada = decryptPassword($usuario->contraseña);
+
+    if ($desencriptada !== $password) {
         throw new Exception("Contraseña incorrecta.");
     }
 
