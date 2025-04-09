@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Swal from 'sweetalert2';
 import "../styles/style.css";
 import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../components/UserContext'; // Importa el hook personalizado
+import { useUser } from '../services/UserContext'; // Importa el hook personalizado
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
