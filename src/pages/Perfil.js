@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../services/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Perfil = () => {
-  const { authState, logout, updateEmail } = useAuth(); // Asumimos que existe una función updateEmail en AuthContext
+  const { authState, logout, updateEmail } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,9 +37,7 @@ const Perfil = () => {
       body: JSON.stringify({ email: authState.email }),
     })
       .then(response => {
-        if (!response.ok) {
-          throw new Error("Error al obtener datos del usuario");
-        }
+        if (!response.ok) throw new Error("Error al obtener datos del usuario");
         return response.json();
       })
       .then(data => {
@@ -62,9 +61,7 @@ const Perfil = () => {
         console.error("Error:", err);
         setError(err.message);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, [authState]);
 
   const handleChange = (e) => {
@@ -73,42 +70,74 @@ const Perfil = () => {
   };
 
   const handleSave = () => {
-    const emailChanged = formData.correo !== originalEmail;
-    
-    fetch("http://localhost/corpfresh-php/updateUserData.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        email: originalEmail, 
-        newEmail: emailChanged ? formData.correo : null,
-        ...formData 
-      }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert("Datos actualizados correctamente");
-          setEditMode(false);
-          setUserData(prev => ({ ...prev, ...formData }));
-          
-          // Si el correo cambió, actualizar en el contexto de autenticación y redirigir
-          if (emailChanged && updateEmail) {
-            updateEmail(formData.correo);
-            setOriginalEmail(formData.correo);
-            alert("El correo electrónico ha sido actualizado. Para completar el proceso, se cerrará tu sesión.");
-            setTimeout(() => {
-              logout();
-              navigate("/login");
-            }, 2000);
-          }
-        } else {
-          alert("Error al actualizar: " + data.message);
-        }
-      })
-      .catch(err => {
-        alert("Error en la solicitud");
-        console.error(err);
-      });
+    Swal.fire({
+      title: '¿Guardar cambios?',
+      text: 'Estás a punto de actualizar tus datos.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, guardar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const emailChanged = formData.correo !== originalEmail;
+
+        fetch("http://localhost/corpfresh-php/updateUserData.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: originalEmail,
+            newEmail: emailChanged ? formData.correo : null,
+            ...formData
+          }),
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              Swal.fire('¡Actualizado!', 'Tus datos fueron actualizados.', 'success');
+              setEditMode(false);
+              setUserData(prev => ({ ...prev, ...formData }));
+
+              if (emailChanged && updateEmail) {
+                updateEmail(formData.correo);
+                setOriginalEmail(formData.correo);
+
+                Swal.fire({
+                  icon: 'info',
+                  title: 'Correo actualizado',
+                  text: 'Se cerrará tu sesión para completar el proceso.',
+                  timer: 3000,
+                  showConfirmButton: false
+                });
+
+                setTimeout(() => {
+                  logout();
+                  navigate("/login");
+                }, 3000);
+              }
+            } else {
+              Swal.fire('Error', data.message || 'No se pudo actualizar.', 'error');
+            }
+          })
+          .catch(() => {
+            Swal.fire('Error', 'Error en la solicitud', 'error');
+          });
+      }
+    });
+  };
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: '¿Cerrar sesión?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, salir',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        navigate("/login");
+      }
+    });
   };
 
   if (loading) {
@@ -168,7 +197,6 @@ const Perfil = () => {
                 )}
               </div>
 
-              
               {error && <div className="alert alert-danger">{error}</div>}
 
               {userData && (
@@ -238,7 +266,7 @@ const Perfil = () => {
 
               <div className="mt-4">
                 <button className="btn btn-primary me-2" onClick={() => navigate("/")}>Ir al Inicio</button>
-                <button className="btn btn-danger" onClick={() => { logout(); navigate("/"); }}>Cerrar sesión</button>
+                <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
               </div>
             </div>
           </div>
