@@ -5,12 +5,21 @@ import Navbar from '../components/Navbar';
 import Swal from 'sweetalert2';
 import "../styles/style.css";
 import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../components/UserContext'; // Importa el hook personalizado
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState('0.00');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useUser(); // Obtiene el usuario desde el contexto
+
+  // Redirige al login si no hay sesión
+  useEffect(() => {
+    if (!user) {
+      navigate('/Login');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     fetchCart();
@@ -71,9 +80,9 @@ const CartPage = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (data.status === 'success') {
         setTotal(data.total || '0.00');
         setCart(data.cart || []);
@@ -105,9 +114,9 @@ const CartPage = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (data.status === 'success') {
         setCart(data.cart || []);
         setTotal(data.total || '0.00');
@@ -121,7 +130,6 @@ const CartPage = () => {
     }
   };
 
-  // ✅ Corregido: Enviar los datos con la clave correcta
   const handleNequiPayment = () => {
     navigate('/pago-nequi', { state: { carrito: cart, total } });
   };
