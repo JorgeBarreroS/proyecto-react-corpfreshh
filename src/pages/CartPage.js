@@ -5,21 +5,14 @@ import Navbar from '../components/Navbar';
 import Swal from 'sweetalert2';
 import "../styles/style.css";
 import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../services/UserContext'; // Importa el hook personalizado
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState('0.00');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { user } = useUser(); // Obtiene el usuario desde el contexto
 
-  // Redirige al login si no hay sesión
-  useEffect(() => {
-    if (!user) {
-      navigate('/Login');
-    }
-  }, [user, navigate]);
+  // ✅ Ya no se valida la sesión aquí
 
   useEffect(() => {
     fetchCart();
