@@ -5,18 +5,24 @@ import Navbar from '../components/Navbar';
 import Swal from 'sweetalert2';
 import "../styles/style.css";
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../services/AuthContext';
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState('0.00');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { authState } = useAuth();
 
-  // ✅ Ya no se valida la sesión aquí
-
+  // Validación de sesión
   useEffect(() => {
-    fetchCart();
-  }, []);
+    if (!authState || !authState.email) {
+      Swal.fire('Error', 'Debes iniciar sesión para ver el carrito.', 'error');
+      navigate('/login');
+    } else {
+      fetchCart();
+    }
+  }, [authState]);
 
   const fetchCart = async () => {
     try {
@@ -24,7 +30,7 @@ const CartPage = () => {
       const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
         method: 'GET',
         credentials: 'include',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
@@ -35,8 +41,6 @@ const CartPage = () => {
       }
 
       const data = await response.json();
-      console.log('Datos recibidos del servidor:', data);
-
       if (data && data.cart) {
         setCart(data.cart || []);
         setTotal(data.total || '0.00');
@@ -59,7 +63,7 @@ const CartPage = () => {
       const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
         method: 'POST',
         credentials: 'include',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
@@ -94,7 +98,7 @@ const CartPage = () => {
       const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
         method: 'POST',
         credentials: 'include',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },

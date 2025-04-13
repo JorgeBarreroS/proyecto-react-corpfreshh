@@ -1,3 +1,4 @@
+// ...importaciones ya existentes
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext"; 
@@ -11,8 +12,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false); 
   const menuRef = useRef(null); 
+  const [cartCount, setCartCount] = useState(0);
 
-  // Cierra el menú si se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -21,6 +22,34 @@ const Navbar = () => {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Fetch del carrito
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      try {
+        const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+        if (data.cart && Array.isArray(data.cart)) {
+          const totalCantidad = data.cart.reduce((acc, item) => acc + item.cantidad, 0);
+          setCartCount(totalCantidad);
+        }
+      } catch (error) {
+        console.error("No se pudo cargar el conteo del carrito:", error);
+      }
+    };
+
+    fetchCartCount();
   }, []);
 
   const handleLogout = () => {
@@ -57,8 +86,13 @@ const Navbar = () => {
             <Link to="/buscador" className="ms-2">
               <img src={imagen1} alt="lupa" width="30px" />
             </Link>
-            <Link to="/carrito" className="ms-2">
+            <Link to="/carrito" className="ms-2 position-relative">
               <img src={imagen2} alt="carrito" width="30px" />
+              {cartCount > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
             {authState ? (
@@ -72,18 +106,11 @@ const Navbar = () => {
                 />
                 <span className="active-dot"></span>
 
-                {/* Menú desplegable */}
                 {menuOpen && (
                   <div className="dropdown-menu show position-absolute end-0 mt-2 shadow bg-white rounded p-2" style={{ right: 0, zIndex: 10 }}>
-                    <button className="dropdown-item" onClick={() => navigate("/dashboard")}>
-                      Mi Información
-                    </button>
-                    <button className="dropdown-item" onClick={() => navigate("/perfil")}>
-                      Editar Información
-                    </button>
-                    <button className="dropdown-item text-danger" onClick={handleLogout}>
-                      Cerrar Sesión
-                    </button>
+                    <button className="dropdown-item" onClick={() => navigate("/dashboard")}>Mi Información</button>
+                    <button className="dropdown-item" onClick={() => navigate("/perfil")}>Editar Información</button>
+                    <button className="dropdown-item text-danger" onClick={handleLogout}>Cerrar Sesión</button>
                   </div>
                 )}
               </div>
