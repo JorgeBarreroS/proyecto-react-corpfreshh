@@ -21,7 +21,7 @@ const Login = () => {
     };
   }, []);
 
-  // Inicio de sesión con Google (siempre va a /dashboard)
+  // Inicio de sesión con Google
   const onSuccess = (credentialResponse) => {
     try {
       const decodedToken = JSON.parse(atob(credentialResponse.credential.split(".")[1]));
@@ -52,7 +52,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!email || !password) {
       Swal.fire({
         icon: "error",
@@ -62,21 +62,20 @@ const Login = () => {
       });
       return;
     }
-  
+
     try {
       const response = await fetch("http://localhost/corpfresh-php/authenticate.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
-      console.log("Respuesta del servidor:", data); // DEPURACIÓN
-  
+
       if (!response.ok) {
         throw new Error(data.message || "Error en el servidor");
       }
-  
+
       if (data.success) {
         Swal.fire({
           icon: "success",
@@ -85,8 +84,14 @@ const Login = () => {
           confirmButtonColor: "#3085d6",
           confirmButtonText: "Continuar",
         }).then(() => {
-          login({ name: data.user.email, email: data.user.email, rol: data.user.rol });
+          login({
+            name: data.user.email,
+            email: data.user.email,
+            rol: data.user.rol,
+            id: data.user.id,
+          });
 
+          // Verificar el rol del usuario
           const userRole = Number(data.user.rol);
 
           if (userRole === 1) {
@@ -94,7 +99,7 @@ const Login = () => {
           } else if (userRole === 2) {
             navigate("/dashboard", { replace: true });
           } else {
-            console.warn(`Rol desconocido (${data.rol}), redirigiendo a /dashboard`); 
+            console.warn(`Rol desconocido (${data.rol}), redirigiendo a /dashboard`);
             navigate("/dashboard", { replace: true });
           }
         });
