@@ -1,4 +1,3 @@
-// ...importaciones ya existentes
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext"; 
@@ -24,7 +23,7 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch del carrito
+  // Fetch del carrito solo si hay sesión
   useEffect(() => {
     const fetchCartCount = async () => {
       try {
@@ -49,8 +48,12 @@ const Navbar = () => {
       }
     };
 
-    fetchCartCount();
-  }, []);
+    if (authState) {
+      fetchCartCount();
+    } else {
+      setCartCount(0);
+    }
+  }, [authState]);
 
   const handleLogout = () => {
     logout();
@@ -86,9 +89,10 @@ const Navbar = () => {
             <Link to="/buscador" className="ms-2">
               <img src={imagen1} alt="lupa" width="30px" />
             </Link>
+
             <Link to="/carrito" className="ms-2 position-relative">
               <img src={imagen2} alt="carrito" width="30px" />
-              {cartCount > 0 && (
+              {authState && cartCount > 0 && (
                 <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                   {cartCount}
                 </span>
