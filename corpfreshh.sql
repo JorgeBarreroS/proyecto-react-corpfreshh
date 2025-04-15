@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-04-2025 a las 03:22:02
+-- Tiempo de generación: 15-04-2025 a las 23:16:34
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -131,6 +131,10 @@ CREATE TABLE `articulos_ordenes` (
 
 --
 -- RELACIONES PARA LA TABLA `articulos_ordenes`:
+--   `id_producto`
+--       `producto` -> `id_producto`
+--   `id_venta`
+--       `ordenes` -> `id_venta`
 --
 
 --
@@ -231,6 +235,10 @@ CREATE TABLE `comentarios` (
 
 --
 -- RELACIONES PARA LA TABLA `comentarios`:
+--   `id_producto`
+--       `producto` -> `id_producto`
+--   `id_usuario`
+--       `usuario` -> `id_usuario`
 --
 
 --
@@ -258,6 +266,8 @@ CREATE TABLE `ordenes` (
 
 --
 -- RELACIONES PARA LA TABLA `ordenes`:
+--   `id_usuario`
+--       `usuario` -> `id_usuario`
 --
 
 --
@@ -314,6 +324,10 @@ CREATE TABLE `pedido` (
 
 --
 -- RELACIONES PARA LA TABLA `pedido`:
+--   `id_usuario`
+--       `usuario` -> `id_usuario`
+--   `id_venta`
+--       `ordenes` -> `id_venta`
 --
 
 --
@@ -373,6 +387,8 @@ CREATE TABLE `producto` (
 
 --
 -- RELACIONES PARA LA TABLA `producto`:
+--   `id_categoria`
+--       `categoria` -> `id_categoria`
 --
 
 --
@@ -458,6 +474,8 @@ CREATE TABLE `usuario` (
 
 --
 -- RELACIONES PARA LA TABLA `usuario`:
+--   `id_rol`
+--       `rol` -> `id_rol`
 --
 
 --
@@ -528,32 +546,65 @@ ALTER TABLE `codigos_reset`
 --
 ALTER TABLE `comentarios`
   ADD PRIMARY KEY (`id_comentario`),
-  ADD KEY `fk_usuario` (`id_usuario`),
-  ADD KEY `fk_producto` (`id_producto`);
+  ADD KEY `usuarioss` (`id_usuario`),
+  ADD KEY `producto` (`id_producto`);
 
 --
 -- Indices de la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
-  ADD PRIMARY KEY (`id_venta`);
+  ADD PRIMARY KEY (`id_venta`),
+  ADD KEY `usuarios` (`id_usuario`);
 
 --
 -- Indices de la tabla `pedido`
 --
 ALTER TABLE `pedido`
   ADD PRIMARY KEY (`id_pedido`),
-  ADD KEY `id_venta` (`id_venta`),
-  ADD KEY `id_usuario` (`id_usuario`);
+  ADD KEY `usuario` (`id_usuario`),
+  ADD KEY `venta` (`id_venta`);
 
 --
 -- Indices de la tabla `producto`
 --
 ALTER TABLE `producto`
-  ADD PRIMARY KEY (`id_producto`);
+  ADD PRIMARY KEY (`id_producto`),
+  ADD KEY `categoria` (`id_categoria`);
+
+--
+-- Indices de la tabla `rol`
+--
+ALTER TABLE `rol`
+  ADD PRIMARY KEY (`id_rol`);
+
+--
+-- Indices de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD KEY `rol` (`id_rol`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `articulos_ordenes`
+--
+ALTER TABLE `articulos_ordenes`
+  MODIFY `id_detalle_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT de la tabla `categoria`
+--
+ALTER TABLE `categoria`
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `ordenes`
@@ -572,6 +623,61 @@ ALTER TABLE `pedido`
 --
 ALTER TABLE `producto`
   MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+
+--
+-- AUTO_INCREMENT de la tabla `rol`
+--
+ALTER TABLE `rol`
+  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `articulos_ordenes`
+--
+ALTER TABLE `articulos_ordenes`
+  ADD CONSTRAINT `articulos_ordenes_ibfk_1` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `ventas` FOREIGN KEY (`id_venta`) REFERENCES `ordenes` (`id_venta`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD CONSTRAINT `producto` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `usuarioss` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `ordenes`
+--
+ALTER TABLE `ordenes`
+  ADD CONSTRAINT `usuarios` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `pedido`
+--
+ALTER TABLE `pedido`
+  ADD CONSTRAINT `usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `venta` FOREIGN KEY (`id_venta`) REFERENCES `ordenes` (`id_venta`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `producto`
+--
+ALTER TABLE `producto`
+  ADD CONSTRAINT `categoria` FOREIGN KEY (`id_categoria`) REFERENCES `categoria` (`id_categoria`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD CONSTRAINT `rol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
