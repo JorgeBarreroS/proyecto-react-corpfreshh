@@ -7,7 +7,7 @@ header("Content-Type: application/json");
 require_once 'conexion.php';
 
 try {
-    $query = $pdo->query("SELECT t_id_usuario, correo, rol FROM t_usuario");
+    $query = $pdo->query("SELECT * FROM usuario");
     $usuarios = $query->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($usuarios);
 } catch (PDOException $e) {
