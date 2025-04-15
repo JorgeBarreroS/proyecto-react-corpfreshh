@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-04-2025 a las 03:59:51
+-- Tiempo de generación: 15-04-2025 a las 03:22:02
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -131,10 +131,6 @@ CREATE TABLE `articulos_ordenes` (
 
 --
 -- RELACIONES PARA LA TABLA `articulos_ordenes`:
---   `id_venta`
---       `ordenes` -> `id_venta`
---   `id_producto`
---       `producto` -> `id_producto`
 --
 
 --
@@ -235,10 +231,6 @@ CREATE TABLE `comentarios` (
 
 --
 -- RELACIONES PARA LA TABLA `comentarios`:
---   `id_producto`
---       `producto` -> `id_producto`
---   `id_usuario`
---       `usuario` -> `id_usuario`
 --
 
 --
@@ -266,8 +258,6 @@ CREATE TABLE `ordenes` (
 
 --
 -- RELACIONES PARA LA TABLA `ordenes`:
---   `id_usuario`
---       `usuario` -> `id_usuario`
 --
 
 --
@@ -324,10 +314,6 @@ CREATE TABLE `pedido` (
 
 --
 -- RELACIONES PARA LA TABLA `pedido`:
---   `id_venta`
---       `ordenes` -> `id_venta`
---   `id_usuario`
---       `usuario` -> `id_usuario`
 --
 
 --
@@ -387,8 +373,6 @@ CREATE TABLE `producto` (
 
 --
 -- RELACIONES PARA LA TABLA `producto`:
---   `id_categoria`
---       `categoria` -> `id_categoria`
 --
 
 --
@@ -474,8 +458,6 @@ CREATE TABLE `usuario` (
 
 --
 -- RELACIONES PARA LA TABLA `usuario`:
---   `id_rol`
---       `rol` -> `id_rol`
 --
 
 --
@@ -553,8 +535,7 @@ ALTER TABLE `comentarios`
 -- Indices de la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
-  ADD PRIMARY KEY (`id_venta`),
-  ADD KEY `id_usuario` (`id_usuario`);
+  ADD PRIMARY KEY (`id_venta`);
 
 --
 -- Indices de la tabla `pedido`
@@ -568,88 +549,29 @@ ALTER TABLE `pedido`
 -- Indices de la tabla `producto`
 --
 ALTER TABLE `producto`
-  ADD PRIMARY KEY (`id_producto`),
-  ADD KEY `id_categoria` (`id_categoria`);
-
---
--- Indices de la tabla `rol`
---
-ALTER TABLE `rol`
-  ADD PRIMARY KEY (`id_rol`);
-
---
--- Indices de la tabla `usuario`
---
-ALTER TABLE `usuario`
-  ADD PRIMARY KEY (`id_usuario`),
-  ADD KEY `correo_usuario` (`correo_usuario`),
-  ADD KEY `contraseña` (`contraseña`),
-  ADD KEY `id_rol` (`id_rol`);
+  ADD PRIMARY KEY (`id_producto`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT de la tabla `codigos_reset`
---
-ALTER TABLE `codigos_reset`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT de la tabla `comentarios`
---
-ALTER TABLE `comentarios`
-  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT de la tabla `usuario`
---
-ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `articulos_ordenes`
---
-ALTER TABLE `articulos_ordenes`
-  ADD CONSTRAINT `articulos_ordenes_ibfk_1` FOREIGN KEY (`id_venta`) REFERENCES `ordenes` (`id_venta`),
-  ADD CONSTRAINT `articulos_ordenes_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`);
-
---
--- Filtros para la tabla `comentarios`
---
-ALTER TABLE `comentarios`
-  ADD CONSTRAINT `fk_producto` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `ordenes`
+-- AUTO_INCREMENT de la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
-  ADD CONSTRAINT `ordenes_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
+  MODIFY `id_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- Filtros para la tabla `pedido`
+-- AUTO_INCREMENT de la tabla `pedido`
 --
 ALTER TABLE `pedido`
-  ADD CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`id_venta`) REFERENCES `ordenes` (`id_venta`),
-  ADD CONSTRAINT `pedido_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- Filtros para la tabla `producto`
+-- AUTO_INCREMENT de la tabla `producto`
 --
 ALTER TABLE `producto`
-  ADD CONSTRAINT `producto_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `categoria` (`id_categoria`);
-
---
--- Filtros para la tabla `usuario`
---
-ALTER TABLE `usuario`
-  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`);
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
