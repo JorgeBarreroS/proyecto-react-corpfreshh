@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import Navbar from '../components/Navbar'; 
 import Carousel from '../components/Carousel'; 
 import ProductCard from '../components/ProductCard'; 
@@ -70,6 +71,7 @@ const showRandomStyleTip = () => {
 };
 
 const Home = () => {
+    const navigate = useNavigate(); // Movido aquí dentro del componente
     const [ofertaActiva, setOfertaActiva] = useState(null);
     const [countdown, setCountdown] = useState({
         days: 0,
@@ -227,14 +229,12 @@ const Home = () => {
                                 </div>
                             </div>
                             
-                            <div>
-                                <button className="btn btn-danger btn-lg me-2 mb-2">
-                                    -{ofertaActiva.porcentaje_descuento}% DESCUENTO
-                                </button>
-                                <button className="btn btn-light btn-lg mb-2">
-                                    {ofertaActiva.texto_boton || "Comprar Ahora"}
-                                </button>
-                            </div>
+                            <button 
+                                className="btn btn-danger btn-lg mb-2"
+                                onClick={() => navigate("/productos")}
+                                >
+                                -{ofertaActiva.porcentaje_descuento}% DESCUENTO – {ofertaActiva.texto_boton || "Comprar Ahora"}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -244,7 +244,10 @@ const Home = () => {
                         <div className="text-center">
                             <h3 className="mb-3 fw-bold">Sin ofertas activas actualmente</h3>
                             <p className="mb-4">¡No te pierdas nuestras próximas promociones!</p>
-                            <button className="btn btn-light btn-lg mb-2">
+                            <button
+                                className="btn btn-light btn-lg mb-2"
+                                onClick={() => navigate("/productos")}
+                                >
                                 Ver Productos
                             </button>
                         </div>

@@ -26,7 +26,20 @@ export default function AdminOfertas() {
         }
         return response.json();
       })
-      .then((data) => setOfertas(data))
+      .then((data) => {
+        // Convertir la propiedad activo a string para asegurar consistencia
+        const ofertasFormateadas = data.map(oferta => ({
+          ...oferta,
+          activo: String(oferta.activo)
+        }));
+        setOfertas(ofertasFormateadas);
+        
+        // Log para debugging
+        if (ofertasFormateadas.length > 0) {
+          console.log("Primer oferta activo:", ofertasFormateadas[0].activo);
+          console.log("Tipo de activo:", typeof ofertasFormateadas[0].activo);
+        }
+      })
       .catch((err) => setError(err.message));
   };
 
@@ -35,8 +48,12 @@ export default function AdminOfertas() {
   }, []);
 
   const handleEdit = (oferta) => {
+    // Aseguramos que activo sea string para el formulario de edición
     setEditingOfertaId(oferta.id_oferta);
-    setEditedOferta(oferta);
+    setEditedOferta({
+      ...oferta,
+      activo: String(oferta.activo)
+    });
   };
 
   const handleSave = () => {
@@ -53,7 +70,7 @@ export default function AdminOfertas() {
           setOfertas((prevOfertas) =>
             prevOfertas.map((oferta) =>
               oferta.id_oferta === editedOferta.id_oferta
-                ? editedOferta
+                ? {...editedOferta, activo: String(editedOferta.activo)}
                 : oferta
             )
           );
@@ -128,6 +145,7 @@ export default function AdminOfertas() {
   };
 
   const handleToggleActive = (id, currentState) => {
+    // Convertir el nuevo estado a string para consistencia
     const newState = currentState === "1" ? "0" : "1";
     
     fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/toggleOfertaActiva.php", {
@@ -192,13 +210,20 @@ export default function AdminOfertas() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newOferta),
+      body: JSON.stringify({
+        ...newOferta,
+        activo: String(newOferta.activo) // Asegurar que activo sea string
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          // Agregar la nueva oferta con el ID generado
-          const ofertaConId = { ...newOferta, id_oferta: data.id_oferta };
+          // Agregar la nueva oferta con el ID generado y asegurar activo como string
+          const ofertaConId = { 
+            ...newOferta, 
+            id_oferta: data.id_oferta,
+            activo: String(newOferta.activo)
+          };
           setOfertas((prevOfertas) => [...prevOfertas, ofertaConId]);
           
           // Resetear el formulario

@@ -19,6 +19,11 @@ try {
     $stmt->execute();
     $ofertas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
+    // Asegurar que activo siempre se envía como string
+    foreach ($ofertas as &$oferta) {
+        $oferta['activo'] = (string)$oferta['activo'];
+    }
+    
     echo json_encode($ofertas);
 } catch(PDOException $e) {
     echo json_encode(['error' => $e->getMessage()]);
