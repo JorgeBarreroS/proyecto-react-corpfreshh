@@ -22,7 +22,6 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background: linear-gradient(135deg, #3b8d99, #6b6b83, #9b9b9b);
     color: white;
     font-family: 'Arial', sans-serif;
   }
@@ -63,7 +62,7 @@
   }
   
   .btn-success {
-    background-color: #27ae60;
+    background-color: #3f4546;
     color: white;
     border: none;
     padding: 10px 20px;

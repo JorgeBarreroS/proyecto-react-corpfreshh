@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import "../styles/sytles2.css";
+import logo from "../imagenes/Corp.png";
+
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +19,6 @@ const Register = () => {
   });
 
   useEffect(() => {
-    document.body.style.background = "linear-gradient(135deg, #3c72a1, #5298d6)";
     return () => {
       document.body.style.background = "";
     };
@@ -122,6 +123,9 @@ const Register = () => {
   return (
     <div className="register-page">
       <div className="register-container">
+        <div className="login-header">
+            <img src={logo} alt="Corp Freshh" />
+        </div>
         <h2 className="fw-bold text-center">Registro</h2>
         <form className="form-container" onSubmit={handleSubmit}>
 
@@ -150,7 +154,6 @@ const Register = () => {
           </div>
 
           {/* CUENTA */}
-          <h5 className="text-center my-3">Credenciales de Acceso</h5>
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Contraseña *</label>
@@ -162,29 +165,7 @@ const Register = () => {
             </div>
           </div>
 
-          {/* DIRECCIÓN */}
-          <h5 className="text-center my-3">Dirección (Opcional)</h5>
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">Dirección 1</label>
-              <input type="text" name="direccion1" className="form-control" placeholder="Calle principal, número, etc." value={formData.direccion1} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Dirección 2</label>
-              <input type="text" name="direccion2" className="form-control" placeholder="Apartamento, piso, referencia" value={formData.direccion2} onChange={handleChange} />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">Ciudad</label>
-              <input type="text" name="ciudad" className="form-control" placeholder="Ciudad" value={formData.ciudad} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">País</label>
-              <input type="text" name="pais" className="form-control" placeholder="País" value={formData.pais} onChange={handleChange} />
-            </div>
-          </div>
+          
 
           <div className="d-grid mt-3">
             <button type="submit" className="btn btn-primary">Registrarme</button>

@@ -42,7 +42,7 @@ const Dashboard = () => {
         </p>
         
         <div className="dashboard-actions">
-          <button className="btn btn-success" onClick={() => navigate("/")}>Volver</button>
+          <button className="btn btn-success" onClick={() => navigate("/")}>Ir a inicio</button>
         </div>
       </div>
     </div>

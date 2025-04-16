@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import "../styles/Login.css";
-import logo from "../imagenes/corp-freshh.jfif";
+import logo from "../imagenes/Corp.png";
 
 const clientID = "590045182886-8jfebo35qqi7mpc4dtldu48m3skpu6ne.apps.googleusercontent.com";
 
