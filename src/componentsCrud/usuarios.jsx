@@ -43,21 +43,30 @@ export default function Usuarios() {
   }, []);
 
   const handleEdit = (usuario) => {
+    // Crear una copia del usuario para editar y asegurarse de que tenga el campo contrasena
+    const userToEdit = {
+      ...usuario,
+      contrasena: "" // Inicializar contrasena como campo vacío para evitar enviar la contraseña encriptada al servidor
+    };
     setEditingUserId(usuario.id_usuario);
-    setEditedUser(usuario);
+    setEditedUser(userToEdit);
   };
 
   const handleSave = () => {
+    // Crear una copia del usuario editado para asegurarnos de que tiene el formato correcto
+    const userToUpdate = { ...editedUser };
+    
     fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarUsuario.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(editedUser),
+      body: JSON.stringify(userToUpdate),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
+          // Actualizar la lista de usuarios en el estado
           setUsuarios((prevUsuarios) =>
             prevUsuarios.map((usuario) =>
               usuario.id_usuario === editedUser.id_usuario
@@ -78,9 +87,16 @@ export default function Usuarios() {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Error al actualizar el usuario",
+            text: "Error al actualizar el usuario: " + (data.error || ""),
           });
         }
+      })
+      .catch(error => {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Error al procesar la solicitud: " + error.message,
+        });
       });
   };
 
@@ -542,12 +558,13 @@ export default function Usuarios() {
                         <input
                           type="password"
                           name="contrasena"
-                          value={editedUser.contraseña || ""}
+                          value={editedUser.contrasena || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1 rounded"
+                          placeholder="Nueva contraseña"
                         />
                       ) : (
-                        usuario.contraseña
+                        "••••••••"
                       )}
                     </td>
 
