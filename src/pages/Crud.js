@@ -7,6 +7,7 @@ import Categorias from "../componentsCrud/categorias";
 import Ordenes from "../componentsCrud/ordenes";
 import Pedidos from "../componentsCrud/pedidos";
 import Usuarios from "../componentsCrud/usuarios";
+import AdminOfertas from "../componentsCrud/AdminOfertas";
 import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -99,6 +100,11 @@ export default function App() {
               </button>
             </li>
             <li className="sidebar-item">
+              <button onClick={() => setView("AdminOfertas")} className="sidebar-btn">
+                Admin Ofertas
+              </button>
+            </li>
+            <li className="sidebar-item">
               <button onClick={() => setView("productos")} className="sidebar-btn">
                 Productos
               </button>
@@ -138,6 +144,7 @@ export default function App() {
         </header>
         <div className="content-wrapper">
           {view === null && renderDashboard()}
+          {view === "AdminOfertas" && <AdminOfertas />}
           {view === "productos" && <Productos />}
           {view === "categorias" && <Categorias />}
           {view === "ordenes" && <Ordenes />}

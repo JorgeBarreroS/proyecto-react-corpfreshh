@@ -8,7 +8,7 @@ import imagen1 from "../imagenes/tenis1.jpg";
 import imagen2 from "../imagenes/zapatosP.png"; 
 import imagen3 from "../imagenes/zapatosPPP.png"; 
 
-import Swal from 'sweetalert2'; // Importa Swal
+import Swal from 'sweetalert2';
 
 // Función para mostrar un Dato Curioso aleatorio
 const showFunFact = () => {
@@ -70,17 +70,61 @@ const showRandomStyleTip = () => {
 };
 
 const Home = () => {
+    const [ofertaActiva, setOfertaActiva] = useState(null);
     const [countdown, setCountdown] = useState({
-        days: 3,
-        hours: 8,
-        minutes: 45,
-        seconds: 30
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
     });
+    const [loading, setLoading] = useState(true);
+
+    // Obtener la oferta activa desde la API
+    useEffect(() => {
+        const fetchOfertaActiva = async () => {
+            try {
+                const response = await fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertaActiva.php");
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    setOfertaActiva(data.data);
+                    
+                    // Calcular la diferencia de tiempo para la cuenta regresiva
+                    const fechaFin = new Date(data.data.fecha_fin);
+                    const ahora = new Date();
+                    const diferencia = fechaFin - ahora;
+                    
+                    if (diferencia > 0) {
+                        const days = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((diferencia % (1000 * 60)) / 1000);
+                        
+                        setCountdown({ days, hours, minutes, seconds });
+                    }
+                }
+            } catch (error) {
+                console.error("Error al obtener oferta activa:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchOfertaActiva();
+    }, []);
 
     // Efecto para la cuenta regresiva
     useEffect(() => {
+        if (!ofertaActiva) return;
+        
         const timer = setInterval(() => {
             setCountdown(prev => {
+                // Si todos los valores están en 0, detener el contador
+                if (prev.days === 0 && prev.hours === 0 && prev.minutes === 0 && prev.seconds === 0) {
+                    clearInterval(timer);
+                    return prev;
+                }
+                
                 if (prev.seconds > 0) {
                     return { ...prev, seconds: prev.seconds - 1 };
                 } else if (prev.minutes > 0) {
@@ -95,7 +139,7 @@ const Home = () => {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [ofertaActiva]);
 
     return (
         <div className="main-container">
@@ -149,43 +193,64 @@ const Home = () => {
                 </div>
             </div>
             
-            {/* Banner de cuenta regresiva */}
-            <div className="bg-dark text-white py-5 my-5">
-                <div className="container">
-                    <div className="text-center">
-                        <h3 className="mb-3 fw-bold">Oferta Exclusiva por Tiempo Limitado</h3>
-                        <p className="mb-4">No te pierdas nuestra colección especial con descuentos únicos.</p>
-                        
-                        <div className="d-flex justify-content-center flex-wrap mb-4">
-                            <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "80px", color: "white"}}>
-                                <div className="fs-3 fw-bold">{countdown.days}</div>
-                                <div className="small text-uppercase">Días</div>
+            {/* Banner de oferta especial dinámica */}
+            {loading ? (
+                <div className="bg-dark text-white py-5 my-5 text-center">
+                    <div className="spinner-border text-light" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                    </div>
+                    <p className="mt-3">Cargando ofertas especiales...</p>
+                </div>
+            ) : ofertaActiva ? (
+                <div className="bg-dark text-white py-5 my-5">
+                    <div className="container">
+                        <div className="text-center">
+                            <h3 className="mb-3 fw-bold">{ofertaActiva.titulo}</h3>
+                            <p className="mb-4">{ofertaActiva.descripcion || "Oferta exclusiva por tiempo limitado"}</p>
+                            
+                            <div className="d-flex justify-content-center flex-wrap mb-4">
+                                <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "80px", color: "white"}}>
+                                    <div className="fs-3 fw-bold">{countdown.days}</div>
+                                    <div className="small text-uppercase">Días</div>
+                                </div>
+                                <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "80px", color: "white"}}>
+                                    <div className="fs-3 fw-bold">{countdown.hours}</div>
+                                    <div className="small text-uppercase">Horas</div>
+                                </div>
+                                <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "105px", color: "white"}}>
+                                    <div className="fs-3 fw-bold">{countdown.minutes}</div>
+                                    <div className="small text-uppercase">Minutos</div>
+                                </div>
+                                <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "105px", color: "white"}}>
+                                    <div className="fs-3 fw-bold">{countdown.seconds}</div>
+                                    <div className="small text-uppercase">Segundos</div>
+                                </div>
                             </div>
-                            <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "80px", color: "white"}}>
-                                <div className="fs-3 fw-bold">{countdown.hours}</div>
-                                <div className="small text-uppercase">Horas</div>
-                            </div>
-                            <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "105px", color: "white"}}>
-                                <div className="fs-3 fw-bold">{countdown.minutes}</div>
-                                <div className="small text-uppercase">Minutos</div>
-                            </div>
-                            <div className="bg-secondary bg-opacity-25 rounded p-3 mx-2 mb-2" style={{width: "105px", color: "white"}}>
-                                <div className="fs-3 fw-bold">{countdown.seconds}</div>
-                                <div className="small text-uppercase">Segundos</div>
+                            
+                            <div>
+                                <button className="btn btn-danger btn-lg me-2 mb-2">
+                                    -{ofertaActiva.porcentaje_descuento}% DESCUENTO
+                                </button>
+                                <button className="btn btn-light btn-lg mb-2">
+                                    {ofertaActiva.texto_boton || "Comprar Ahora"}
+                                </button>
                             </div>
                         </div>
-                        
-                        <div>
-                            <button className="btn btn-danger btn-lg me-2 mb-2">
-                                -40% DESCUENTO
-                            </button>
+                    </div>
+                </div>
+            ) : (
+                <div className="bg-dark text-white py-5 my-5">
+                    <div className="container">
+                        <div className="text-center">
+                            <h3 className="mb-3 fw-bold">Sin ofertas activas actualmente</h3>
+                            <p className="mb-4">¡No te pierdas nuestras próximas promociones!</p>
                             <button className="btn btn-light btn-lg mb-2">
-                                Comprar Ahora
+                                Ver Productos
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
             
             {/* Categorías */}
             <div className="container py-5">
@@ -231,8 +296,17 @@ const Home = () => {
                         <div className="col-md-6 mb-4 mb-md-0">
                             <h3 className="mb-3">Colección Premium 2025</h3>
                             <p className="mb-4">Descubre nuestras exclusivas piezas de diseñador con los materiales más innovadores y descuentos especiales por tiempo limitado.</p>
-                            <button className="btn btn-danger me-2">-30% DESCUENTO</button>
-                            <button className="btn btn-dark">Comprar Ahora</button>
+                            {ofertaActiva ? (
+                                <>
+                                    <button className="btn btn-danger me-2">-{ofertaActiva.porcentaje_descuento}% DESCUENTO</button>
+                                    <button className="btn btn-dark">{ofertaActiva.texto_boton || "Comprar Ahora"}</button>
+                                </>
+                            ) : (
+                                <>
+                                    <button className="btn btn-danger me-2">-30% DESCUENTO</button>
+                                    <button className="btn btn-dark">Comprar Ahora</button>
+                                </>
+                            )}
                         </div>
                         <div className="col-md-6">
                             <div className="card shadow">
@@ -320,7 +394,6 @@ const Home = () => {
                 </div>
             </div>
             
-        
             <Footer />
         </div>
     );

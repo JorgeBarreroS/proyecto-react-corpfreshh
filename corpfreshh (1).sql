@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-04-2025 a las 23:16:34
+-- Tiempo de generación: 16-04-2025 a las 23:31:08
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -251,6 +251,37 @@ INSERT INTO `comentarios` (`id_comentario`, `id_usuario`, `id_producto`, `coment
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `ofertas_especiales`
+--
+
+DROP TABLE IF EXISTS `ofertas_especiales`;
+CREATE TABLE `ofertas_especiales` (
+  `id_oferta` int(11) NOT NULL,
+  `titulo` varchar(255) NOT NULL,
+  `descripcion` varchar(255) NOT NULL,
+  `porcentaje_descuento` int(11) NOT NULL DEFAULT 0,
+  `fecha_inicio` datetime NOT NULL,
+  `fecha_fin` datetime NOT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 1,
+  `texto_boton` varchar(100) DEFAULT 'Comprar Ahora',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `ofertas_especiales`:
+--
+
+--
+-- Volcado de datos para la tabla `ofertas_especiales`
+--
+
+INSERT INTO `ofertas_especiales` (`id_oferta`, `titulo`, `descripcion`, `porcentaje_descuento`, `fecha_inicio`, `fecha_fin`, `activo`, `texto_boton`, `created_at`, `updated_at`) VALUES
+(1, 'promo', 'nuevo', 19, '2025-04-16 16:28:00', '2025-04-16 16:34:00', 1, 'Comprar Ahora', '2025-04-16 21:28:48', '2025-04-16 21:29:01');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `ordenes`
 --
 
@@ -275,7 +306,7 @@ CREATE TABLE `ordenes` (
 --
 
 INSERT INTO `ordenes` (`id_venta`, `fecha_venta`, `impuesto_venta`, `total_venta`, `estado_venta`, `id_usuario`) VALUES
-(1, '2023-01-01', '19%', 59500.00, 'Completado', 1),
+(1, '2023-01-01', '19%', 59500.00, 'Completada', 1),
 (2, '2023-01-15', '19%', 120000.00, 'Completado', 1),
 (3, '2023-03-01', '19%', 178500.00, 'Completado', 2),
 (4, '2023-04-01', '19%', 142800.00, 'Completado', 2),
@@ -492,7 +523,7 @@ INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `apellido_usuario`, `tele
 (7, 'Carolina', 'Gutiérrez', '473829105', 'carolina@example.com', 'Calle 567', 'Casa 3', 'Cúcuta', 'Colombia', '???Mx?yj	Y??YQ?', 2),
 (8, 'Andrés', 'Díaz', '918273645', 'andres@example.com', 'Carrera 345', 'Apartamento 7', 'Manizales', 'Colombia', 'wr??jG? v??', 2),
 (9, 'Claudia', 'Herrera', '827364910', 'claudia@example.com', 'Avenida 678', 'Oficina 4', 'Pereira', 'Colombia', 'c?B??ݨ???p???w', 2),
-(10, 'Sofía', 'Paredes', '564738920', 'sofia@example.com', 'Calle 303', 'Casa 6', 'Bogotá', 'Colombia', '5?p??\\???!???}$', 2),
+(10, 'Sofíar', 'fffff', '564738920', 'sofia@example.com', 'Calle 303', 'Casa 6', 'Bogotá', 'Colombia', '5?p??\\???!???}$', 2),
 (11, 'David', 'Lozano', '738291046', 'david@example.com', 'Avenida 909', 'Piso 5', 'Medellín', 'Colombia', '?,???q??\"]???\ZC?', 2),
 (12, 'Lucía', 'Hernández', '849302170', 'lucia@example.com', 'Carrera 404', 'Oficina 3', 'Cali', 'Colombia', 'Y?????T??U??jj', 2),
 (13, 'Felipe', 'Vargas', '938470562', 'felipe@example.com', 'Calle 212', 'Local 4', 'Barranquilla', 'Colombia', '?3g?k=f?#', 2),
@@ -515,7 +546,9 @@ INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `apellido_usuario`, `tele
 (30, 'Camila', 'Cardenas', '738291056', 'camila@example.com', 'Calle 909', 'Casa 2', 'Cartagena', 'Colombia', '?3g?k=f?#', 2),
 (31, 'carlos', 'jimenez', '3159786425', 'holabuendia@gmail.com', 'calle 5', 'calle 6', 'bogota', 'colombia', '???????a???>??', 2),
 (32, 'juanito', 'elmascapito', '3159786425', 'perroiguanita@gmail.com', 'calle 6', 'calle 7', 'bogota', 'colombia', 'y???ѩ??1z???(??', 2),
-(50, 'jorge', 'barrero', '5224522', 'jorgebarrero44@gmail.com', '', '', '', '', 'UzFJMnY5Y2RXbk5HcC9xMU11a3k2dz0900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', 1);
+(50, 'jorge', 'barrero', '5224522', 'jorgebarrero44@gmail.com', '', '', '', '', 'UjVKa2Z3Z3ZoWS9uZ05NQ3lvZkpEUT0900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', 1),
+(52, 'Sofíarrtr', 'fffff', '3432', 'sofia555@example.com', 'Calle 303', 'Casa 6', 'Bogotá', 'Colombia', 'UzFJMnY5Y2RXbk5HcC9xMU11a3k2dz0900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', 2),
+(53, 'melor', 'shhd', '5224522', 'mejor5646546@gmail.com', '', '', '', '', 'UzFJMnY5Y2RXbk5HcC9xMU11a3k2dz0900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', 2);
 
 --
 -- Índices para tablas volcadas
@@ -548,6 +581,12 @@ ALTER TABLE `comentarios`
   ADD PRIMARY KEY (`id_comentario`),
   ADD KEY `usuarioss` (`id_usuario`),
   ADD KEY `producto` (`id_producto`);
+
+--
+-- Indices de la tabla `ofertas_especiales`
+--
+ALTER TABLE `ofertas_especiales`
+  ADD PRIMARY KEY (`id_oferta`);
 
 --
 -- Indices de la tabla `ordenes`
@@ -601,10 +640,22 @@ ALTER TABLE `categoria`
   MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT de la tabla `codigos_reset`
+--
+ALTER TABLE `codigos_reset`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
   MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT de la tabla `ofertas_especiales`
+--
+ALTER TABLE `ofertas_especiales`
+  MODIFY `id_oferta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `ordenes`
@@ -634,7 +685,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- Restricciones para tablas volcadas
