@@ -69,9 +69,3 @@ const NequiPago = ({ carrito }) => {
 
 export default NequiPago;
 
-// Estilos usando Tailwind CSS
-/*
-.btn-nequi {
-  @apply bg-purple-800 text-white py-2 px-4 rounded-lg transition-all duration-300 hover:bg-purple-600;
-}
-*/

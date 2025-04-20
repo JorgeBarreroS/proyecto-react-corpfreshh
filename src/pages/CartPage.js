@@ -168,7 +168,7 @@ const CartPage = () => {
               </Link>
               <TotalPrice total={total} />
               <button onClick={handleNequiPayment} className="btn btn-primary btn-sm mt-2 mt-md-0">
-                Ir a pagar con Nequi
+                Ir a pagar
               </button>
             </div>
           </div>
