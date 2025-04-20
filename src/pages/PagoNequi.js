@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom'; // Se añadió Link
 import Navbar from '../components/Navbar';
 
 const PagoNequi = () => {
@@ -7,7 +7,7 @@ const PagoNequi = () => {
   const { carrito, total } = location.state || { carrito: [], total: '0.00' };
 
   const redirigirANequi = () => {
-    window.location.href = 'https://www.nequi.com.co/'; // Redirección directa a Nequi
+    window.location.href = 'https://www.nequi.com.co/';
   };
 
   return (
@@ -27,6 +27,13 @@ const PagoNequi = () => {
           </ul>
           <h3 className="text-center mt-4">Total a pagar: ${total}</h3>
           <div className="text-center mt-4">
+            <Link to="/pago-casa" state={{ carrito, total }}>
+              <button className="btn btn-success">
+                Proceder a pagar en casa
+              </button>
+            </Link>
+          </div>
+          <div className="text-center mt-4">
             <button className="btn btn-success" onClick={redirigirANequi}>
               Proceder a pagar con Nequi
             </button>
@@ -38,3 +45,4 @@ const PagoNequi = () => {
 };
 
 export default PagoNequi;
+
