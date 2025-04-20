@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './services/AuthContext'; // Ruta corregida
-import { UserProvider } from './services/UserContext'; // Ruta unificada
+import { UserProvider } from './services/UserContext'; // Ruta unificada    
 
 import Home from './pages/Home';
 import Productos from './pages/Productos';
@@ -19,6 +19,7 @@ import MiInformacion from "./pages/MiInformacion";
 import Crud from "./pages/Crud";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import PagoNequi from './pages/PagoNequi'; // Agregada la importación de la página de pago con Nequi
+import PagoCasa from './pages/PagoCasa'; // Agregada la importación de la página de pago en casa
 
 function App() {
     return (
@@ -41,6 +42,7 @@ function App() {
                         <Route path="/mi-informacion" element={<MiInformacion />} />
                         <Route path="/crud" element={ <ProtectedRoute> <Crud /> </ProtectedRoute>} />
                         <Route path="/pago-nequi" element={<PagoNequi />} />
+                        <Route path="/pago-casa" element={<PagoCasa />} /> 
                     </Routes>
                 </Router>
             </AuthProvider>
