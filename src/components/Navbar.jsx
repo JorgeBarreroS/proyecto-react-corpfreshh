@@ -27,7 +27,15 @@ const Navbar = () => {
   useEffect(() => {
     const fetchCartCount = async () => {
       try {
-        const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+        // Verificar si hay un usuario autenticado y obtener su email
+        if (!authState || !authState.email) {
+          setCartCount(0);
+          return;
+        }
+
+        console.log("Fetching cart count for user:", authState.email);
+
+        const response = await fetch(`http://localhost/corpfresh-php/carrito/carrito.php?usuario=${authState.email}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -36,19 +44,43 @@ const Navbar = () => {
           }
         });
 
-        if (!response.ok) return;
+        // Verificar que la respuesta sea válida
+        if (!response.ok) {
+          console.error("Error en la respuesta del servidor:", response.status);
+          return;
+        }
 
-        const data = await response.json();
-        if (data.cart && Array.isArray(data.cart)) {
-          const totalCantidad = data.cart.reduce((acc, item) => acc + item.cantidad, 0);
-          setCartCount(totalCantidad);
+        // Verificar que el content-type sea JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("La respuesta no es JSON, content-type:", contentType);
+          const textResponse = await response.text();
+          console.error("Respuesta como texto:", textResponse);
+          return;
+        }
+
+        // Intentar parsear como JSON
+        try {
+          const data = await response.json();
+          
+          if (Array.isArray(data)) {
+            const totalCantidad = data.reduce((acc, item) => acc + (parseInt(item.cantidad) || 0), 0);
+            setCartCount(totalCantidad);
+          } else {
+            console.error("La respuesta no es un array:", data);
+            setCartCount(0);
+          }
+        } catch (parseError) {
+          console.error("Error al parsear JSON:", parseError);
+          setCartCount(0);
         }
       } catch (error) {
         console.error("No se pudo cargar el conteo del carrito:", error);
+        setCartCount(0);
       }
     };
 
-    if (authState) {
+    if (authState && authState.email) {
       fetchCartCount();
     } else {
       setCartCount(0);

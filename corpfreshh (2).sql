@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-04-2025 a las 23:31:08
+-- Tiempo de generación: 21-04-2025 a las 07:16:50
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -176,6 +176,37 @@ INSERT INTO `articulos_ordenes` (`id_detalle_venta`, `id_venta`, `id_producto`, 
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `carrito`
+--
+
+DROP TABLE IF EXISTS `carrito`;
+CREATE TABLE `carrito` (
+  `id_carrito` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `precio` decimal(10,2) NOT NULL,
+  `imagen` varchar(255) NOT NULL,
+  `cantidad` int(11) NOT NULL DEFAULT 1,
+  `usuario` varchar(255) NOT NULL,
+  `color` varchar(50) DEFAULT NULL,
+  `talla` varchar(50) DEFAULT NULL,
+  `fecha_agregado` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `carrito`:
+--
+
+--
+-- Volcado de datos para la tabla `carrito`
+--
+
+INSERT INTO `carrito` (`id_carrito`, `id_producto`, `nombre`, `precio`, `imagen`, `cantidad`, `usuario`, `color`, `talla`, `fecha_agregado`) VALUES
+(4, 1, 'Camisa polo verde', 139124.00, 'imagenes/42631_10.webp', 14, 'jorgebarrero44@gmail.com', NULL, NULL, '2025-04-21 04:55:53');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `categoria`
 --
 
@@ -277,7 +308,7 @@ CREATE TABLE `ofertas_especiales` (
 --
 
 INSERT INTO `ofertas_especiales` (`id_oferta`, `titulo`, `descripcion`, `porcentaje_descuento`, `fecha_inicio`, `fecha_fin`, `activo`, `texto_boton`, `created_at`, `updated_at`) VALUES
-(1, 'promo', 'nuevo', 19, '2025-04-16 16:28:00', '2025-04-16 16:34:00', 1, 'Comprar Ahora', '2025-04-16 21:28:48', '2025-04-16 21:29:01');
+(6, 'descuentos de ultima hora', 'descuento en productos relacionados a camisas', 10, '2025-04-20 17:11:00', '2025-04-20 17:07:00', 1, 'Comprar Ahora', '2025-04-20 22:11:11', '2025-04-20 22:11:11');
 
 -- --------------------------------------------------------
 
@@ -563,6 +594,14 @@ ALTER TABLE `articulos_ordenes`
   ADD KEY `id_producto` (`id_producto`);
 
 --
+-- Indices de la tabla `carrito`
+--
+ALTER TABLE `carrito`
+  ADD PRIMARY KEY (`id_carrito`),
+  ADD KEY `id_usuario` (`usuario`),
+  ADD KEY `id_producto` (`id_producto`);
+
+--
 -- Indices de la tabla `categoria`
 --
 ALTER TABLE `categoria`
@@ -634,6 +673,12 @@ ALTER TABLE `articulos_ordenes`
   MODIFY `id_detalle_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
+-- AUTO_INCREMENT de la tabla `carrito`
+--
+ALTER TABLE `carrito`
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
@@ -649,13 +694,13 @@ ALTER TABLE `codigos_reset`
 -- AUTO_INCREMENT de la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
-  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `ofertas_especiales`
 --
 ALTER TABLE `ofertas_especiales`
-  MODIFY `id_oferta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_oferta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `ordenes`
