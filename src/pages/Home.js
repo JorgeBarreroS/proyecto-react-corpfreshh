@@ -5,9 +5,11 @@ import Carousel from '../components/Carousel';
 import ProductCard from '../components/ProductCard'; 
 import Footer from '../components/Footer'; 
 
-import imagen1 from "../imagenes/tenis1.jpg"; 
+import imagen1 from "../imagenes/42631_10.webp"; 
 import imagen2 from "../imagenes/zapatosP.png"; 
-import imagen3 from "../imagenes/zapatosPPP.png"; 
+import imagen3 from "../imagenes/zapatosPPP.png";
+import imagen4 from "../imagenes/tenis12.jpg";
+import imagen5 from "../imagenes/jean.jfif";  
 
 import Swal from 'sweetalert2';
 
@@ -170,7 +172,7 @@ const Home = () => {
                 <div className="row g-4">
                     <div className="col-md-4 mb-4">
                         <ProductCard
-                            imgSrc={imagen1}
+                            imgSrc={imagen4}
                             title="Louis Vuitton Skate Black"
                             description="Están hechos con materiales exóticos y exclusivos para el máximo confort."
                             price="$10.736.439"
@@ -263,9 +265,7 @@ const Home = () => {
                         <div className="card shadow-sm h-100">
                             <div className="card-body text-center">
                                 <img src={imagen1} alt="Sneakers Exclusivos" className="img-fluid mb-3" style={{maxHeight: "150px", objectFit: "contain"}} />
-                                <h4>Sneakers Exclusivos</h4>
-                                <p className="text-muted">42 productos</p>
-                                <button className="btn btn-outline-dark mt-2">Ver Colección</button>
+                                <h4>Camisas Exclusivas</h4>
                             </div>
                         </div>
                     </div>
@@ -273,124 +273,15 @@ const Home = () => {
                         <div className="card shadow-sm h-100">
                             <div className="card-body text-center">
                                 <img src={imagen2} alt="Colección Urbana" className="img-fluid mb-3" style={{maxHeight: "150px", objectFit: "contain"}} />
-                                <h4>Colección Urbana</h4>
-                                <p className="text-muted">38 productos</p>
-                                <button className="btn btn-outline-dark mt-2">Ver Colección</button>
+                                <h4>Sneakers Exclusivos</h4>
                             </div>
                         </div>
                     </div>
                     <div className="col-md-4 mb-4">
                         <div className="card shadow-sm h-100">
                             <div className="card-body text-center">
-                                <img src={imagen3} alt="Edición Limitada" className="img-fluid mb-3" style={{maxHeight: "150px", objectFit: "contain"}} />
+                                <img src={imagen5} alt="Edición Limitada" className="img-fluid mb-3" style={{maxHeight: "150px", objectFit: "contain"}} />
                                 <h4>Edición Limitada</h4>
-                                <p className="text-muted">15 productos</p>
-                                <button className="btn btn-outline-dark mt-2">Ver Colección</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            {/* Banner promocional */}
-            <div className="bg-light py-5 my-5">
-                <div className="container">
-                    <div className="row align-items-center">
-                        <div className="col-md-6 mb-4 mb-md-0">
-                            <h3 className="mb-3">Colección Premium 2025</h3>
-                            <p className="mb-4">Descubre nuestras exclusivas piezas de diseñador con los materiales más innovadores y descuentos especiales por tiempo limitado.</p>
-                            {ofertaActiva ? (
-                                <>
-                                    <button className="btn btn-danger me-2">-{ofertaActiva.porcentaje_descuento}% DESCUENTO</button>
-                                    <button className="btn btn-dark">{ofertaActiva.texto_boton || "Comprar Ahora"}</button>
-                                </>
-                            ) : (
-                                <>
-                                    <button className="btn btn-danger me-2">-30% DESCUENTO</button>
-                                    <button className="btn btn-dark">Comprar Ahora</button>
-                                </>
-                            )}
-                        </div>
-                        <div className="col-md-6">
-                            <div className="card shadow">
-                                <div className="card-body">
-                                    <div className="d-flex align-items-center mb-3">
-                                        <div className="rounded-circle bg-danger me-2" style={{width: "10px", height: "10px"}}></div>
-                                        <small className="text-muted">Edición Limitada</small>
-                                    </div>
-                                    <h4 className="card-title">Colección Exclusiva</h4>
-                                    <p className="card-text">Cada par de nuestra colección premium está numerado y certificado. Sólo producimos 500 unidades de cada modelo para garantizar exclusividad.</p>
-                                    <a href="#" className="text-dark fw-bold text-decoration-none">
-                                        Descubrir más <i className="fas fa-long-arrow-alt-right ms-1"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            {/* Testimonios */}
-            <div className="container py-5">
-                <h2 className="text-center mb-5">Lo que dicen nuestros clientes</h2>
-                <div className="row">
-                    <div className="col-md-4 mb-4">
-                        <div className="card h-100 shadow-sm">
-                            <div className="card-body">
-                                <div className="d-flex align-items-center mb-3">
-                                    <div className="bg-secondary rounded-circle me-3" style={{width: "50px", height: "50px"}}></div>
-                                    <div>
-                                        <h5 className="mb-0">Carlos Rodríguez</h5>
-                                        <div className="text-warning">
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className="card-text">"Las zapatillas que compré superaron mis expectativas. Comodidad y estilo en un solo producto."</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-4 mb-4">
-                        <div className="card h-100 shadow-sm">
-                            <div className="card-body">
-                                <div className="d-flex align-items-center mb-3">
-                                    <div className="bg-secondary rounded-circle me-3" style={{width: "50px", height: "50px"}}></div>
-                                    <div>
-                                        <h5 className="mb-0">María González</h5>
-                                        <div className="text-warning">
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="far fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className="card-text">"El servicio al cliente es excelente y los productos son de primera calidad."</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-4 mb-4">
-                        <div className="card h-100 shadow-sm">
-                            <div className="card-body">
-                                <div className="d-flex align-items-center mb-3">
-                                    <div className="bg-secondary rounded-circle me-3" style={{width: "50px", height: "50px"}}></div>
-                                    <div>
-                                        <h5 className="mb-0">Juan Pérez</h5>
-                                        <div className="text-warning">
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                            <i className="fas fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className="card-text">"Mi colección de sneakers ha crecido gracias a los excelentes precios y la calidad de esta tienda."</p>
                             </div>
                         </div>
                     </div>
