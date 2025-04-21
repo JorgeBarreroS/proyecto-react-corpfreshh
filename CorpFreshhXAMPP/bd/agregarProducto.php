@@ -27,7 +27,8 @@ if (isset($data->nombre_producto) && isset($data->precio_producto)) {
                 precio_producto, 
                 imagen_producto, 
                 nombre_marca, 
-                talla
+                talla,
+                id_categoria
             ) VALUES (
                 :nombre_producto,
                 :descripcion_producto,
@@ -35,7 +36,8 @@ if (isset($data->nombre_producto) && isset($data->precio_producto)) {
                 :precio_producto,
                 :imagen_producto,
                 :nombre_marca,
-                :talla
+                :talla,
+                :id_categoria
             )";
 
     $stmt = $pdo->prepare($sql);
@@ -46,6 +48,7 @@ if (isset($data->nombre_producto) && isset($data->precio_producto)) {
     $stmt->bindParam(':imagen_producto', $data->imagen_producto);
     $stmt->bindParam(':nombre_marca', $data->nombre_marca);
     $stmt->bindParam(':talla', $data->talla);
+    $stmt->bindParam(':id_categoria', $data->id_categoria);
 
     // Ejecutar la consulta
     if ($stmt->execute()) {

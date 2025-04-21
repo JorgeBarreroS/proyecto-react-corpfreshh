@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 
 export default function Productos() {
   const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [error, setError] = useState(null);
   const [editingProductoId, setEditingProductoId] = useState(null);
   const [editedProducto, setEditedProducto] = useState({});
@@ -19,7 +20,8 @@ export default function Productos() {
     precio_producto: "",
     imagen_producto: "",
     nombre_marca: "",
-    talla: ""
+    talla: "",
+    id_categoria: ""
   });
 
   const fetchProductos = () => {
@@ -34,8 +36,21 @@ export default function Productos() {
       .catch((err) => setError(err.message));
   };
 
+  const fetchCategorias = () => {
+    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerCategorias.php")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error al obtener categorías");
+        }
+        return response.json();
+      })
+      .then((data) => setCategorias(data))
+      .catch((err) => setError(err.message));
+  };
+
   useEffect(() => {
     fetchProductos();
+    fetchCategorias();
   }, []);
 
   const handleEdit = (producto) => {
@@ -176,7 +191,8 @@ export default function Productos() {
             precio_producto: "",
             imagen_producto: "",
             nombre_marca: "",
-            talla: ""
+            talla: "",
+            id_categoria: ""
           });
           
           // Cerrar el formulario
@@ -204,6 +220,12 @@ export default function Productos() {
           text: "Error al procesar la solicitud: " + error.message,
         });
       });
+  };
+
+  // Función para obtener el nombre de la categoría según el ID
+  const getNombreCategoria = (id_categoria) => {
+    const categoria = categorias.find(cat => cat.id_categoria === id_categoria);
+    return categoria ? categoria.nombre_categoria : "Sin categoría";
   };
 
   // Filtrar productos por búsqueda
@@ -331,6 +353,24 @@ export default function Productos() {
                 className="w-full p-2 border border-gray-300 rounded"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Categoría
+              </label>
+              <select
+                name="id_categoria"
+                value={newProducto.id_categoria}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              >
+                <option value="">Selecciona una categoría</option>
+                {categorias.map((categoria) => (
+                  <option key={categoria.id_categoria} value={categoria.id_categoria}>
+                    {categoria.nombre_categoria}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="md:col-span-2 lg:col-span-3 flex justify-end mt-4">
               <button
                 type="button"
@@ -375,6 +415,7 @@ export default function Productos() {
                 <th className="py-3 px-4">Imagen</th>
                 <th className="py-3 px-4">Marca</th>
                 <th className="py-3 px-4">Talla</th>
+                <th className="py-3 px-4">Categoría</th>
                 <th className="py-3 px-4">Acciones</th>
               </tr>
             </thead>
@@ -477,6 +518,25 @@ export default function Productos() {
                         producto.talla
                       )}
                     </td>
+                    <td className="py-3 px-4">
+                      {editingProductoId === producto.id_producto ? (
+                        <select
+                          name="id_categoria"
+                          value={editedProducto.id_categoria}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                        >
+                          <option value="">Selecciona una categoría</option>
+                          {categorias.map((categoria) => (
+                            <option key={categoria.id_categoria} value={categoria.id_categoria}>
+                              {categoria.nombre_categoria}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        getNombreCategoria(producto.id_categoria)
+                      )}
+                    </td>
                     <td className="py-3 px-4 flex items-center space-x-2">
                       {editingProductoId === producto.id_producto ? (
                         <button
@@ -508,7 +568,7 @@ export default function Productos() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="9" className="py-4 px-4 text-center text-gray-500">
+                  <td colSpan="10" className="py-4 px-4 text-center text-gray-500">
                     No se encontraron productos
                   </td>
                 </tr>
