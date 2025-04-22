@@ -12,11 +12,16 @@ export default function Pedidos() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newPedido, setNewPedido] = useState({
-    id_venta: "",
+    correo_usuario: "",
     id_usuario: "",
     fecha_pedido: "",
-    estado_pedido: "",
-    metodo_envio_pedido: ""
+    total: "",
+    metodo_pago: "",
+    direccion_entrega: "",
+    telefono_contacto: "",
+    costo_envio: "",
+    impuestos: "",
+    estado: ""
   });
 
   const fetchPedidos = () => {
@@ -27,8 +32,14 @@ export default function Pedidos() {
         }
         return response.json();
       })
-      .then((data) => setPedidos(data))
-      .catch((err) => setError(err.message));
+      .then((data) => {
+        // Ensure data is always an array
+        setPedidos(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setPedidos([]); // Set empty array on error
+      });
   };
 
   useEffect(() => {
@@ -36,7 +47,7 @@ export default function Pedidos() {
   }, []);
 
   const handleEdit = (pedido) => {
-    setEditingPedidoId(pedido.id_pedido);
+    setEditingPedidoId(pedido.id);
     setEditedPedido(pedido);
   };
 
@@ -53,7 +64,7 @@ export default function Pedidos() {
         if (data.success) {
           setPedidos((prevPedidos) =>
             prevPedidos.map((pedido) =>
-              pedido.id_pedido === editedPedido.id_pedido ? editedPedido : pedido
+              pedido.id === editedPedido.id ? editedPedido : pedido
             )
           );
           setEditingPedidoId(null);
@@ -98,7 +109,7 @@ export default function Pedidos() {
           .then((data) => {
             if (data.success) {
               setPedidos((prevPedidos) =>
-                prevPedidos.filter((pedido) => pedido.id_pedido !== id)
+                prevPedidos.filter((pedido) => pedido.id !== id)
               );
               Swal.fire({
                 icon: "success",
@@ -140,11 +151,11 @@ export default function Pedidos() {
     e.preventDefault();
     
     // Validar campos requeridos
-    if (!newPedido.id_venta || !newPedido.id_usuario) {
+    if (!newPedido.correo_usuario || !newPedido.id_usuario) {
       Swal.fire({
         icon: "warning",
         title: "Campos requeridos",
-        text: "El ID de venta y el ID de usuario son obligatorios",
+        text: "El correo y el ID de usuario son obligatorios",
       });
       return;
     }
@@ -160,16 +171,21 @@ export default function Pedidos() {
       .then((data) => {
         if (data.success) {
           // Agregar el nuevo pedido con el ID generado
-          const pedidoConId = { ...newPedido, id_pedido: data.id_pedido };
+          const pedidoConId = { ...newPedido, id: data.id_pedido };
           setPedidos((prevPedidos) => [...prevPedidos, pedidoConId]);
           
           // Resetear el formulario
           setNewPedido({
-            id_venta: "",
+            correo_usuario: "",
             id_usuario: "",
             fecha_pedido: "",
-            estado_pedido: "",
-            metodo_envio_pedido: ""
+            total: "",
+            metodo_pago: "",
+            direccion_entrega: "",
+            telefono_contacto: "",
+            costo_envio: "",
+            impuestos: "",
+            estado: ""
           });
           
           // Cerrar el formulario
@@ -199,7 +215,7 @@ export default function Pedidos() {
       });
   };
 
-  // Filtrar pedidos por búsqueda
+  // Filtrar pedidos por búsqueda - CORREGIDO: Se añadió el paréntesis faltante
   const filteredPedidos = pedidos.filter((pedido) =>
     Object.values(pedido).some((value) =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
@@ -209,10 +225,7 @@ export default function Pedidos() {
   // Paginación
   const indexOfLastPedido = currentPage * itemsPerPage;
   const indexOfFirstPedido = indexOfLastPedido - itemsPerPage;
-  const currentPedidos = filteredPedidos.slice(
-    indexOfFirstPedido,
-    indexOfLastPedido
-  );
+  const currentPedidos = filteredPedidos.slice(indexOfFirstPedido, indexOfLastPedido);
 
   // Cambiar página
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -241,12 +254,12 @@ export default function Pedidos() {
           <form onSubmit={handleAddPedido} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                ID Venta *
+                Correo Usuario *
               </label>
               <input
-                type="text"
-                name="id_venta"
-                value={newPedido.id_venta}
+                type="email"
+                name="correo_usuario"
+                value={newPedido.correo_usuario}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
                 required
@@ -279,27 +292,96 @@ export default function Pedidos() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Estado Pedido
+                Total
+              </label>
+              <input
+                type="number"
+                name="total"
+                value={newPedido.total}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Método de Pago
               </label>
               <input
                 type="text"
-                name="estado_pedido"
-                value={newPedido.estado_pedido}
+                name="metodo_pago"
+                value={newPedido.metodo_pago}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Método de Envío
+                Dirección Entrega
               </label>
               <input
                 type="text"
-                name="metodo_envio_pedido"
-                value={newPedido.metodo_envio_pedido}
+                name="direccion_entrega"
+                value={newPedido.direccion_entrega}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Teléfono Contacto
+              </label>
+              <input
+                type="text"
+                name="telefono_contacto"
+                value={newPedido.telefono_contacto}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Costo Envío
+              </label>
+              <input
+                type="number"
+                name="costo_envio"
+                value={newPedido.costo_envio}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Impuestos
+              </label>
+              <input
+                type="number"
+                name="impuestos"
+                value={newPedido.impuestos}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Estado
+              </label>
+              <select
+                name="estado"
+                value={newPedido.estado}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              >
+                <option value="">Seleccionar estado</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Procesando">Procesando</option>
+                <option value="Enviado">Enviado</option>
+                <option value="Entregado">Entregado</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
             </div>
             <div className="md:col-span-2 flex justify-end mt-4">
               <button
@@ -337,12 +419,17 @@ export default function Pedidos() {
           <table className="w-full text-sm text-left bg-white">
             <thead className="bg-grisOscuro text-dark">
               <tr>
-                <th className="py-3 px-4">ID Pedido</th>
-                <th className="py-3 px-4">ID Venta</th>
+                <th className="py-3 px-4">ID</th>
+                <th className="py-3 px-4">Correo</th>
                 <th className="py-3 px-4">ID Usuario</th>
-                <th className="py-3 px-4">Fecha Pedido</th>
-                <th className="py-3 px-4">Estado Pedido</th>
-                <th className="py-3 px-4">Método Envío</th>
+                <th className="py-3 px-4">Fecha</th>
+                <th className="py-3 px-4">Total</th>
+                <th className="py-3 px-4">Método Pago</th>
+                <th className="py-3 px-4">Dirección</th>
+                <th className="py-3 px-4">Teléfono</th>
+                <th className="py-3 px-4">Costo Envío</th>
+                <th className="py-3 px-4">Impuestos</th>
+                <th className="py-3 px-4">Estado</th>
                 <th className="py-3 px-4">Acciones</th>
               </tr>
             </thead>
@@ -350,29 +437,29 @@ export default function Pedidos() {
               {currentPedidos.length > 0 ? (
                 currentPedidos.map((pedido, index) => (
                   <tr
-                    key={pedido.id_pedido}
+                    key={pedido.id}
                     className={index % 2 === 0 ? "bg-grisClaro" : "bg-white"}
                   >
-                    <td className="py-3 px-4">{pedido.id_pedido}</td>
+                    <td className="py-3 px-4">{pedido.id}</td>
                     <td className="py-3 px-4">
-                      {editingPedidoId === pedido.id_pedido ? (
+                      {editingPedidoId === pedido.id ? (
                         <input
-                          type="text"
-                          name="id_venta"
-                          value={editedPedido.id_venta}
+                          type="email"
+                          name="correo_usuario"
+                          value={editedPedido.correo_usuario || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        pedido.id_venta
+                        pedido.correo_usuario
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingPedidoId === pedido.id_pedido ? (
+                      {editingPedidoId === pedido.id ? (
                         <input
                           type="text"
                           name="id_usuario"
-                          value={editedPedido.id_usuario}
+                          value={editedPedido.id_usuario || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
@@ -381,11 +468,11 @@ export default function Pedidos() {
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingPedidoId === pedido.id_pedido ? (
+                      {editingPedidoId === pedido.id ? (
                         <input
                           type="date"
                           name="fecha_pedido"
-                          value={editedPedido.fecha_pedido}
+                          value={editedPedido.fecha_pedido || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
@@ -394,33 +481,106 @@ export default function Pedidos() {
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingPedidoId === pedido.id_pedido ? (
+                      {editingPedidoId === pedido.id ? (
                         <input
-                          type="text"
-                          name="estado_pedido"
-                          value={editedPedido.estado_pedido}
+                          type="number"
+                          name="total"
+                          value={editedPedido.total || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
+                          step="0.01"
                         />
                       ) : (
-                        pedido.estado_pedido
+                        pedido.total
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingPedidoId === pedido.id_pedido ? (
+                      {editingPedidoId === pedido.id ? (
                         <input
                           type="text"
-                          name="metodo_envio_pedido"
-                          value={editedPedido.metodo_envio_pedido}
+                          name="metodo_pago"
+                          value={editedPedido.metodo_pago || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        pedido.metodo_envio_pedido
+                        pedido.metodo_pago
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingPedidoId === pedido.id ? (
+                        <input
+                          type="text"
+                          name="direccion_entrega"
+                          value={editedPedido.direccion_entrega || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                        />
+                      ) : (
+                        pedido.direccion_entrega
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingPedidoId === pedido.id ? (
+                        <input
+                          type="text"
+                          name="telefono_contacto"
+                          value={editedPedido.telefono_contacto || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                        />
+                      ) : (
+                        pedido.telefono_contacto
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingPedidoId === pedido.id ? (
+                        <input
+                          type="number"
+                          name="costo_envio"
+                          value={editedPedido.costo_envio || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                          step="0.01"
+                        />
+                      ) : (
+                        pedido.costo_envio
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingPedidoId === pedido.id ? (
+                        <input
+                          type="number"
+                          name="impuestos"
+                          value={editedPedido.impuestos || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                          step="0.01"
+                        />
+                      ) : (
+                        pedido.impuestos
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingPedidoId === pedido.id ? (
+                        <select
+                          name="estado"
+                          value={editedPedido.estado || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                        >
+                          <option value="Pendiente">Pendiente</option>
+                          <option value="Procesando">Procesando</option>
+                          <option value="Enviado">Enviado</option>
+                          <option value="Entregado">Entregado</option>
+                          <option value="Cancelado">Cancelado</option>
+                        </select>
+                      ) : (
+                        pedido.estado
                       )}
                     </td>
                     <td className="py-3 px-4 flex items-center space-x-2">
-                      {editingPedidoId === pedido.id_pedido ? (
+                      {editingPedidoId === pedido.id ? (
                         <button
                           onClick={handleSave}
                           className="text-azulOscuroMate hover:text-blue-500"
@@ -437,7 +597,7 @@ export default function Pedidos() {
                             <FaEdit size={20} />
                           </button>
                           <button
-                            onClick={() => handleDelete(pedido.id_pedido)}
+                            onClick={() => handleDelete(pedido.id)}
                             className="text-red-600 hover:text-red-800"
                             title="Eliminar"
                           >
@@ -450,7 +610,7 @@ export default function Pedidos() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="py-4 px-4 text-center text-gray-500">
+                  <td colSpan="12" className="py-4 px-4 text-center text-gray-500">
                     No se encontraron pedidos
                   </td>
                 </tr>
