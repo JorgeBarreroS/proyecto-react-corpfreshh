@@ -182,7 +182,7 @@ const MisPedidos = () => {
                             <p>Cuando realices un pedido, aparecerá aquí.</p>
                             <button 
                                 className="btn btn-primary mt-3"
-                                onClick={() => navigate('/tienda')}
+                                onClick={() => navigate('/')}
                             >
                                 Ir a la tienda
                             </button>
