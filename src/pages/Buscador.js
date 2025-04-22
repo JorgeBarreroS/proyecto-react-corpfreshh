@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaTimes } from 'react-icons/fa';  // Importar los íconos
+import { FaSearch, FaTimes } from 'react-icons/fa';
 import '../styles/buscador.css';
 
 const SearchBar = ({ searchQuery, onSearchChange, onSearchSubmit }) => (
@@ -12,7 +12,7 @@ const SearchBar = ({ searchQuery, onSearchChange, onSearchSubmit }) => (
         placeholder="Buscar productos"
       />
       <button type="submit">
-        <FaSearch size={20} />  {/* Usar el ícono de lupa */}
+        <FaSearch size={20} />
       </button>
     </form>
   </div>
@@ -20,12 +20,31 @@ const SearchBar = ({ searchQuery, onSearchChange, onSearchSubmit }) => (
 
 const ProductCard = ({ producto }) => {
   const precio = parseFloat(producto.precio_producto);
+  
+  // Función para determinar la fuente de la imagen
+  const getImageSource = (imagePath) => {
+    if (!imagePath) {
+      return "http://localhost/corpfresh-php/imagenes/1.jpg";
+    }
+    
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    
+    return `http://localhost/corpfresh-php/${imagePath}`;
+  };
+
   return (
     <div className="product-card22">
-      <img
-        src={`http://localhost/corpfresh-php/${producto.imagen_producto}`}
-        alt={producto.nombre_producto}
-      />
+      <div className="product-image-container22">
+        <img
+          src={getImageSource(producto.imagen_producto)}
+          alt={producto.nombre_producto}
+          onError={(e) => {
+            e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
+          }}
+        />
+      </div>
       <h3>{producto.nombre_producto}</h3>
       <p>Precio: ${isNaN(precio) ? 'N/A' : precio.toFixed(2)}</p>
       <button onClick={() => (window.location.href = `/producto/${producto.id_producto}`)}>
@@ -76,7 +95,7 @@ const Buscador = () => {
   return (
     <div>
       <button className="close-button22" onClick={() => (window.location.href = '/')}>
-        <FaTimes size={20} /> {/* Usar el ícono de la X */}
+        <FaTimes size={20} />
       </button>
       <SearchBar
         searchQuery={searchQuery}

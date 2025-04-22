@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f8f9fa; /* Fondo similar a Bootstrap */
+    background-color: #f8f9fa;
 }
 
 /* Botón de cerrar */
@@ -53,70 +53,85 @@ body {
     justify-content: center;
 }
 
-.search-bar22 button img {
-    width: 20px;
-    height: 20px;
+/* Contenedor principal de productos */
+.products-container22 {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-/* Contenedor de productos */
+/* Lista de productos - AHORA CENTRADA */
 .product-list22 {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
     padding: 20px;
+    justify-content: center; /* Centra las columnas */
+    justify-items: center; /* Centra los items dentro de las columnas */
 }
 
 /* Tarjetas de producto */
 .product-card22 {
-    width: 200px;               /* Tamaño reducido para las tarjetas */
-    height: 300px;              /* Altura reducida para todas las tarjetas */
+    width: 200px;
+    height: 300px;
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 10px;              /* Menos padding para hacer las tarjetas más compactas */
+    padding: 10px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Asegura que el contenido se distribuya */
-    overflow: hidden; /* Evita que el contenido se desborde */
+    justify-content: space-between;
+    overflow: hidden;
 }
 
-/* Imagen del producto con tamaño fijo */
-.product-card22 img {
-    width: 100%;                /* La imagen ocupa todo el ancho de la tarjeta */
-    height: 120px;              /* Altura reducida para todas las imágenes */
-    object-fit: cover;          /* Asegura que la imagen se recorte correctamente */
-    border-radius: 8px;
+/* Contenedor de imagen */
+.product-image-container22 {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
     margin-bottom: 10px;
+    border-radius: 8px;
 }
 
-/* Títulos de los productos */
+/* Imagen del producto */
+.product-card22 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease-in-out;
+}
+
+.product-card22 img:hover {
+    transform: scale(1.05);
+}
+
+/* Textos y botones */
 .product-card22 h3 {
-    font-size: 16px;            /* Font-size reducido para los títulos */
+    font-size: 16px;
     margin: 10px 0;
     color: #333;
-    white-space: nowrap;        /* Evita el salto de línea */
-    overflow: hidden;           /* Oculta el texto que se desborda */
-    text-overflow: ellipsis;    /* Muestra '...' si el texto es muy largo */
-    max-width: 100%;            /* Asegura que el título se ajuste al ancho de la tarjeta */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Descripción y precio del producto */
 .product-card22 p {
-    font-size: 14px;            /* Font-size reducido para la descripción */
+    font-size: 14px;
     color: #666;
     margin: 10px 0;
-    overflow: hidden;           /* Evita el desbordamiento */
-    text-overflow: ellipsis;    /* Si la descripción es demasiado larga, se corta */
 }
 
-/* Botón de acción */
 .product-card22 button {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 8px;               /* Menos padding para hacer el botón más pequeño */
+    padding: 8px;
     font-size: 14px;
     cursor: pointer;
     border-radius: 4px;
@@ -125,4 +140,19 @@ body {
 
 .product-card22 button:hover {
     background-color: #0056b3;
+}
+
+/* Mensajes de estado */
+.loading-message22,
+.error-message22,
+.no-results-message22 {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: #666;
+    grid-column: 1 / -1; /* Ocupa todo el ancho del grid */
+}
+
+.error-message22 {
+    color: #dc3545;
 }

@@ -39,7 +39,7 @@ try {
         // Mostrar los primeros 6 productos si no hay búsqueda
         $sql = "SELECT id_producto, nombre_producto, precio_producto, imagen_producto 
                 FROM producto 
-                LIMIT 7";
+                LIMIT 5";
         $result = $conn->query($sql);
         while ($producto = $result->fetch_assoc()) {
             $productos[] = $producto;
