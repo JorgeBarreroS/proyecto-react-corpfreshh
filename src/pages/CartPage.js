@@ -14,7 +14,6 @@ const Carrito = () => {
     const { authState } = useAuth();
     const navigate = useNavigate();
 
-    // Obtener datos del carrito desde la base de datos
     const fetchCarrito = async () => {
         try {
             if (!authState || !authState.email) {
@@ -23,31 +22,20 @@ const Carrito = () => {
                 return;
             }
 
-            console.log("Fetching carrito for user:", authState.email);
-
             const response = await fetch(`http://localhost/corpfresh-php/carrito/carrito.php?usuario=${authState.email}`);
-            
-            // Mostrar el estado de la respuesta
-            console.log("Response status:", response.status);
-            console.log("Response headers:", response.headers);
-            
-            // Intentar obtener la respuesta como texto primero para poder ver el error
             const textResponse = await response.text();
-            console.log("Raw response:", textResponse);
-            
+
             if (!response.ok) {
                 throw new Error(`Error ${response.status}: ${textResponse}`);
             }
-            
-            // Intentar parsear como JSON
+
             let data;
             try {
                 data = JSON.parse(textResponse);
             } catch (parseError) {
-                console.error("Failed to parse JSON:", parseError);
                 throw new Error(`La respuesta no es JSON válido: ${textResponse.substring(0, 100)}...`);
             }
-            
+
             if (data.error) {
                 setProductos([]);
             } else {
@@ -56,13 +44,11 @@ const Carrito = () => {
             }
         } catch (err) {
             setError(err.message);
-            console.error("Error al cargar carrito:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    // Calcular el total de los productos en el carrito
     const calcularTotal = (items) => {
         const sum = items.reduce((acc, item) => acc + (parseFloat(item.precio) * item.cantidad), 0);
         setTotal(sum);
@@ -72,7 +58,6 @@ const Carrito = () => {
         fetchCarrito();
     }, [authState]);
 
-    // Actualizar cantidad de un producto
     const actualizarCantidad = async (id_carrito, nuevaCantidad) => {
         if (nuevaCantidad < 1) {
             Swal.fire('Error', 'La cantidad debe ser al menos 1', 'error');
@@ -83,21 +68,17 @@ const Carrito = () => {
             const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    id_carrito, 
-                    cantidad: nuevaCantidad 
-                })
+                body: JSON.stringify({ id_carrito, cantidad: nuevaCantidad })
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || "Error al actualizar carrito");
+                throw new Error("Error al actualizar carrito");
             }
-            
+
             const data = await response.json();
             if (data.success) {
                 const nuevosProductos = productos.map(prod => 
-                    prod.id_carrito === id_carrito ? {...prod, cantidad: nuevaCantidad} : prod
+                    prod.id_carrito === id_carrito ? { ...prod, cantidad: nuevaCantidad } : prod
                 );
                 setProductos(nuevosProductos);
                 calcularTotal(nuevosProductos);
@@ -105,58 +86,75 @@ const Carrito = () => {
                 Swal.fire('Error', data.error || 'No se pudo actualizar el carrito', 'error');
             }
         } catch (err) {
-            console.error("Error al actualizar carrito:", err);
             Swal.fire('Error', err.message || 'Hubo un problema al actualizar el carrito', 'error');
         }
     };
 
-    // Eliminar producto del carrito
-    const eliminarProducto = async (id_carrito) => {
-        // Pedir confirmación
+    const eliminarProducto = async (id_carrito, productoNombre, productoImagen) => {
+        // Mostrar confirmación visual similar a vaciarCarrito
         const resultado = await Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Este producto será eliminado del carrito",
-            icon: 'warning',
+            title: '¿Eliminar producto?',
+            html: `¿Estás seguro de eliminar <strong>${productoNombre}</strong> de tu carrito?`,
+            imageUrl: `http://localhost/corpfresh-php/${productoImagen}`,
+            imageWidth: 200,
+            imageAlt: productoNombre,
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         });
-
+    
         if (!resultado.isConfirmed) return;
-
+    
         try {
+            // Enviar solicitud DELETE con el id_carrito y usuario
             const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_carrito })
+                body: JSON.stringify({ 
+                    id_carrito: id_carrito,
+                    usuario: authState.email 
+                })
             });
-
+    
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || "Error al eliminar producto");
+                throw new Error("Error al eliminar producto del carrito");
             }
-            
+    
             const data = await response.json();
             if (data.success) {
-                // Actualizar estado local
+                // Actualizar el estado eliminando solo el producto específico
                 const nuevosProductos = productos.filter(prod => prod.id_carrito !== id_carrito);
                 setProductos(nuevosProductos);
-                calcularTotal(nuevosProductos);
-                Swal.fire('Eliminado', 'El producto ha sido eliminado del carrito', 'success');
+                
+                // Recalcular el total
+                const productoEliminado = productos.find(p => p.id_carrito === id_carrito);
+                const nuevoTotal = total - (productoEliminado.precio * productoEliminado.cantidad);
+                setTotal(nuevoTotal);
+                
+                Swal.fire(
+                    '¡Eliminado!', 
+                    'El producto ha sido eliminado del carrito', 
+                    'success'
+                );
             } else {
-                Swal.fire('Error', data.error || 'No se pudo eliminar el producto', 'error');
+                Swal.fire(
+                    'Error', 
+                    data.error || 'No se pudo eliminar el producto del carrito', 
+                    'error'
+                );
             }
         } catch (err) {
-            console.error("Error al eliminar producto:", err);
-            Swal.fire('Error', err.message || 'Hubo un problema al eliminar el producto', 'error');
+            Swal.fire(
+                'Error', 
+                err.message || 'Hubo un problema al eliminar el producto del carrito', 
+                'error'
+            );
         }
     };
 
-    // Vaciar todo el carrito
     const vaciarCarrito = async () => {
-        // Pedir confirmación
         const resultado = await Swal.fire({
             title: '¿Vaciar carrito?',
             text: "Se eliminarán todos los productos del carrito",
@@ -174,17 +172,13 @@ const Carrito = () => {
             const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    usuario: authState.email,
-                    vaciar: true
-                })
+                body: JSON.stringify({ usuario: authState.email, vaciar: true })
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || "Error al vaciar carrito");
+                throw new Error("Error al vaciar carrito");
             }
-            
+
             const data = await response.json();
             if (data.success) {
                 setProductos([]);
@@ -194,12 +188,10 @@ const Carrito = () => {
                 Swal.fire('Error', data.error || 'No se pudo vaciar el carrito', 'error');
             }
         } catch (err) {
-            console.error("Error al vaciar carrito:", err);
             Swal.fire('Error', err.message || 'Hubo un problema al vaciar el carrito', 'error');
         }
     };
 
-    // Proceder al pago
     const procederPago = () => {
         if (!authState || !authState.email) {
             Swal.fire({
@@ -222,7 +214,6 @@ const Carrito = () => {
             return;
         }
 
-        // Navegar a la página de pago
         navigate('/checkout');
     };
 
@@ -257,7 +248,6 @@ const Carrito = () => {
             <div className="cart-container">
                 <div className="container">
                     <h1 className="cart-title">Mi Carrito de Compras</h1>
-                    
                     {!authState || !authState.email ? (
                         <div className="cart-empty-message">
                             <i className="fas fa-shopping-cart cart-icon"></i>
@@ -294,6 +284,12 @@ const Carrito = () => {
                                                         {producto.talla && <span className="cart-item-size">Talla: {producto.talla}</span>}
                                                         {producto.color && <span className="cart-item-color">Color: {producto.color}</span>}
                                                     </div>
+                                                    <button 
+                                                        className="btn btn-outline-danger btn-sm cart-item-remove-mobile d-lg-none mt-2"
+                                                        onClick={() => eliminarProducto(producto.id_carrito, producto.nombre, producto.imagen)}
+                                                    >
+                                                        <i className="fas fa-trash me-1"></i> Eliminar
+                                                    </button>
                                                 </div>
                                                 <div className="cart-item-quantity">
                                                     <button 
@@ -326,11 +322,10 @@ const Carrito = () => {
                                                     ${(producto.precio * producto.cantidad).toFixed(2)}
                                                 </div>
                                                 <button 
-                                                    className="cart-item-remove" 
-                                                    onClick={() => eliminarProducto(producto.id_carrito)}
-                                                    title="Eliminar producto"
+                                                    className="btn btn-outline-danger btn-sm cart-item-remove d-none d-lg-block"
+                                                    onClick={() => eliminarProducto(producto.id_carrito, producto.nombre, producto.imagen)}
                                                 >
-                                                    <i className="fas fa-trash"></i>
+                                                    <i className="fas fa-trash me-1"></i> Eliminar
                                                 </button>
                                             </div>
                                         ))}
@@ -361,12 +356,6 @@ const Carrito = () => {
                                             <div className="summary-item">
                                                 <span>Impuestos</span>
                                                 <span>Calculado en el checkout</span>
-                                            </div>
-                                        </div>
-                                        <div className="coupon-container">
-                                            <div className="input-group">
-                                                <input type="text" className="form-control" placeholder="Código de cupón" />
-                                                <button className="btn btn-outline-secondary" type="button">Aplicar</button>
                                             </div>
                                         </div>
                                         <div className="summary-total">
