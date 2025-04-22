@@ -23,23 +23,12 @@ const Carrito = () => {
             }
 
             const response = await fetch(`http://localhost/corpfresh-php/carrito/carrito.php?usuario=${authState.email}`);
-<<<<<<< HEAD
-            
-            console.log("Response status:", response.status);
-            console.log("Response headers:", response.headers);
-            
-=======
->>>>>>> 88abcecca18302c011b37434f7ec85d541e91325
             const textResponse = await response.text();
 
             if (!response.ok) {
                 throw new Error(`Error ${response.status}: ${textResponse}`);
             }
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> 88abcecca18302c011b37434f7ec85d541e91325
             let data;
             try {
                 data = JSON.parse(textResponse);
@@ -101,22 +90,13 @@ const Carrito = () => {
         }
     };
 
-<<<<<<< HEAD
-    const eliminarProducto = async (id_carrito, nombreProducto) => {
-        const resultado = await Swal.fire({
-            title: '¿Eliminar producto?',
-            text: `¿Estás seguro que deseas eliminar "${nombreProducto}" del carrito?`,
-            icon: 'question',
-=======
     const eliminarProducto = async (id_carrito, productoNombre, productoImagen) => {
-        // Mostrar confirmación visual similar a vaciarCarrito
         const resultado = await Swal.fire({
             title: '¿Eliminar producto?',
             html: `¿Estás seguro de eliminar <strong>${productoNombre}</strong> de tu carrito?`,
             imageUrl: `http://localhost/corpfresh-php/${productoImagen}`,
             imageWidth: 200,
             imageAlt: productoNombre,
->>>>>>> 88abcecca18302c011b37434f7ec85d541e91325
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
@@ -124,11 +104,10 @@ const Carrito = () => {
             cancelButtonText: 'Cancelar',
             reverseButtons: true
         });
-    
+
         if (!resultado.isConfirmed) return;
-    
+
         try {
-            // Enviar solicitud DELETE con el id_carrito y usuario
             const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
@@ -137,26 +116,15 @@ const Carrito = () => {
                     usuario: authState.email 
                 })
             });
-    
+
             if (!response.ok) {
                 throw new Error("Error al eliminar producto del carrito");
             }
-    
+
             const data = await response.json();
             if (data.success) {
-<<<<<<< HEAD
                 const nuevosProductos = productos.filter(prod => prod.id_carrito !== id_carrito);
                 setProductos(nuevosProductos);
-                calcularTotal(nuevosProductos);
-                Swal.fire(
-                    '¡Eliminado!',
-                    'El producto ha sido removido de tu carrito.',
-=======
-                // Actualizar el estado eliminando solo el producto específico
-                const nuevosProductos = productos.filter(prod => prod.id_carrito !== id_carrito);
-                setProductos(nuevosProductos);
-                
-                // Recalcular el total
                 const productoEliminado = productos.find(p => p.id_carrito === id_carrito);
                 const nuevoTotal = total - (productoEliminado.precio * productoEliminado.cantidad);
                 setTotal(nuevoTotal);
@@ -164,7 +132,6 @@ const Carrito = () => {
                 Swal.fire(
                     '¡Eliminado!', 
                     'El producto ha sido eliminado del carrito', 
->>>>>>> 88abcecca18302c011b37434f7ec85d541e91325
                     'success'
                 );
             } else {
@@ -351,19 +318,10 @@ const Carrito = () => {
                                                     ${(producto.precio * producto.cantidad).toFixed(2)}
                                                 </div>
                                                 <button 
-<<<<<<< HEAD
-                                                    className="cart-item-remove" 
-                                                    onClick={() => eliminarProducto(producto.id_carrito, producto.nombre)}
-                                                    title="Eliminar producto"
-                                                >
-                                                    <i className="fas fa-trash"></i>
-                                                    <span className="remove-text">Eliminar</span>
-=======
                                                     className="btn btn-outline-danger btn-sm cart-item-remove d-none d-lg-block"
                                                     onClick={() => eliminarProducto(producto.id_carrito, producto.nombre, producto.imagen)}
                                                 >
                                                     <i className="fas fa-trash me-1"></i> Eliminar
->>>>>>> 88abcecca18302c011b37434f7ec85d541e91325
                                                 </button>
                                             </div>
                                         ))}
