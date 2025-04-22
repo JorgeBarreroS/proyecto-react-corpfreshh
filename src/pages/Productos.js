@@ -40,6 +40,22 @@ const ProductsPage = () => {
     }
   };
 
+  const isAbsoluteUrl = (url) => {
+    return url?.startsWith('http://') || url?.startsWith('https://');
+  };
+
+  const getImageSource = (imagePath) => {
+    if (!imagePath) {
+      return "http://localhost/corpfresh-php/imagenes/1.jpg";
+    }
+    
+    if (isAbsoluteUrl(imagePath)) {
+      return imagePath;
+    }
+    
+    return `http://localhost/corpfresh-php/${imagePath}`;
+  };
+
   useEffect(() => {
     fetchAllProducts();
     fetchAllCategories();
@@ -51,7 +67,6 @@ const ProductsPage = () => {
       <div className="products-container">
         <h1>Lista de Productos</h1>
 
-        {/* Filtro de categoría */}
         <div className="category-filter">
           <label htmlFor="category">Categoría: </label>
           <select
@@ -72,17 +87,20 @@ const ProductsPage = () => {
           </select>
         </div>
 
-        {/* Lista de productos */}
         <ul className="product-list">
           {products.length > 0 ? (
             products.map((product) => (
               <li key={product.id_producto} className="product-item">
-                <img
-                  src={product.imagen_producto 
-                    ? `http://localhost/corpfresh-php/${product.imagen_producto}`
-                    : "http://localhost/corpfresh-php/imagenes/1.jpg"}
-                  alt={product.nombre_producto}
-                />
+                <div className="product-image-container">
+                  <img
+                    src={getImageSource(product.imagen_producto)}
+                    alt={product.nombre_producto}
+                    className="product-image"
+                    onError={(e) => {
+                      e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
+                    }}
+                  />
+                </div>
                 <h3>{product.nombre_producto}</h3>
                 <p>${product.precio_producto}</p>
                 <a href={`/producto/${product.id_producto}`} className="btn btn-dark w-100">Ver Producto</a>
@@ -93,7 +111,6 @@ const ProductsPage = () => {
           )}
         </ul>
 
-        {/* Paginación */}
         <div className="pagination-buttons">
           <button
             disabled={page === 1}
@@ -107,10 +124,7 @@ const ProductsPage = () => {
           </button>
         </div>
 
-        {/* Mensaje de carga */}
         {loading && <p className="loading-message">Cargando productos...</p>}
-
-        {/* Manejo de errores */}
         {error && <p className="error-message">{error}</p>}
       </div>
       <Footer />
