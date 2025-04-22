@@ -13,24 +13,35 @@ const MisPedidos = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!authState || !authState.email) {
+        if (!authState?.email) {
             navigate('/login');
             return;
         }
 
         const fetchOrders = async () => {
             try {
-                const response = await fetch(`http://localhost/corpfresh-php/pedidos/mis_pedidos.php?usuario=${authState.email}`);
+                setLoading(true);
+                const response = await fetch(
+                    `http://localhost/corpfresh-php/pedidos/mis_pedidos.php?usuario=${encodeURIComponent(authState.email)}`,
+                    {
+                        credentials: 'include'
+                    }
+                );
+
                 const data = await response.json();
                 
-                if (response.ok) {
-                    setOrders(data);
-                } else {
+                if (!response.ok || !data.success) {
                     throw new Error(data.error || 'Error al cargar los pedidos');
                 }
+
+                setOrders(data.data || []);
             } catch (error) {
-                console.error('Error:', error);
-                Swal.fire('Error', 'No se pudieron cargar los pedidos', 'error');
+                console.error('Error al obtener pedidos:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message || 'No se pudieron cargar los pedidos',
+                    icon: 'error'
+                });
             } finally {
                 setLoading(false);
             }
@@ -41,9 +52,18 @@ const MisPedidos = () => {
 
     const generateInvoice = async (orderId) => {
         try {
-            const response = await fetch(`http://localhost/corpfresh-php/facturas/generar_factura.php?pedido_id=${orderId}`);
+            const response = await fetch(
+                `http://localhost/corpfresh-php/facturas/generar_factura.php?pedido_id=${orderId}`,
+                {
+                    credentials: 'include'
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Error al generar la factura');
+            }
+
             const blob = await response.blob();
-            
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -53,9 +73,17 @@ const MisPedidos = () => {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Error', 'No se pudo generar la factura', 'error');
+            console.error('Error al generar factura:', error);
+            Swal.fire({
+                title: 'Error',
+                text: error.message || 'No se pudo generar la factura',
+                icon: 'error'
+            });
         }
+    };
+
+    const calculateSubtotal = (order) => {
+        return (order.total - (order.costo_envio || 0) - (order.impuestos || 0)).toFixed(2);
     };
 
     if (loading) {
@@ -100,21 +128,31 @@ const MisPedidos = () => {
                                         <div>
                                             <h4>Pedido #{order.id}</h4>
                                             <small className="text-muted">
-                                                Fecha: {new Date(order.fecha_pedido).toLocaleDateString()}
+                                                Fecha: {new Date(order.fecha_pedido).toLocaleDateString('es-ES', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
                                             </small>
                                         </div>
                                         <div>
                                             <span className={`badge ${order.estado === 'completado' ? 'bg-success' : 'bg-warning'}`}>
-                                                {order.estado}
+                                                {order.estado.charAt(0).toUpperCase() + order.estado.slice(1)}
                                             </span>
                                         </div>
                                     </div>
                                     
                                     <div className="order-details">
                                         <div>
-                                            <p><strong>Total:</strong> ${parseFloat(order.total).toFixed(2)}</p>
+                                            <p><strong>Subtotal:</strong> ${calculateSubtotal(order)}</p>
+                                            <p><strong>Envío:</strong> ${order.costo_envio?.toFixed(2) || '0.00'}</p>
+                                            <p><strong>Impuestos:</strong> ${order.impuestos?.toFixed(2) || '0.00'}</p>
+                                            <p><strong>Total:</strong> ${order.total.toFixed(2)}</p>
                                             <p><strong>Método de pago:</strong> {order.metodo_pago}</p>
                                             <p><strong>Dirección:</strong> {order.direccion_entrega}</p>
+                                            <p><strong>Productos:</strong> {order.total_productos}</p>
                                         </div>
                                         
                                         <div className="order-actions">
@@ -127,6 +165,8 @@ const MisPedidos = () => {
                                             <button 
                                                 className="btn btn-outline-secondary"
                                                 onClick={() => generateInvoice(order.id)}
+                                                disabled={order.estado !== 'completado'}
+                                                title={order.estado !== 'completado' ? 'Factura disponible solo para pedidos completados' : ''}
                                             >
                                                 <i className="fas fa-file-invoice"></i> Factura
                                             </button>
