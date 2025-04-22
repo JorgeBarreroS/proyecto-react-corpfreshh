@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-04-2025 a las 07:16:50
+-- Tiempo de generación: 22-04-2025 a las 03:47:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -118,64 +118,6 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `articulos_ordenes`
---
-
-DROP TABLE IF EXISTS `articulos_ordenes`;
-CREATE TABLE `articulos_ordenes` (
-  `id_detalle_venta` int(11) NOT NULL,
-  `id_venta` int(11) DEFAULT NULL,
-  `id_producto` int(11) DEFAULT NULL,
-  `Cantidad_Producto` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- RELACIONES PARA LA TABLA `articulos_ordenes`:
---   `id_producto`
---       `producto` -> `id_producto`
---   `id_venta`
---       `ordenes` -> `id_venta`
---
-
---
--- Volcado de datos para la tabla `articulos_ordenes`
---
-
-INSERT INTO `articulos_ordenes` (`id_detalle_venta`, `id_venta`, `id_producto`, `Cantidad_Producto`) VALUES
-(1, 1, 1, 2),
-(2, 1, 2, 1),
-(3, 2, 3, 1),
-(4, 4, 4, 3),
-(5, 5, 5, 1),
-(6, 6, 6, 2),
-(7, 7, 7, 1),
-(8, 8, 8, 1),
-(9, 9, 9, 2),
-(10, 10, 10, 1),
-(11, 11, 11, 1),
-(12, 12, 12, 1),
-(13, 13, 13, 1),
-(14, 14, 14, 1),
-(15, 15, 15, 1),
-(16, 16, 16, 1),
-(17, 17, 17, 1),
-(18, 18, 18, 1),
-(19, 19, 19, 1),
-(20, 20, 20, 1),
-(21, 21, 21, 1),
-(22, 22, 22, 1),
-(23, 23, 23, 1),
-(24, 24, 24, 1),
-(25, 25, 25, 1),
-(26, 26, 26, 1),
-(27, 27, 27, 1),
-(28, 28, 28, 1),
-(29, 29, 29, 1),
-(30, 30, 30, 1);
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `carrito`
 --
 
@@ -196,13 +138,6 @@ CREATE TABLE `carrito` (
 --
 -- RELACIONES PARA LA TABLA `carrito`:
 --
-
---
--- Volcado de datos para la tabla `carrito`
---
-
-INSERT INTO `carrito` (`id_carrito`, `id_producto`, `nombre`, `precio`, `imagen`, `cantidad`, `usuario`, `color`, `talla`, `fecha_agregado`) VALUES
-(4, 1, 'Camisa polo verde', 139124.00, 'imagenes/42631_10.webp', 14, 'jorgebarrero44@gmail.com', NULL, NULL, '2025-04-21 04:55:53');
 
 -- --------------------------------------------------------
 
@@ -282,6 +217,39 @@ INSERT INTO `comentarios` (`id_comentario`, `id_usuario`, `id_producto`, `coment
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `facturas`
+--
+
+DROP TABLE IF EXISTS `facturas`;
+CREATE TABLE `facturas` (
+  `id` int(11) NOT NULL,
+  `pedido_id` int(11) NOT NULL,
+  `correo_usuario` varchar(100) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `fecha_factura` datetime NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL,
+  `envio` decimal(10,2) NOT NULL,
+  `impuestos` decimal(10,2) NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `metodo_pago` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `facturas`:
+--   `pedido_id`
+--       `pedidos` -> `id`
+--
+
+--
+-- Volcado de datos para la tabla `facturas`
+--
+
+INSERT INTO `facturas` (`id`, `pedido_id`, `correo_usuario`, `id_usuario`, `fecha_factura`, `subtotal`, `envio`, `impuestos`, `total`, `metodo_pago`) VALUES
+(3, 11, 'jorgebarrero44@gmail.com', 0, '2025-04-21 20:16:59', 1730200.00, 0.00, 138416.00, 1868616.00, 'casa');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `ofertas_especiales`
 --
 
@@ -308,7 +276,7 @@ CREATE TABLE `ofertas_especiales` (
 --
 
 INSERT INTO `ofertas_especiales` (`id_oferta`, `titulo`, `descripcion`, `porcentaje_descuento`, `fecha_inicio`, `fecha_fin`, `activo`, `texto_boton`, `created_at`, `updated_at`) VALUES
-(6, 'descuentos de ultima hora', 'descuento en productos relacionados a camisas', 10, '2025-04-20 17:11:00', '2025-04-20 17:07:00', 1, 'Comprar Ahora', '2025-04-20 22:11:11', '2025-04-20 22:11:11');
+(7, 'descuentos de ultima hora', 'descuento en productos relacionados a camisas', 19, '2025-04-21 17:01:00', '2025-04-21 18:59:00', 1, 'Comprar Ahora', '2025-04-21 22:01:24', '2025-04-21 22:01:24');
 
 -- --------------------------------------------------------
 
@@ -371,62 +339,66 @@ INSERT INTO `ordenes` (`id_venta`, `fecha_venta`, `impuesto_venta`, `total_venta
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pedido`
+-- Estructura de tabla para la tabla `pedidos`
 --
 
-DROP TABLE IF EXISTS `pedido`;
-CREATE TABLE `pedido` (
-  `id_pedido` int(11) NOT NULL,
-  `id_venta` int(11) DEFAULT NULL,
-  `id_usuario` int(11) DEFAULT NULL,
-  `fecha_pedido` date DEFAULT NULL,
-  `estado_pedido` varchar(50) DEFAULT NULL,
-  `metodo_envio_pedido` varchar(50) DEFAULT NULL
+DROP TABLE IF EXISTS `pedidos`;
+CREATE TABLE `pedidos` (
+  `id` int(11) NOT NULL,
+  `correo_usuario` varchar(255) DEFAULT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `fecha_pedido` datetime NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `metodo_pago` varchar(50) NOT NULL,
+  `direccion_entrega` text NOT NULL,
+  `telefono_contacto` varchar(20) NOT NULL,
+  `costo_envio` decimal(10,2) NOT NULL,
+  `impuestos` decimal(10,2) NOT NULL,
+  `estado` enum('pendiente','procesando','enviado','completado','cancelado') DEFAULT 'pendiente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- RELACIONES PARA LA TABLA `pedido`:
---   `id_usuario`
---       `usuario` -> `id_usuario`
---   `id_venta`
---       `ordenes` -> `id_venta`
+-- RELACIONES PARA LA TABLA `pedidos`:
 --
 
 --
--- Volcado de datos para la tabla `pedido`
+-- Volcado de datos para la tabla `pedidos`
 --
 
-INSERT INTO `pedido` (`id_pedido`, `id_venta`, `id_usuario`, `fecha_pedido`, `estado_pedido`, `metodo_envio_pedido`) VALUES
-(1, 1, 1, '2023-01-01', 'Enviado', 'Estándar'),
-(2, 2, 1, '2023-01-15', 'Enviado', 'Express'),
-(3, 3, 2, '2023-03-03', 'Enviado', 'Estándar'),
-(4, 4, 2, '2023-04-04', 'Enviado', 'Express'),
-(5, 5, 3, '2023-05-02', 'Enviado', 'Express'),
-(6, 6, 3, '2023-05-15', 'Enviado', 'Estándar'),
-(7, 7, 7, '2023-07-02', 'Enviado', 'Estándar'),
-(8, 8, 8, '2023-08-03', 'Enviado', 'Express'),
-(9, 9, 9, '2023-09-02', 'Enviado', 'Estándar'),
-(10, 10, 10, '2023-10-01', 'Enviado', 'Express'),
-(11, 11, 11, '2023-10-15', 'Enviado', 'Estándar'),
-(12, 12, 12, '2023-11-01', 'Enviado', 'Express'),
-(13, 13, 13, '2023-11-15', 'Enviado', 'Estándar'),
-(14, 14, 14, '2023-12-01', 'Enviado', 'Express'),
-(15, 15, 15, '2023-12-15', 'Enviado', 'Estándar'),
-(16, 16, 16, '2024-01-01', 'Enviado', 'Express'),
-(17, 17, 17, '2024-01-15', 'Enviado', 'Estándar'),
-(18, 18, 18, '2024-02-01', 'Enviado', 'Express'),
-(19, 19, 19, '2024-02-15', 'Enviado', 'Estándar'),
-(20, 20, 20, '2024-03-01', 'Enviado', 'Express'),
-(21, 21, 21, '2024-03-15', 'Enviado', 'Estándar'),
-(22, 22, 22, '2024-04-01', 'Enviado', 'Express'),
-(23, 23, 23, '2024-04-15', 'Enviado', 'Estándar'),
-(24, 24, 24, '2024-05-01', 'Enviado', 'Express'),
-(25, 25, 25, '2024-05-15', 'Enviado', 'Estándar'),
-(26, 26, 26, '2024-06-01', 'Enviado', 'Express'),
-(27, 27, 27, '2024-06-15', 'Enviado', 'Estándar'),
-(28, 28, 28, '2024-07-01', 'Enviado', 'Express'),
-(29, 29, 29, '2024-07-15', 'Enviado', 'Estándar'),
-(30, 30, 30, '2024-08-01', 'Enviado', 'Express');
+INSERT INTO `pedidos` (`id`, `correo_usuario`, `id_usuario`, `fecha_pedido`, `total`, `metodo_pago`, `direccion_entrega`, `telefono_contacto`, `costo_envio`, `impuestos`, `estado`) VALUES
+(11, 'jorgebarrero44@gmail.com', 0, '2025-04-21 20:16:59', 1868616.00, 'casa', 'ssss', '333333', 0.00, 138416.00, 'pendiente');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pedidos_detalle`
+--
+
+DROP TABLE IF EXISTS `pedidos_detalle`;
+CREATE TABLE `pedidos_detalle` (
+  `id` int(11) NOT NULL,
+  `pedido_id` int(11) NOT NULL,
+  `producto_id` int(11) NOT NULL,
+  `nombre_producto` varchar(100) NOT NULL,
+  `precio_unitario` decimal(10,2) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL,
+  `color` varchar(50) DEFAULT NULL,
+  `talla` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `pedidos_detalle`:
+--   `pedido_id`
+--       `pedidos` -> `id`
+--
+
+--
+-- Volcado de datos para la tabla `pedidos_detalle`
+--
+
+INSERT INTO `pedidos_detalle` (`id`, `pedido_id`, `producto_id`, `nombre_producto`, `precio_unitario`, `cantidad`, `subtotal`, `color`, `talla`) VALUES
+(10, 11, 2, 'Nike SB Dunk Low Verdy Visty', 1730200.00, 1, 1730200.00, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -586,14 +558,6 @@ INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `apellido_usuario`, `tele
 --
 
 --
--- Indices de la tabla `articulos_ordenes`
---
-ALTER TABLE `articulos_ordenes`
-  ADD PRIMARY KEY (`id_detalle_venta`),
-  ADD KEY `id_venta` (`id_venta`),
-  ADD KEY `id_producto` (`id_producto`);
-
---
 -- Indices de la tabla `carrito`
 --
 ALTER TABLE `carrito`
@@ -622,6 +586,14 @@ ALTER TABLE `comentarios`
   ADD KEY `producto` (`id_producto`);
 
 --
+-- Indices de la tabla `facturas`
+--
+ALTER TABLE `facturas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pedido_id` (`pedido_id`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
 -- Indices de la tabla `ofertas_especiales`
 --
 ALTER TABLE `ofertas_especiales`
@@ -635,12 +607,18 @@ ALTER TABLE `ordenes`
   ADD KEY `usuarios` (`id_usuario`);
 
 --
--- Indices de la tabla `pedido`
+-- Indices de la tabla `pedidos`
 --
-ALTER TABLE `pedido`
-  ADD PRIMARY KEY (`id_pedido`),
-  ADD KEY `usuario` (`id_usuario`),
-  ADD KEY `venta` (`id_venta`);
+ALTER TABLE `pedidos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
+-- Indices de la tabla `pedidos_detalle`
+--
+ALTER TABLE `pedidos_detalle`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pedido_id` (`pedido_id`);
 
 --
 -- Indices de la tabla `producto`
@@ -667,16 +645,10 @@ ALTER TABLE `usuario`
 --
 
 --
--- AUTO_INCREMENT de la tabla `articulos_ordenes`
---
-ALTER TABLE `articulos_ordenes`
-  MODIFY `id_detalle_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
-
---
 -- AUTO_INCREMENT de la tabla `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria`
@@ -697,10 +669,16 @@ ALTER TABLE `comentarios`
   MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
+-- AUTO_INCREMENT de la tabla `facturas`
+--
+ALTER TABLE `facturas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT de la tabla `ofertas_especiales`
 --
 ALTER TABLE `ofertas_especiales`
-  MODIFY `id_oferta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_oferta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `ordenes`
@@ -709,16 +687,22 @@ ALTER TABLE `ordenes`
   MODIFY `id_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- AUTO_INCREMENT de la tabla `pedido`
+-- AUTO_INCREMENT de la tabla `pedidos`
 --
-ALTER TABLE `pedido`
-  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+ALTER TABLE `pedidos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT de la tabla `pedidos_detalle`
+--
+ALTER TABLE `pedidos_detalle`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `producto`
 --
 ALTER TABLE `producto`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -737,18 +721,17 @@ ALTER TABLE `usuario`
 --
 
 --
--- Filtros para la tabla `articulos_ordenes`
---
-ALTER TABLE `articulos_ordenes`
-  ADD CONSTRAINT `articulos_ordenes_ibfk_1` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `ventas` FOREIGN KEY (`id_venta`) REFERENCES `ordenes` (`id_venta`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Filtros para la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
   ADD CONSTRAINT `producto` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `usuarioss` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `facturas`
+--
+ALTER TABLE `facturas`
+  ADD CONSTRAINT `facturas_ibfk_1` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`);
 
 --
 -- Filtros para la tabla `ordenes`
@@ -757,11 +740,10 @@ ALTER TABLE `ordenes`
   ADD CONSTRAINT `usuarios` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `pedido`
+-- Filtros para la tabla `pedidos_detalle`
 --
-ALTER TABLE `pedido`
-  ADD CONSTRAINT `usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `venta` FOREIGN KEY (`id_venta`) REFERENCES `ordenes` (`id_venta`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `pedidos_detalle`
+  ADD CONSTRAINT `pedidos_detalle_ibfk_1` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`);
 
 --
 -- Filtros para la tabla `producto`

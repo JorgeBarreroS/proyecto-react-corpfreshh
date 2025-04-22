@@ -14,7 +14,6 @@ const Carrito = () => {
     const { authState } = useAuth();
     const navigate = useNavigate();
 
-    // Obtener datos del carrito desde la base de datos
     const fetchCarrito = async () => {
         try {
             if (!authState || !authState.email) {
@@ -27,11 +26,9 @@ const Carrito = () => {
 
             const response = await fetch(`http://localhost/corpfresh-php/carrito/carrito.php?usuario=${authState.email}`);
             
-            // Mostrar el estado de la respuesta
             console.log("Response status:", response.status);
             console.log("Response headers:", response.headers);
             
-            // Intentar obtener la respuesta como texto primero para poder ver el error
             const textResponse = await response.text();
             console.log("Raw response:", textResponse);
             
@@ -39,7 +36,6 @@ const Carrito = () => {
                 throw new Error(`Error ${response.status}: ${textResponse}`);
             }
             
-            // Intentar parsear como JSON
             let data;
             try {
                 data = JSON.parse(textResponse);
@@ -62,7 +58,6 @@ const Carrito = () => {
         }
     };
 
-    // Calcular el total de los productos en el carrito
     const calcularTotal = (items) => {
         const sum = items.reduce((acc, item) => acc + (parseFloat(item.precio) * item.cantidad), 0);
         setTotal(sum);
@@ -72,7 +67,6 @@ const Carrito = () => {
         fetchCarrito();
     }, [authState]);
 
-    // Actualizar cantidad de un producto
     const actualizarCantidad = async (id_carrito, nuevaCantidad) => {
         if (nuevaCantidad < 1) {
             Swal.fire('Error', 'La cantidad debe ser al menos 1', 'error');
@@ -110,18 +104,17 @@ const Carrito = () => {
         }
     };
 
-    // Eliminar producto del carrito
-    const eliminarProducto = async (id_carrito) => {
-        // Pedir confirmación
+    const eliminarProducto = async (id_carrito, nombreProducto) => {
         const resultado = await Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Este producto será eliminado del carrito",
-            icon: 'warning',
+            title: '¿Eliminar producto?',
+            text: `¿Estás seguro que deseas eliminar "${nombreProducto}" del carrito?`,
+            icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
         });
 
         if (!resultado.isConfirmed) return;
@@ -140,11 +133,14 @@ const Carrito = () => {
             
             const data = await response.json();
             if (data.success) {
-                // Actualizar estado local
                 const nuevosProductos = productos.filter(prod => prod.id_carrito !== id_carrito);
                 setProductos(nuevosProductos);
                 calcularTotal(nuevosProductos);
-                Swal.fire('Eliminado', 'El producto ha sido eliminado del carrito', 'success');
+                Swal.fire(
+                    '¡Eliminado!',
+                    'El producto ha sido removido de tu carrito.',
+                    'success'
+                );
             } else {
                 Swal.fire('Error', data.error || 'No se pudo eliminar el producto', 'error');
             }
@@ -154,9 +150,7 @@ const Carrito = () => {
         }
     };
 
-    // Vaciar todo el carrito
     const vaciarCarrito = async () => {
-        // Pedir confirmación
         const resultado = await Swal.fire({
             title: '¿Vaciar carrito?',
             text: "Se eliminarán todos los productos del carrito",
@@ -199,7 +193,6 @@ const Carrito = () => {
         }
     };
 
-    // Proceder al pago
     const procederPago = () => {
         if (!authState || !authState.email) {
             Swal.fire({
@@ -222,7 +215,6 @@ const Carrito = () => {
             return;
         }
 
-        // Navegar a la página de pago
         navigate('/checkout');
     };
 
@@ -327,10 +319,11 @@ const Carrito = () => {
                                                 </div>
                                                 <button 
                                                     className="cart-item-remove" 
-                                                    onClick={() => eliminarProducto(producto.id_carrito)}
+                                                    onClick={() => eliminarProducto(producto.id_carrito, producto.nombre)}
                                                     title="Eliminar producto"
                                                 >
                                                     <i className="fas fa-trash"></i>
+                                                    <span className="remove-text">Eliminar</span>
                                                 </button>
                                             </div>
                                         ))}

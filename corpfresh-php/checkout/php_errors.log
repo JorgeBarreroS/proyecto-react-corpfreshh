@@ -1,0 +1,77 @@
+[22-Apr-2025 02:35:26 Europe/Berlin] PHP Fatal error:  Uncaught ArgumentCountError: The number of elements in the type definition string must match the number of bind variables in C:\xampp\htdocs\corpfresh-php\checkout\process_payment.php:163
+Stack trace:
+#0 C:\xampp\htdocs\corpfresh-php\checkout\process_payment.php(163): mysqli_stmt->bind_param('isdddd', 6, 'jorgebarrero44@...', 1730200, 0, 138416, 1868616, 'casa')
+#1 {main}
+  thrown in C:\xampp\htdocs\corpfresh-php\checkout\process_payment.php on line 163
+[22-Apr-2025 02:35:31 Europe/Berlin] PHP Fatal error:  Uncaught ArgumentCountError: The number of elements in the type definition string must match the number of bind variables in C:\xampp\htdocs\corpfresh-php\checkout\process_payment.php:163
+Stack trace:
+#0 C:\xampp\htdocs\corpfresh-php\checkout\process_payment.php(163): mysqli_stmt->bind_param('isdddd', 7, 'jorgebarrero44@...', 1730200, 0, 138416, 1868616, 'nequi')
+#1 {main}
+  thrown in C:\xampp\htdocs\corpfresh-php\checkout\process_payment.php on line 163
+[22-Apr-2025 02:54:37 Europe/Berlin] === Inicio de process_payment.php ===
+[22-Apr-2025 02:54:37 Europe/Berlin] Datos recibidos: 
+[22-Apr-2025 02:54:37 Europe/Berlin] Error: No se recibieron datos
+[22-Apr-2025 02:54:37 Europe/Berlin] Enviando respuesta: {"success":false,"data":[],"error":"No se recibieron datos","timestamp":"2025-04-22 02:54:37"}
+[22-Apr-2025 02:57:55 Europe/Berlin] === Inicio de process_payment.php ===
+[22-Apr-2025 02:57:55 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":2,"nombre":"Nike SB Dunk Low Verdy Visty","precio":1730200,"cantidad":1,"color":null,"talla":null}],"total":1868616,"metodo_pago":"casa","direccion":"dddd","telefono":"ddddd","envio":0,"impuestos":138416}
+[22-Apr-2025 02:57:55 Europe/Berlin] Conectando a la base de datos...
+[22-Apr-2025 02:57:55 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 02:57:55 Europe/Berlin] Transacción iniciada
+[22-Apr-2025 02:57:55 Europe/Berlin] Preparando consulta de pedido: INSERT INTO pedidos (
+        correo_usuario, 
+        fecha_pedido, 
+        total, 
+        metodo_pago, 
+        direccion_entrega, 
+        telefono_contacto,
+        costo_envio,
+        impuestos,
+        estado
+    ) VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, 'pendiente')
+[22-Apr-2025 02:57:55 Europe/Berlin] Pedido creado con ID: 8
+[22-Apr-2025 02:57:55 Europe/Berlin] Preparando consulta de items: INSERT INTO pedidos_detalle (
+        pedido_id, 
+        producto_id, 
+        nombre_producto, 
+        precio_unitario, 
+        cantidad, 
+        subtotal,
+        color,
+        talla
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+[22-Apr-2025 02:57:55 Europe/Berlin] Procesando item: {"id_producto":2,"nombre":"Nike SB Dunk Low Verdy Visty","precio":1730200,"cantidad":1,"color":null,"talla":null}
+[22-Apr-2025 02:57:55 Europe/Berlin] Items agregados al pedido
+[22-Apr-2025 02:57:55 Europe/Berlin] Preparando consulta de factura: INSERT INTO facturas (
+        pedido_id,
+        correo_usuario,
+        fecha_factura,
+        subtotal,
+        envio,
+        impuestos,
+        total,
+        metodo_pago
+    ) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)
+[22-Apr-2025 02:57:55 Europe/Berlin] PHP Fatal error:  Uncaught ArgumentCountError: The number of elements in the type definition string must match the number of bind variables in C:\xampp\htdocs\corpfresh-php\checkout\process_payment.php:214
+Stack trace:
+#0 C:\xampp\htdocs\corpfresh-php\checkout\process_payment.php(214): mysqli_stmt->bind_param('isdddd', 8, 'jorgebarrero44@...', 1730200, 0, 138416, 1868616, 'casa')
+#1 {main}
+  thrown in C:\xampp\htdocs\corpfresh-php\checkout\process_payment.php on line 214
+[22-Apr-2025 03:11:01 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 03:11:01 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":2,"nombre":"Nike SB Dunk Low Verdy Visty","precio":1730200,"cantidad":1,"color":null,"talla":null}],"total":1868616,"metodo_pago":"casa","direccion":"ggddffdfdfdf","telefono":"3423434","envio":0,"impuestos":138416}
+[22-Apr-2025 03:11:01 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 03:11:01 Europe/Berlin] Pedido creado - ID: 9
+[22-Apr-2025 03:11:01 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 03:11:01 Europe/Berlin] Error en la transacción: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`corpfreshh`.`facturas`, CONSTRAINT `facturas_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`))
+[22-Apr-2025 03:11:20 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 03:11:20 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":2,"nombre":"Nike SB Dunk Low Verdy Visty","precio":1730200,"cantidad":1,"color":null,"talla":null}],"total":1868616,"metodo_pago":"nequi","direccion":"ggddffdfdfdf","telefono":"3423434","envio":0,"impuestos":138416}
+[22-Apr-2025 03:11:20 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 03:11:20 Europe/Berlin] Pedido creado - ID: 10
+[22-Apr-2025 03:11:20 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 03:11:20 Europe/Berlin] Error en la transacción: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`corpfreshh`.`facturas`, CONSTRAINT `facturas_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`))
+[22-Apr-2025 03:16:59 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 03:16:59 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":2,"nombre":"Nike SB Dunk Low Verdy Visty","precio":1730200,"cantidad":1,"color":null,"talla":null}],"total":1868616,"metodo_pago":"casa","direccion":"ssss","telefono":"333333","envio":0,"impuestos":138416}
+[22-Apr-2025 03:16:59 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 03:16:59 Europe/Berlin] Pedido creado - ID: 11
+[22-Apr-2025 03:16:59 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 03:16:59 Europe/Berlin] Factura generada - ID: 3
+[22-Apr-2025 03:16:59 Europe/Berlin] Transacción completada con éxito
