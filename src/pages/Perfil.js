@@ -31,6 +31,33 @@ const Perfil = () => {
 
     setOriginalEmail(authState.email);
 
+    // Si es un usuario de Google sin datos completos
+    if (authState.isGoogleUser) {
+      setUserData({
+        correo: authState.email,
+        nombre: authState.name || 'Usuario',
+        apellido: 'Google',
+        telefono: '',
+        direccion1: '',
+        direccion2: '',
+        ciudad: '',
+        pais: ''
+      });
+      setFormData({
+        nombre: authState.name || 'Usuario',
+        apellido: 'Google',
+        telefono: '',
+        correo: authState.email,
+        direccion1: '',
+        direccion2: '',
+        ciudad: '',
+        pais: ''
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Para usuarios normales
     fetch("http://localhost/corpfresh-php/getUserData.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -44,7 +71,7 @@ const Perfil = () => {
         if (data.success) {
           setUserData(data.user);
           setFormData({
-            nombre: data.user.nombre || "",
+            nombre: data.user.nombre || authState.name || "",
             apellido: data.user.apellido || "",
             telefono: data.user.telefono || "",
             correo: data.user.correo || authState.email,
@@ -87,6 +114,7 @@ const Perfil = () => {
           body: JSON.stringify({
             email: originalEmail,
             newEmail: emailChanged ? formData.correo : null,
+            isGoogleUser: authState.isGoogleUser || false,
             ...formData
           }),
         })

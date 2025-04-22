@@ -21,8 +21,7 @@ const Login = () => {
     };
   }, []);
 
-  // Inicio de sesión con Google
-  const onSuccess = (credentialResponse) => {
+  const handleGoogleLogin = async (credentialResponse) => {
     try {
       const decodedToken = JSON.parse(atob(credentialResponse.credential.split(".")[1]));
       const googleUser = {
@@ -30,10 +29,52 @@ const Login = () => {
         email: decodedToken.email,
         avatar: decodedToken.picture,
       };
-      login(googleUser);
-      navigate("/dashboard", { replace: true });
+
+      const response = await fetch("http://localhost/corpfresh-php/authenticateGoogle.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: googleUser.email,
+          name: googleUser.name,
+          avatar: googleUser.avatar
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Error en el servidor");
+      }
+
+      if (data.success) {
+        login({
+          id: data.user.id,
+          name: data.user.name || googleUser.name,
+          email: data.user.email,
+          rol: data.user.rol,
+          avatar: googleUser.avatar,
+          isGoogleUser: data.isGoogleUser || false
+        });
+        
+        Swal.fire({
+          icon: "success",
+          title: "¡Bienvenido!",
+          text: "Inicio de sesión con Google exitoso",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          navigate("/dashboard", { replace: true });
+        });
+      } else {
+        throw new Error(data.message || "Error al autenticar usuario de Google");
+      }
     } catch (error) {
-      console.error("Error procesando el inicio de sesión con Google:", error);
+      console.error("Error en autenticación Google:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "No se pudo iniciar sesión con Google.",
+        confirmButtonColor: "#3085d6",
+      });
     }
   };
 
@@ -85,21 +126,17 @@ const Login = () => {
           confirmButtonText: "Continuar",
         }).then(() => {
           login({
-            name: data.user.email,
+            name: data.user.name || data.user.email,
             email: data.user.email,
             rol: data.user.rol,
             id: data.user.id,
+            isGoogleUser: false
           });
 
-          // Verificar el rol del usuario
           const userRole = Number(data.user.rol);
-
           if (userRole === 1) {
             navigate("/crud", { replace: true });
-          } else if (userRole === 2) {
-            navigate("/dashboard", { replace: true });
           } else {
-            console.warn(`Rol desconocido (${data.rol}), redirigiendo a /dashboard`);
             navigate("/dashboard", { replace: true });
           }
         });
@@ -175,7 +212,7 @@ const Login = () => {
             <div className="row">
               <div className="mb-3">
                 <GoogleLogin
-                  onSuccess={onSuccess}
+                  onSuccess={handleGoogleLogin}
                   onError={onFailure}
                 />
               </div>

@@ -20,17 +20,21 @@ try {
     }
 
     $email = $data['email'];
+    $isGoogleRequest = isset($data['isGoogleUser']) ? $data['isGoogleUser'] : false;
 
     $cnn = Conexion::getConexion();
     $stmt = $cnn->prepare("
-        SELECT nombre_usuario AS nombre, 
-               apellido_usuario AS apellido, 
-               telefono_usuario AS telefono,
-               correo_usuario AS correo, 
-               direccion1_usuario AS direccion1,
-               direccion2_usuario AS direccion2,
-               ciudad_usuario AS ciudad,
-               pais_usuario AS pais  
+        SELECT 
+            id_usuario as id,
+            nombre_usuario AS nombre, 
+            apellido_usuario AS apellido, 
+            telefono_usuario AS telefono,
+            correo_usuario AS correo, 
+            direccion1_usuario AS direccion1,
+            direccion2_usuario AS direccion2,
+            ciudad_usuario AS ciudad,
+            pais_usuario AS pais,
+            id_rol as rol
         FROM usuario 
         WHERE correo_usuario = :email
     ");
@@ -38,9 +42,44 @@ try {
 
     if ($stmt->rowCount() > 0) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        $response = ["success" => true, "user" => $user];
+        
+        // Para usuarios de Google con datos incompletos
+        if ($isGoogleRequest && empty($user['telefono']) && empty($user['direccion1'])) {
+            $response = [
+                "success" => true,
+                "user" => $user,
+                "isGoogleUser" => true,
+                "requiresProfileCompletion" => true
+            ];
+        } else {
+            $response = [
+                "success" => true,
+                "user" => $user,
+                "isGoogleUser" => $isGoogleRequest
+            ];
+        }
     } else {
-        throw new Exception("Usuario no encontrado");
+        // Si es una petición de Google y el usuario no existe, devolver un objeto vacío
+        if ($isGoogleRequest) {
+            $response = [
+                "success" => true,
+                "user" => [
+                    "correo" => $email,
+                    "nombre" => "",
+                    "apellido" => "",
+                    "telefono" => "",
+                    "direccion1" => "",
+                    "direccion2" => "",
+                    "ciudad" => "",
+                    "pais" => "",
+                    "rol" => 2
+                ],
+                "isGoogleUser" => true,
+                "requiresProfileCompletion" => true
+            ];
+        } else {
+            throw new Exception("Usuario no encontrado");
+        }
     }
 } catch (Exception $e) {
     http_response_code(400);
@@ -48,3 +87,4 @@ try {
 }
 
 echo json_encode($response);
+?>
