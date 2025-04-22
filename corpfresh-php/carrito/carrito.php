@@ -278,59 +278,68 @@ try {
             }
             $stmt->close();
             break;
+case 'DELETE':
+    // Verificar que el método sea DELETE y tenga parámetros
+    if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
+        responderError("Método no permitido", 405);
+    }
 
-        case 'DELETE':
-            // Eliminar producto del carrito o vaciar carrito
-            $json_input = file_get_contents("php://input");
-            $data = json_decode($json_input);
-            
-            if (!$data) {
-                responderError("Datos JSON inválidos: " . json_last_error_msg());
-            }
-            
-            if (isset($data->vaciar) && $data->vaciar === true) {
-                // Vaciar todo el carrito
-                if (!isset($data->usuario)) {
-                    responderError("Falta el parámetro usuario para vaciar carrito");
-                }
-                
-                $usuario = $data->usuario;
-                
-                // Verificar que el usuario existe
-                if (!validarUsuario($usuario, $conn)) {
-                    responderError("Usuario no válido");
-                }
-                
-                $sql = "DELETE FROM carrito WHERE usuario = ?";
-                $stmt = $conn->prepare($sql);
-                if (!$stmt) {
-                    responderError("Error en la preparación de consulta: " . $conn->error, 500);
-                }
-                $stmt->bind_param("s", $usuario);
-            } else {
-                // Eliminar un producto específico
-                if (!isset($data->id_carrito)) {
-                    responderError("Falta el parámetro id_carrito");
-                }
-                
-                $id_carrito = intval($data->id_carrito);
-                $sql = "DELETE FROM carrito WHERE id_carrito = ?";
-                $stmt = $conn->prepare($sql);
-                if (!$stmt) {
-                    responderError("Error en la preparación de consulta: " . $conn->error, 500);
-                }
-                $stmt->bind_param("i", $id_carrito);
-            }
-            
-            if ($stmt->execute()) {
-                ob_end_clean();
-                echo json_encode(['success' => true, 'message' => 'Operación completada']);
-            } else {
-                responderError("Error al eliminar: " . $stmt->error, 500);
-            }
-            $stmt->close();
-            break;
-        
+    // Obtener parámetros de la URL
+    parse_str($_SERVER['QUERY_STRING'], $params);
+    $id_carrito = isset($params['id_carrito']) ? intval($params['id_carrito']) : null;
+
+    // Validación estricta
+    if (!$id_carrito || $id_carrito <= 0) {
+        responderError("ID de carrito no válido", 400);
+    }
+
+    // Consulta preparada con verificación de usuario
+    $sql = "DELETE FROM carrito WHERE id_carrito = ? AND usuario = ?";
+    $stmt = $conn->prepare($sql);
+    
+    if (!$stmt) {
+        responderError("Error al preparar la consulta: " . $conn->error, 500);
+    }
+
+    // Obtener el usuario del carrito primero (para verificación)
+    $sql_check = "SELECT usuario FROM carrito WHERE id_carrito = ?";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bind_param("i", $id_carrito);
+    $stmt_check->execute();
+    $result = $stmt_check->get_result();
+    
+    if ($result->num_rows === 0) {
+        responderError("El producto no existe en el carrito", 404);
+    }
+    
+    $row = $result->fetch_assoc();
+    $usuario_carrito = $row['usuario'];
+    $stmt_check->close();
+
+    // Verificar que el usuario coincide (seguridad adicional)
+    if (!isset($_GET['usuario']) || $_GET['usuario'] !== $usuario_carrito) {
+        responderError("No tienes permisos para eliminar este producto", 403);
+    }
+
+    // Ejecutar eliminación
+    $stmt->bind_param("is", $id_carrito, $usuario_carrito);
+    
+    if ($stmt->execute()) {
+        if ($stmt->affected_rows > 0) {
+            ob_end_clean();
+            echo json_encode([
+                'success' => true,
+                'message' => 'Producto eliminado correctamente'
+            ]);
+        } else {
+            responderError("No se pudo eliminar el producto", 500);
+        }
+    } else {
+        responderError("Error al ejecutar la consulta: " . $stmt->error, 500);
+    }
+    
+    $stmt->close();
+    break;       
         default:
             responderError("Método no soportado", 405);
             break;
