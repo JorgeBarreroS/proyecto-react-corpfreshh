@@ -110,3 +110,10 @@ Stack trace:
 [22-Apr-2025 20:58:44 Europe/Berlin] Items del pedido insertados
 [22-Apr-2025 20:58:44 Europe/Berlin] Factura generada - ID: 18
 [22-Apr-2025 20:58:44 Europe/Berlin] Transacción completada con éxito
+[22-Apr-2025 22:04:01 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 22:04:01 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null},{"id_producto":2,"nombre":"Nike SB Dunk Low Verdy Visty","precio":1730200,"cantidad":1,"color":null,"talla":null},{"id_producto":34,"nombre":"ssh","precio":2222,"cantidad":1,"color":null,"talla":null}],"total":2021269.68,"metodo_pago":"casa","direccion":"fsdsf","telefono":"fsfdsf","envio":0,"impuestos":149723.68}
+[22-Apr-2025 22:04:01 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 22:04:01 Europe/Berlin] Pedido creado - ID: 16
+[22-Apr-2025 22:04:01 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 22:04:01 Europe/Berlin] Factura generada - ID: 7
+[22-Apr-2025 22:04:01 Europe/Berlin] Transacción completada con éxito
