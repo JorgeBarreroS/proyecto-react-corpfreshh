@@ -228,8 +228,8 @@ const Checkout = () => {
                                 
                                 {paymentMethod === 'nequi' && (
                                     <div className="nequi-info mt-3">
-                                        <p>Por favor realiza el pago a nuestro número de Nequi: <strong>3101234567</strong></p>
-                                        <p>Envía el comprobante de pago al WhatsApp: <strong>3101234567</strong></p>
+                                        <p>Por favor realiza el pago a nuestro número de Nequi: <strong>320 8706701</strong></p>
+                                        <p>Envía el comprobante de pago al WhatsApp: <strong>320 8706701</strong></p>
                                     </div>
                                 )}
                             </div>

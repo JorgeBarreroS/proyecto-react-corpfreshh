@@ -82,3 +82,31 @@ Stack trace:
 [22-Apr-2025 04:14:36 Europe/Berlin] Items del pedido insertados
 [22-Apr-2025 04:14:36 Europe/Berlin] Factura generada - ID: 4
 [22-Apr-2025 04:14:36 Europe/Berlin] Transacción completada con éxito
+[22-Apr-2025 17:26:01 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 17:26:01 Europe/Berlin] Datos recibidos: {"correo_usuario":"sebastianarteagaxd@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150253.92,"metodo_pago":"casa","direccion":"dsadsadsasad","telefono":"3213232132","envio":0,"impuestos":11129.92}
+[22-Apr-2025 17:26:01 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 17:26:01 Europe/Berlin] Pedido creado - ID: 23
+[22-Apr-2025 17:26:01 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 17:26:01 Europe/Berlin] Factura generada - ID: 15
+[22-Apr-2025 17:26:01 Europe/Berlin] Transacción completada con éxito
+[22-Apr-2025 20:05:49 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 20:05:49 Europe/Berlin] Datos recibidos: {"correo_usuario":"sebastianarteagaxd@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150253.92,"metodo_pago":"casa","direccion":"adsadsadsa","telefono":"213123123","envio":0,"impuestos":11129.92}
+[22-Apr-2025 20:05:49 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 20:05:49 Europe/Berlin] Pedido creado - ID: 24
+[22-Apr-2025 20:05:49 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 20:05:49 Europe/Berlin] Factura generada - ID: 16
+[22-Apr-2025 20:05:49 Europe/Berlin] Transacción completada con éxito
+[22-Apr-2025 20:53:18 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 20:53:18 Europe/Berlin] Datos recibidos: {"correo_usuario":"sebastianarteagaxd@gmail.com","items":[{"id_producto":9,"nombre":"Jordan 4 Retro Military Blue (2024) (GS)","precio":568375,"cantidad":1,"color":null,"talla":null},{"id_producto":6,"nombre":"Jordan 4 Retro White Thunder","precio":1228693,"cantidad":1,"color":null,"talla":null},{"id_producto":3,"nombre":"Conjunto Nba Baloncesto Jordan 23 Blanco (S)","precio":70000,"cantidad":1,"color":null,"talla":null}],"total":2016433.44,"metodo_pago":"casa","direccion":"calle 80","telefono":"3208706701","envio":0,"impuestos":149365.44}
+[22-Apr-2025 20:53:18 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 20:53:18 Europe/Berlin] Pedido creado - ID: 25
+[22-Apr-2025 20:53:18 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 20:53:18 Europe/Berlin] Factura generada - ID: 17
+[22-Apr-2025 20:53:18 Europe/Berlin] Transacción completada con éxito
+[22-Apr-2025 20:58:44 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 20:58:44 Europe/Berlin] Datos recibidos: {"correo_usuario":"sebastianarteagaxd@gmail.com","items":[{"id_producto":2,"nombre":"Nike SB Dunk Low Verdy Visty","precio":1730200,"cantidad":1,"color":null,"talla":null}],"total":1868616,"metodo_pago":"nequi","direccion":"calle 50","telefono":"3208706701","envio":0,"impuestos":138416}
+[22-Apr-2025 20:58:44 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 20:58:44 Europe/Berlin] Pedido creado - ID: 26
+[22-Apr-2025 20:58:44 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 20:58:44 Europe/Berlin] Factura generada - ID: 18
+[22-Apr-2025 20:58:44 Europe/Berlin] Transacción completada con éxito

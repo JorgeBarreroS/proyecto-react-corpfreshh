@@ -55,12 +55,21 @@ const MisPedidos = () => {
             const response = await fetch(
                 `http://localhost/corpfresh-php/facturas/generar_factura.php?pedido_id=${orderId}`,
                 {
-                    credentials: 'include'
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/pdf'
+                    }
                 }
             );
 
             if (!response.ok) {
-                throw new Error('Error al generar la factura');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Error al generar la factura');
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/pdf')) {
+                throw new Error('La respuesta no es un PDF válido');
             }
 
             const blob = await response.blob();
@@ -138,7 +147,7 @@ const MisPedidos = () => {
                                             </small>
                                         </div>
                                         <div>
-                                            <span className={`badge ${order.estado === 'completado' ? 'bg-success' : 'bg-warning'}`}>
+                                            <span className={`badge ${order.estado === 'entregado' ? 'bg-success' : 'bg-warning'}`}>
                                                 {order.estado.charAt(0).toUpperCase() + order.estado.slice(1)}
                                             </span>
                                         </div>
@@ -152,7 +161,7 @@ const MisPedidos = () => {
                                             <p><strong>Total:</strong> ${order.total.toFixed(2)}</p>
                                             <p><strong>Método de pago:</strong> {order.metodo_pago}</p>
                                             <p><strong>Dirección:</strong> {order.direccion_entrega}</p>
-                                            <p><strong>Productos:</strong> {order.total_productos}</p>
+                                            <p><strong>Productos:</strong> {order.total_productos || 1}</p>
                                         </div>
                                         
                                         <div className="order-actions">
@@ -165,8 +174,6 @@ const MisPedidos = () => {
                                             <button 
                                                 className="btn btn-outline-secondary"
                                                 onClick={() => generateInvoice(order.id)}
-                                                disabled={order.estado !== 'completado'}
-                                                title={order.estado !== 'completado' ? 'Factura disponible solo para pedidos completados' : ''}
                                             >
                                                 <i className="fas fa-file-invoice"></i> Factura
                                             </button>
