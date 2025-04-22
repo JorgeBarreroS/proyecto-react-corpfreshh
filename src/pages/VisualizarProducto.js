@@ -22,27 +22,20 @@ const VisualizarProducto = () => {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingCommentText, setEditingCommentText] = useState('');
 
-    // Función mejorada para obtener comentarios
+    const getImageSource = (imagePath) => {
+        if (!imagePath) return "http://localhost/corpfresh-php/imagenes/1.jpg";
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
+        return `http://localhost/corpfresh-php/${imagePath}`;
+    };
+
     const fetchComentarios = async () => {
         setLoadingComentarios(true);
         try {
             const response = await fetch(`http://localhost/corpfresh-php/comentarios.php?id_producto=${id}`);
-            
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
-            }
+            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
             
             const data = await response.json();
-            
-            if (Array.isArray(data)) {
-                setComentarios(data);
-            } else if (data.success === false) {
-                console.warn("Error al cargar comentarios:", data.error);
-                setComentarios([]);
-            } else {
-                setComentarios([]);
-                console.warn("Formato de datos inesperado:", data);
-            }
+            setComentarios(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error("Error al obtener comentarios:", err);
             setComentarios([]);
@@ -75,15 +68,16 @@ const VisualizarProducto = () => {
             Swal.fire('Error', 'La cantidad debe ser al menos 1', 'error');
             return;
         }
-        const productData = {
-            id_producto: producto.id_producto,
-            nombre: producto.nombre_producto,
-            precio: producto.precio_producto,
-            imagen: producto.imagen_producto,
-            cantidad,
-        };
+        
         try {
-            const response = await addToCart(productData);
+            const response = await addToCart({
+                id_producto: producto.id_producto,
+                nombre: producto.nombre_producto,
+                precio: producto.precio_producto,
+                imagen: producto.imagen_producto,
+                cantidad,
+            });
+            
             if (response.error) {
                 Swal.fire('Error', response.error, 'error');
             } else {
@@ -103,9 +97,8 @@ const VisualizarProducto = () => {
         }
     };
 
-    // Función mejorada para agregar comentarios
     const agregarComentario = async () => {
-        if (!authState || !authState.email) {
+        if (!authState?.email) {
             Swal.fire('Error', 'Debes iniciar sesión para comentar.', 'error');
             return;
         }
@@ -126,36 +119,28 @@ const VisualizarProducto = () => {
                     usuario: authState.email 
                 })
             });
-    
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Error ${response.status}: ${errorText}`);
-            }
             
             const data = await response.json();
-            
             if (data.success) {
                 setNuevoComentario('');
                 setNuevaPuntuacion(5);
                 await fetchComentarios();
                 Swal.fire('Éxito', 'Comentario agregado correctamente.', 'success');
             } else {
-                Swal.fire('Error', data.error || 'No se pudo agregar el comentario.', 'error');
+                throw new Error(data.error || 'No se pudo agregar el comentario.');
             }
         } catch (error) {
             console.error("Error al agregar comentario:", error);
-            Swal.fire('Error', `Hubo un problema con la solicitud: ${error.message}`, 'error');
+            Swal.fire('Error', error.message, 'error');
         }
     };
 
-    // Función para eliminar comentario
     const eliminarComentario = async (idComentario) => {
-        if (!authState || !authState.email) {
+        if (!authState?.email) {
             Swal.fire('Error', 'Debes iniciar sesión para eliminar comentarios.', 'error');
             return;
         }
 
-        // Confirmación antes de eliminar
         const confirmResult = await Swal.fire({
             title: '¿Estás seguro?',
             text: 'No podrás revertir esta acción',
@@ -167,9 +152,7 @@ const VisualizarProducto = () => {
             cancelButtonText: 'Cancelar'
         });
 
-        if (!confirmResult.isConfirmed) {
-            return;
-        }
+        if (!confirmResult.isConfirmed) return;
 
         try {
             const response = await fetch('http://localhost/corpfresh-php/comentarios.php', {
@@ -177,40 +160,32 @@ const VisualizarProducto = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id_comentario: idComentario })
             });
-
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
-            }
-
-            const data = await response.json();
             
+            const data = await response.json();
             if (data.success) {
                 await fetchComentarios();
                 Swal.fire('Éxito', 'Comentario eliminado correctamente.', 'success');
             } else {
-                Swal.fire('Error', data.error || 'No se pudo eliminar el comentario.', 'error');
+                throw new Error(data.error || 'No se pudo eliminar el comentario.');
             }
         } catch (error) {
             console.error("Error al eliminar comentario:", error);
-            Swal.fire('Error', `Hubo un problema al eliminar el comentario: ${error.message}`, 'error');
+            Swal.fire('Error', error.message, 'error');
         }
     };
 
-    // Función para iniciar edición de comentario
     const iniciarEdicionComentario = (comentario) => {
         setEditingCommentId(comentario.id_comentario);
         setEditingCommentText(comentario.comentario);
     };
 
-    // Función para cancelar edición
     const cancelarEdicionComentario = () => {
         setEditingCommentId(null);
         setEditingCommentText('');
     };
 
-    // Función para guardar edición de comentario
     const guardarEdicionComentario = async () => {
-        if (!authState || !authState.email) {
+        if (!authState?.email) {
             Swal.fire('Error', 'Debes iniciar sesión para editar comentarios.', 'error');
             return;
         }
@@ -229,113 +204,142 @@ const VisualizarProducto = () => {
                     comentario: editingCommentText 
                 })
             });
-
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
-            }
-
-            const data = await response.json();
             
+            const data = await response.json();
             if (data.success) {
                 await fetchComentarios();
                 setEditingCommentId(null);
                 setEditingCommentText('');
                 Swal.fire('Éxito', 'Comentario actualizado correctamente.', 'success');
             } else {
-                Swal.fire('Error', data.error || 'No se pudo actualizar el comentario.', 'error');
+                throw new Error(data.error || 'No se pudo actualizar el comentario.');
             }
         } catch (error) {
             console.error("Error al actualizar comentario:", error);
-            Swal.fire('Error', `Hubo un problema al actualizar el comentario: ${error.message}`, 'error');
+            Swal.fire('Error', error.message, 'error');
         }
     };
 
-    // Función para representar las estrellas de puntuación
     const renderStars = (rating) => {
         return '⭐'.repeat(rating);
     };
 
-    if (loading) return <div className="text-center mt-5"><div className="spinner-border" role="status"><span className="visually-hidden">Cargando...</span></div></div>;
-    if (error) return <div className="alert alert-danger">Error: {error}</div>;
-    if (!producto) return <div className="alert alert-warning">No se encontró el producto.</div>;
+    if (loading) return (
+        <div className="product-loading-container">
+            <div className="product-spinner" role="status">
+                <span className="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+    );
+
+    if (error) return (
+        <div className="product-error-container">
+            <div className="product-alert alert-danger">Error: {error}</div>
+        </div>
+    );
+
+    if (!producto) return (
+        <div className="product-not-found-container">
+            <div className="product-alert alert-warning">No se encontró el producto.</div>
+        </div>
+    );
 
     return (
-        <div>
+        <div className="product-view-page">
             <Navbar />
-            <div className="container mt-5 mb-5">
-                <div className="row">
-                    <div className="col-md-6">
-                        <img src={`http://localhost/corpfresh-php/${producto.imagen_producto}`} className="img-fluid w-75" alt={producto.nombre_producto} />
+            <div className="product-view-container">
+                <div className="product-details-row">
+                    <div className="product-image-col">
+                        <div className="product-image-wrapper">
+                            <img 
+                                src={getImageSource(producto.imagen_producto)} 
+                                className="product-image" 
+                                alt={producto.nombre_producto}
+                                onError={(e) => {
+                                    e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
+                                }}
+                            />
+                        </div>
                     </div>
-                    <div className="col-md-6">
-                        <h2>{producto.nombre_producto}</h2>
-                        <p><strong>Precio:</strong> ${producto.precio_producto}</p>
-                        <p><strong>Descripción:</strong> {producto.descripcion_producto}</p>
-                        <p><strong>Color:</strong> {producto.color_producto}</p>
-                        <p><strong>Marca:</strong> {producto.nombre_marca}</p>
-                        <p><strong>Talla:</strong> {producto.talla}</p>
-                        <form onSubmit={handleAddToCart}>
-                            <div className="mb-3">
-                                <label className="form-label">Cantidad:</label>
-                                <input type="number" className="form-control" value={cantidad} onChange={(e) => setCantidad(parseInt(e.target.value) || 0)} min="1" required />
+                    <div className="product-info-col">
+                        <h2 className="product-title">{producto.nombre_producto}</h2>
+                        <p className="product-text"><strong>Precio:</strong> ${producto.precio_producto}</p>
+                        <p className="product-text"><strong>Descripción:</strong> {producto.descripcion_producto}</p>
+                        <p className="product-text"><strong>Color:</strong> {producto.color_producto}</p>
+                        <p className="product-text"><strong>Marca:</strong> {producto.nombre_marca}</p>
+                        <p className="product-text"><strong>Talla:</strong> {producto.talla}</p>
+                        
+                        <form onSubmit={handleAddToCart} className="product-form">
+                            <div className="product-form-group">
+                                <label className="product-form-label">Cantidad:</label>
+                                <input 
+                                    type="number" 
+                                    className="product-form-control" 
+                                    value={cantidad} 
+                                    onChange={(e) => setCantidad(parseInt(e.target.value) || 0)} 
+                                    min="1" 
+                                    required 
+                                />
                             </div>
-                            <button type="submit" className="btn btn-primary btn-lg">Añadir al carrito</button>
+                            <button type="submit" className="product-btn btn-primary">
+                                Añadir al carrito
+                            </button>
                         </form>
                     </div>
                 </div>
-                <hr className="my-4" />
-                <h3 className="mb-3">Comentarios y Reseñas</h3>
-                {authState && authState.email ? (
-                    <div className="mb-4 comment-form">
-                        <textarea 
-                            className="form-control mb-2" 
-                            placeholder="Escribe un comentario" 
-                            value={nuevoComentario} 
-                            onChange={(e) => setNuevoComentario(e.target.value)}
-                            rows="3"
-                        />
-                        <div className="d-flex align-items-center">
-                            <select 
-                                className="form-select me-2" 
-                                value={nuevaPuntuacion} 
-                                onChange={(e) => setNuevaPuntuacion(parseInt(e.target.value))}
-                                style={{ maxWidth: "160px" }}
-                            >
-                                {[1, 2, 3, 4, 5].map(num => (
-                                    <option key={num} value={num}>{renderStars(num)}</option>
-                                ))}
-                            </select>
-                            <button 
-                                className="btn btn-success" 
-                                onClick={agregarComentario}
-                                disabled={nuevoComentario.trim() === ''}
-                            >
-                                Agregar Comentario
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="alert alert-info mb-4">
-                        Debes <Link to="/login">iniciar sesión</Link> para agregar comentarios.
-                    </div>
-                )}
                 
-                {loadingComentarios ? (
-                    <div className="text-center my-4">
-                        <div className="spinner-border spinner-border-sm" role="status">
-                            <span className="visually-hidden">Cargando comentarios...</span>
+                <div className="comments-section">
+                    <h3 className="comments-title">Comentarios y Reseñas</h3>
+                    
+                    {authState?.email ? (
+                        <div className="comment-form-container">
+                            <textarea 
+                                className="product-form-control" 
+                                placeholder="Escribe un comentario" 
+                                value={nuevoComentario} 
+                                onChange={(e) => setNuevoComentario(e.target.value)}
+                                rows="3"
+                            />
+                            <div className="comment-form-actions">
+                                <select 
+                                    className="product-form-control rating-select" 
+                                    value={nuevaPuntuacion} 
+                                    onChange={(e) => setNuevaPuntuacion(parseInt(e.target.value))}
+                                >
+                                    {[1, 2, 3, 4, 5].map(num => (
+                                        <option key={num} value={num}>{renderStars(num)}</option>
+                                    ))}
+                                </select>
+                                <button 
+                                    className="product-btn btn-success" 
+                                    onClick={agregarComentario}
+                                    disabled={nuevoComentario.trim() === ''}
+                                >
+                                    Agregar Comentario
+                                </button>
+                            </div>
                         </div>
-                        <span className="ms-2">Cargando comentarios...</span>
-                    </div>
-                ) : comentarios.length > 0 ? (
-                    <div className="comments-container">
-                        {comentarios.map(comentario => (
-                            <div key={comentario.id_comentario} className="card mb-3">
-                                <div className="card-body">
-                                    <div className="d-flex justify-content-between align-items-start">
+                    ) : (
+                        <div className="product-alert alert-info">
+                            Debes <Link to="/login">iniciar sesión</Link> para agregar comentarios.
+                        </div>
+                    )}
+                    
+                    {loadingComentarios ? (
+                        <div className="comments-loading">
+                            <div className="product-spinner spinner-border-sm" role="status">
+                                <span className="visually-hidden">Cargando comentarios...</span>
+                            </div>
+                            <span>Cargando comentarios...</span>
+                        </div>
+                    ) : comentarios.length > 0 ? (
+                        <div className="comments-list">
+                            {comentarios.map(comentario => (
+                                <div key={comentario.id_comentario} className="comment-card">
+                                    <div className="comment-header">
                                         <div>
-                                            <h5 className="card-title">{comentario.usuario}</h5>
-                                            <h6 className="card-subtitle mb-2 text-muted">
+                                            <h5 className="comment-user">{comentario.usuario}</h5>
+                                            <h6 className="comment-date">
                                                 {new Date(comentario.fecha).toLocaleDateString('es-ES', {
                                                     year: 'numeric',
                                                     month: 'long',
@@ -345,27 +349,27 @@ const VisualizarProducto = () => {
                                                 })}
                                             </h6>
                                         </div>
-                                        <div className="rating">{renderStars(comentario.puntuacion)}</div>
+                                        <div className="comment-rating">{renderStars(comentario.puntuacion)}</div>
                                     </div>
                                     
                                     {editingCommentId === comentario.id_comentario ? (
-                                        <div className="mt-3">
+                                        <div className="comment-edit-form">
                                             <textarea 
-                                                className="form-control mb-2" 
+                                                className="product-form-control" 
                                                 value={editingCommentText} 
                                                 onChange={(e) => setEditingCommentText(e.target.value)}
                                                 rows="3"
                                             />
-                                            <div className="d-flex gap-2">
+                                            <div className="edit-actions">
                                                 <button 
-                                                    className="btn btn-sm btn-primary" 
+                                                    className="product-btn btn-primary" 
                                                     onClick={guardarEdicionComentario}
                                                     disabled={editingCommentText.trim() === ''}
                                                 >
                                                     Guardar
                                                 </button>
                                                 <button 
-                                                    className="btn btn-sm btn-secondary" 
+                                                    className="product-btn btn-secondary" 
                                                     onClick={cancelarEdicionComentario}
                                                 >
                                                     Cancelar
@@ -373,19 +377,19 @@ const VisualizarProducto = () => {
                                             </div>
                                         </div>
                                     ) : (
-                                        <p className="card-text mt-2">{comentario.comentario}</p>
+                                        <p className="comment-text">{comentario.comentario}</p>
                                     )}
                                     
-                                    {authState && authState.email === comentario.usuario && editingCommentId !== comentario.id_comentario && (
-                                        <div className="mt-2 d-flex gap-2">
+                                    {authState?.email === comentario.usuario && editingCommentId !== comentario.id_comentario && (
+                                        <div className="comment-actions">
                                             <button 
-                                                className="btn btn-sm btn-outline-primary" 
+                                                className="product-btn btn-outline-primary" 
                                                 onClick={() => iniciarEdicionComentario(comentario)}
                                             >
                                                 Editar
                                             </button>
                                             <button 
-                                                className="btn btn-sm btn-outline-danger" 
+                                                className="product-btn btn-outline-danger" 
                                                 onClick={() => eliminarComentario(comentario.id_comentario)}
                                             >
                                                 Eliminar
@@ -393,14 +397,14 @@ const VisualizarProducto = () => {
                                         </div>
                                     )}
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="alert alert-light text-center">
-                        No hay comentarios aún. ¡Sé el primero en comentar!
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="product-alert alert-light">
+                            No hay comentarios aún. ¡Sé el primero en comentar!
+                        </div>
+                    )}
+                </div>
             </div>
             <Footer />
         </div>
