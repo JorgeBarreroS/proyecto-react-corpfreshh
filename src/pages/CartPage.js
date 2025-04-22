@@ -14,6 +14,19 @@ const Carrito = () => {
     const { authState } = useAuth();
     const navigate = useNavigate();
 
+    // Función para obtener la fuente de la imagen
+    const getImageSource = (imagePath) => {
+        if (!imagePath) {
+            return "http://localhost/corpfresh-php/imagenes/1.jpg";
+        }
+        
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+            return imagePath;
+        }
+        
+        return `http://localhost/corpfresh-php/${imagePath}`;
+    };
+
     const fetchCarrito = async () => {
         try {
             if (!authState || !authState.email) {
@@ -94,7 +107,7 @@ const Carrito = () => {
         const resultado = await Swal.fire({
             title: '¿Eliminar producto?',
             html: `¿Estás seguro de eliminar <strong>${productoNombre}</strong> de tu carrito?`,
-            imageUrl: `http://localhost/corpfresh-php/${productoImagen}`,
+            imageUrl: getImageSource(productoImagen),
             imageWidth: 200,
             imageAlt: productoNombre,
             showCancelButton: true,
@@ -269,7 +282,13 @@ const Carrito = () => {
                                         {productos.map(producto => (
                                             <div className="cart-item" key={producto.id_carrito}>
                                                 <div className="cart-item-image">
-                                                    <img src={`http://localhost/corpfresh-php/${producto.imagen}`} alt={producto.nombre} />
+                                                    <img 
+                                                        src={getImageSource(producto.imagen)} 
+                                                        alt={producto.nombre}
+                                                        onError={(e) => {
+                                                            e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
+                                                        }}
+                                                    />
                                                 </div>
                                                 <div className="cart-item-details">
                                                     <Link to={`/producto/${producto.id_producto}`} className="cart-item-name">
@@ -302,7 +321,7 @@ const Carrito = () => {
                                                         min="1"
                                                         onChange={(e) => {
                                                             const newValue = parseInt(e.target.value);
-                                                            if (!isNaN(newValue) && newValue >= 1) {
+                                                            if (!isNaN(newValue)) {
                                                                 actualizarCantidad(producto.id_carrito, newValue);
                                                             }
                                                         }}
