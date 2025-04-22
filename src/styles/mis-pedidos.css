@@ -87,3 +87,18 @@
         width: 100%;
     }
 }
+
+.btn-outline-secondary {
+    color: #80c26d;
+    background-color: #ffffff;
+    border-color: #4CAF50;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #45a049; 
+    border-color: #45a049;
+}
+
+.btn-outline-secondary i {
+    margin-right: 5px;
+}
