@@ -7,20 +7,26 @@ const DetallePedido = () => {
     const { id } = useParams();
     const [pedido, setPedido] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Aquí iría la llamada a la API para obtener los detalles del pedido
         const fetchPedido = async () => {
             try {
                 const response = await fetch(`http://localhost/corpfresh-php/pedidos/detalle_pedido.php?pedido_id=${id}`);
                 const data = await response.json();
                 if (response.ok) {
-                    setPedido(data);
+                    // Asegurarnos que total es un número
+                    const pedidoConTotalNumerico = {
+                        ...data,
+                        total: parseFloat(data.total) || 0
+                    };
+                    setPedido(pedidoConTotalNumerico);
                 } else {
                     throw new Error(data.error || 'Error al cargar el pedido');
                 }
             } catch (error) {
                 console.error('Error:', error);
+                setError(error.message);
             } finally {
                 setLoading(false);
             }
@@ -44,12 +50,14 @@ const DetallePedido = () => {
         );
     }
 
-    if (!pedido) {
+    if (error || !pedido) {
         return (
             <div>
                 <Navbar />
                 <div className="container mt-5">
-                    <div className="alert alert-danger">No se pudo cargar la información del pedido</div>
+                    <div className="alert alert-danger">
+                        {error || 'No se pudo cargar la información del pedido'}
+                    </div>
                 </div>
                 <Footer />
             </div>
@@ -61,7 +69,6 @@ const DetallePedido = () => {
             <Navbar />
             <div className="container my-5">
                 <h1>Detalles del Pedido #{pedido.id}</h1>
-                {/* Aquí mostrarías los detalles del pedido */}
                 <div className="card mt-4">
                     <div className="card-body">
                         <h5 className="card-title">Información del Pedido</h5>
@@ -74,7 +81,7 @@ const DetallePedido = () => {
                         <ul className="list-group">
                             {pedido.items.map(item => (
                                 <li key={item.id} className="list-group-item">
-                                    {item.nombre_producto} - ${item.precio_unitario.toFixed(2)} x {item.cantidad}
+                                    {item.nombre_producto} - ${(parseFloat(item.precio_unitario) || 0).toFixed(2)} x {item.cantidad}
                                 </li>
                             ))}
                         </ul>
