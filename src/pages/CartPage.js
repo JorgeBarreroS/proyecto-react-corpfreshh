@@ -264,7 +264,7 @@ const Carrito = () => {
                             <p>Para ver tus productos y realizar compras, debes iniciar sesión primero.</p>
                             <div className="mt-4">
                                 <Link to="/login" className="btn btn-primary me-2">Iniciar Sesión</Link>
-                                <Link to="/tienda" className="btn btn-outline-primary">Seguir Comprando</Link>
+                                <Link to="/" className="btn btn-outline-primary">Seguir Comprando</Link>
                             </div>
                         </div>
                     ) : productos.length === 0 ? (
@@ -272,7 +272,7 @@ const Carrito = () => {
                             <i className="fas fa-shopping-cart cart-icon"></i>
                             <h3>Tu carrito está vacío</h3>
                             <p>¡Encuentra productos increíbles en nuestra tienda!</p>
-                            <Link to="/tienda" className="btn btn-primary mt-3">Explorar Tienda</Link>
+                            <Link to="/" className="btn btn-primary mt-3">Explorar Tienda</Link>
                         </div>
                     ) : (
                         <div className="cart-content">
@@ -346,7 +346,7 @@ const Carrito = () => {
                                         ))}
                                     </div>
                                     <div className="cart-actions">
-                                        <Link to="/tienda" className="btn btn-outline-primary">
+                                        <Link to="/" className="btn btn-outline-primary">
                                             <i className="fas fa-arrow-left me-2"></i>
                                             Seguir comprando
                                         </Link>

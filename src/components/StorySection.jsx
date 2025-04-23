@@ -1,5 +1,5 @@
 import React from "react";
-import imagen3 from "../imagenes/corp-freshh.jfif";
+import imagen3 from "../imagenes/Corp.png";
 
 
 const StorySection = () => {

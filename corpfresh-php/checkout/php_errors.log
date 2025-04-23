@@ -82,3 +82,17 @@ Stack trace:
 [22-Apr-2025 04:14:36 Europe/Berlin] Items del pedido insertados
 [22-Apr-2025 04:14:36 Europe/Berlin] Factura generada - ID: 4
 [22-Apr-2025 04:14:36 Europe/Berlin] Transacción completada con éxito
+[22-Apr-2025 14:03:36 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 14:03:36 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150253.92,"metodo_pago":"casa","direccion":"hhcvbvbvbvc","telefono":"4636436","envio":0,"impuestos":11129.92}
+[22-Apr-2025 14:03:36 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 14:03:36 Europe/Berlin] Pedido creado - ID: 12
+[22-Apr-2025 14:03:36 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 14:03:36 Europe/Berlin] Factura generada - ID: 4
+[22-Apr-2025 14:03:36 Europe/Berlin] Transacción completada con éxito
+[22-Apr-2025 14:46:29 Europe/Berlin] === Inicio del proceso de pago ===
+[22-Apr-2025 14:46:29 Europe/Berlin] Datos recibidos: {"correo_usuario":"olamiperro@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150253.92,"metodo_pago":"casa","direccion":"aSDFGHJK","telefono":"142536","envio":0,"impuestos":11129.92}
+[22-Apr-2025 14:46:29 Europe/Berlin] Conexión a BD establecida
+[22-Apr-2025 14:46:29 Europe/Berlin] Pedido creado - ID: 13
+[22-Apr-2025 14:46:29 Europe/Berlin] Items del pedido insertados
+[22-Apr-2025 14:46:29 Europe/Berlin] Factura generada - ID: 5
+[22-Apr-2025 14:46:29 Europe/Berlin] Transacción completada con éxito
