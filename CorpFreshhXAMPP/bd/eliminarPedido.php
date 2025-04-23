@@ -22,7 +22,7 @@ if (isset($data->id_pedido)) {
         if ($checkQuery->rowCount() === 0) {
             echo json_encode([
                 'success' => false,
-                'message' => 'El pedidos con ID ' . $data->id_pedido . ' no existe.'
+                'message' => 'El pedido con ID ' . $data->id_pedido . ' no existe.'
             ]);
             exit;
         }

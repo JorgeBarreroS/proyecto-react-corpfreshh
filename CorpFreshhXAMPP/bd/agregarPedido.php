@@ -8,33 +8,33 @@ require_once 'conexion.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
+// Estados permitidos en minúsculas como en la BD
+$estadosPermitidos = ['pendiente', 'procesando', 'enviado', 'completado', 'cancelado'];
+
 if (isset($data->correo_usuario) && isset($data->id_usuario)) {
     try {
+        // Validar estado si está presente
+        if (!empty($data->estado)) {
+            $estado = strtolower($data->estado);
+            if (!in_array($estado, $estadosPermitidos)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Estado no válido. Los estados permitidos son: pendiente, procesando, enviado, completado, cancelado'
+                ]);
+                exit;
+            }
+            $data->estado = $estado;
+        }
+
         // Set default values if not provided
-        if (empty($data->fecha_pedido)) {
-            $data->fecha_pedido = date('Y-m-d');
-        }
-        if (empty($data->total)) {
-            $data->total = 0.00;
-        }
-        if (empty($data->metodo_pago)) {
-            $data->metodo_pago = 'Efectivo';
-        }
-        if (empty($data->direccion_entrega)) {
-            $data->direccion_entrega = '';
-        }
-        if (empty($data->telefono_contacto)) {
-            $data->telefono_contacto = '';
-        }
-        if (empty($data->costo_envio)) {
-            $data->costo_envio = 0.00;
-        }
-        if (empty($data->impuestos)) {
-            $data->impuestos = 0.00;
-        }
-        if (empty($data->estado)) {
-            $data->estado = 'Pendiente';
-        }
+        $data->fecha_pedido = empty($data->fecha_pedido) ? date('Y-m-d') : $data->fecha_pedido;
+        $data->total = empty($data->total) ? 0.00 : floatval($data->total);
+        $data->metodo_pago = empty($data->metodo_pago) ? 'Efectivo' : $data->metodo_pago;
+        $data->direccion_entrega = empty($data->direccion_entrega) ? '' : $data->direccion_entrega;
+        $data->telefono_contacto = empty($data->telefono_contacto) ? '' : $data->telefono_contacto;
+        $data->costo_envio = empty($data->costo_envio) ? 0.00 : floatval($data->costo_envio);
+        $data->impuestos = empty($data->impuestos) ? 0.00 : floatval($data->impuestos);
+        $data->estado = empty($data->estado) ? 'pendiente' : strtolower($data->estado);
         
         $query = $pdo->prepare("INSERT INTO pedidos (
             correo_usuario, 

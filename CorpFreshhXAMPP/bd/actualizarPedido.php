@@ -8,8 +8,21 @@ require_once 'conexion.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
+// Validar estados permitidos (en minúsculas como en la BD)
+$estadosPermitidos = ['pendiente', 'procesando', 'enviado', 'completado', 'cancelado'];
+
 if (isset($data->id)) {
     try {
+        // Validar estado si está presente
+        if (isset($data->estado)) {
+            $estado = strtolower($data->estado);
+            if (!in_array($estado, $estadosPermitidos)) {
+                echo json_encode(['error' => 'Estado no válido. Use: pendiente, procesando, enviado, completado o cancelado']);
+                exit;
+            }
+            $data->estado = $estado;
+        }
+
         $query = $pdo->prepare("UPDATE pedidos SET 
             correo_usuario = :correo_usuario, 
             id_usuario = :id_usuario, 
@@ -42,5 +55,5 @@ if (isset($data->id)) {
         echo json_encode(['error' => $e->getMessage()]);
     }
 } else {
-    echo json_encode(['error' => 'Faltan parámetros']);
+    echo json_encode(['error' => 'Faltan parámetros requeridos']);
 }

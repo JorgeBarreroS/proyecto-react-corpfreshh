@@ -1,11 +1,9 @@
 <?php
-// Encabezados CORS
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Manejo de preflight (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -31,7 +29,7 @@ try {
     $direccion2 = $data['direccion2'] ?? '';
     $ciudad = $data['ciudad'] ?? '';
     $pais = $data['pais'] ?? '';
-    $correo = $data['correo'] ?? $currentEmail;
+    $isGoogleUser = $data['isGoogleUser'] ?? false;
 
     $cnn = Conexion::getConexion();
     
@@ -47,16 +45,32 @@ try {
     }
     
     // Preparar la consulta SQL
-    $sql = "
-        UPDATE usuario 
-        SET nombre_usuario = :nombre, 
-            apellido_usuario = :apellido, 
-            telefono_usuario = :telefono, 
-            direccion1_usuario = :direccion1,
-            direccion2_usuario = :direccion2,
-            ciudad_usuario = :ciudad,
-            pais_usuario = :pais
-    ";
+    if ($isGoogleUser) {
+        // Para usuarios de Google, actualizamos todos los campos posibles
+        $sql = "
+            UPDATE usuario 
+            SET nombre_usuario = :nombre, 
+                apellido_usuario = :apellido, 
+                telefono_usuario = :telefono, 
+                direccion1_usuario = :direccion1,
+                direccion2_usuario = :direccion2,
+                ciudad_usuario = :ciudad,
+                pais_usuario = :pais,
+                id_rol = 2
+        ";
+    } else {
+        // Para usuarios normales
+        $sql = "
+            UPDATE usuario 
+            SET nombre_usuario = :nombre, 
+                apellido_usuario = :apellido, 
+                telefono_usuario = :telefono, 
+                direccion1_usuario = :direccion1,
+                direccion2_usuario = :direccion2,
+                ciudad_usuario = :ciudad,
+                pais_usuario = :pais
+        ";
+    }
     
     // Si hay cambio de email, incluirlo en la actualización
     if ($newEmail && $newEmail !== $currentEmail) {
@@ -98,7 +112,6 @@ try {
         $exists = (int)$checkStmt->fetchColumn();
         
         if ($exists) {
-            // El usuario existe pero no se realizaron cambios (mismos datos)
             $response = ["success" => true, "message" => "No se detectaron cambios en los datos"];
         } else {
             throw new Exception("Usuario no encontrado");
@@ -110,3 +123,4 @@ try {
 }
 
 echo json_encode($response);
+?>

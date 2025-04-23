@@ -33,12 +33,11 @@ export default function Pedidos() {
         return response.json();
       })
       .then((data) => {
-        // Ensure data is always an array
         setPedidos(Array.isArray(data) ? data : []);
       })
       .catch((err) => {
         setError(err.message);
-        setPedidos([]); // Set empty array on error
+        setPedidos([]);
       });
   };
 
@@ -48,7 +47,7 @@ export default function Pedidos() {
 
   const handleEdit = (pedido) => {
     setEditingPedidoId(pedido.id);
-    setEditedPedido(pedido);
+    setEditedPedido({...pedido});
   };
 
   const handleSave = () => {
@@ -63,8 +62,8 @@ export default function Pedidos() {
       .then((data) => {
         if (data.success) {
           setPedidos((prevPedidos) =>
-            prevPedidos.map((pedido) =>
-              pedido.id === editedPedido.id ? editedPedido : pedido
+            prevPedidos.map((p) =>
+              p.id === editedPedido.id ? editedPedido : p
             )
           );
           setEditingPedidoId(null);
@@ -109,7 +108,7 @@ export default function Pedidos() {
           .then((data) => {
             if (data.success) {
               setPedidos((prevPedidos) =>
-                prevPedidos.filter((pedido) => pedido.id !== id)
+                prevPedidos.filter((p) => p.id !== id)
               );
               Swal.fire({
                 icon: "success",
@@ -150,7 +149,6 @@ export default function Pedidos() {
   const handleAddPedido = (e) => {
     e.preventDefault();
     
-    // Validar campos requeridos
     if (!newPedido.correo_usuario || !newPedido.id_usuario) {
       Swal.fire({
         icon: "warning",
@@ -170,11 +168,8 @@ export default function Pedidos() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          // Agregar el nuevo pedido con el ID generado
           const pedidoConId = { ...newPedido, id: data.id_pedido };
           setPedidos((prevPedidos) => [...prevPedidos, pedidoConId]);
-          
-          // Resetear el formulario
           setNewPedido({
             correo_usuario: "",
             id_usuario: "",
@@ -187,10 +182,7 @@ export default function Pedidos() {
             impuestos: "",
             estado: ""
           });
-          
-          // Cerrar el formulario
           setShowAddForm(false);
-          
           Swal.fire({
             icon: "success",
             title: "¡Éxito!",
@@ -215,22 +207,17 @@ export default function Pedidos() {
       });
   };
 
-  // Filtrar pedidos por búsqueda - CORREGIDO: Se añadió el paréntesis faltante
   const filteredPedidos = pedidos.filter((pedido) =>
     Object.values(pedido).some((value) =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
-  // Paginación
   const indexOfLastPedido = currentPage * itemsPerPage;
   const indexOfFirstPedido = indexOfLastPedido - itemsPerPage;
   const currentPedidos = filteredPedidos.slice(indexOfFirstPedido, indexOfLastPedido);
 
-  // Cambiar página
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Calcular el total de páginas
   const totalPages = Math.ceil(filteredPedidos.length / itemsPerPage);
 
   return (
@@ -245,7 +232,6 @@ export default function Pedidos() {
         </button>
       </div>
 
-      {/* Formulario para agregar pedido */}
       {showAddForm && (
         <div className="bg-white p-4 mb-6 rounded-lg shadow-md">
           <h3 className="text-lg font-medium mb-4 text-grisOscuro">
@@ -376,11 +362,11 @@ export default function Pedidos() {
                 className="w-full p-2 border border-gray-300 rounded"
               >
                 <option value="">Seleccionar estado</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Procesando">Procesando</option>
-                <option value="Enviado">Enviado</option>
-                <option value="Entregado">Entregado</option>
-                <option value="Cancelado">Cancelado</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="procesando">Procesando</option>
+                <option value="enviado">Enviado</option>
+                <option value="completado">Completado</option>
+                <option value="cancelado">Cancelado</option>
               </select>
             </div>
             <div className="md:col-span-2 flex justify-end mt-4">
@@ -402,7 +388,6 @@ export default function Pedidos() {
         </div>
       )}
 
-      {/* Buscador */}
       <input
         type="text"
         placeholder="Buscar pedidos..."
@@ -411,7 +396,6 @@ export default function Pedidos() {
         className="mb-4 p-2 border border-gray-300 w-full"
       />
 
-      {/* Tabla de pedidos */}
       {error ? (
         <p className="text-red-600">{error}</p>
       ) : (
@@ -569,11 +553,11 @@ export default function Pedidos() {
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         >
-                          <option value="Pendiente">Pendiente</option>
-                          <option value="Procesando">Procesando</option>
-                          <option value="Enviado">Enviado</option>
-                          <option value="Entregado">Entregado</option>
-                          <option value="Cancelado">Cancelado</option>
+                          <option value="pendiente">Pendiente</option>
+                          <option value="procesando">Procesando</option>
+                          <option value="enviado">Enviado</option>
+                          <option value="completado">Completado</option>
+                          <option value="cancelado">Cancelado</option>
                         </select>
                       ) : (
                         pedido.estado
@@ -620,7 +604,6 @@ export default function Pedidos() {
         </div>
       )}
 
-      {/* Paginación */}
       {filteredPedidos.length > 0 && (
         <div className="flex justify-center mt-4">
           <button
