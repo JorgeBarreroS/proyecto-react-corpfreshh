@@ -17,7 +17,7 @@ if ($id <= 0) {
 // Consulta para obtener el producto
 $sql = "SELECT p.id_producto, p.nombre_producto, p.descripcion_producto, 
                p.precio_producto, p.imagen_producto, p.color_producto, 
-               p.nombre_marca, p.talla 
+               p.nombre_marca, p.talla, p.stock 
         FROM producto p
         WHERE p.id_producto = ?";
 $stmt = $conn->prepare($sql);

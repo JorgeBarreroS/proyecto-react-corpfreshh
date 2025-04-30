@@ -82,22 +82,6 @@ Stack trace:
 [22-Apr-2025 04:14:36 Europe/Berlin] Items del pedido insertados
 [22-Apr-2025 04:14:36 Europe/Berlin] Factura generada - ID: 4
 [22-Apr-2025 04:14:36 Europe/Berlin] Transacción completada con éxito
-<<<<<<< HEAD
-[22-Apr-2025 14:03:36 Europe/Berlin] === Inicio del proceso de pago ===
-[22-Apr-2025 14:03:36 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150253.92,"metodo_pago":"casa","direccion":"hhcvbvbvbvc","telefono":"4636436","envio":0,"impuestos":11129.92}
-[22-Apr-2025 14:03:36 Europe/Berlin] Conexión a BD establecida
-[22-Apr-2025 14:03:36 Europe/Berlin] Pedido creado - ID: 12
-[22-Apr-2025 14:03:36 Europe/Berlin] Items del pedido insertados
-[22-Apr-2025 14:03:36 Europe/Berlin] Factura generada - ID: 4
-[22-Apr-2025 14:03:36 Europe/Berlin] Transacción completada con éxito
-[22-Apr-2025 14:46:29 Europe/Berlin] === Inicio del proceso de pago ===
-[22-Apr-2025 14:46:29 Europe/Berlin] Datos recibidos: {"correo_usuario":"olamiperro@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150253.92,"metodo_pago":"casa","direccion":"aSDFGHJK","telefono":"142536","envio":0,"impuestos":11129.92}
-[22-Apr-2025 14:46:29 Europe/Berlin] Conexión a BD establecida
-[22-Apr-2025 14:46:29 Europe/Berlin] Pedido creado - ID: 13
-[22-Apr-2025 14:46:29 Europe/Berlin] Items del pedido insertados
-[22-Apr-2025 14:46:29 Europe/Berlin] Factura generada - ID: 5
-[22-Apr-2025 14:46:29 Europe/Berlin] Transacción completada con éxito
-=======
 [22-Apr-2025 17:26:01 Europe/Berlin] === Inicio del proceso de pago ===
 [22-Apr-2025 17:26:01 Europe/Berlin] Datos recibidos: {"correo_usuario":"sebastianarteagaxd@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150253.92,"metodo_pago":"casa","direccion":"dsadsadsasad","telefono":"3213232132","envio":0,"impuestos":11129.92}
 [22-Apr-2025 17:26:01 Europe/Berlin] Conexión a BD establecida
@@ -133,4 +117,24 @@ Stack trace:
 [22-Apr-2025 22:04:01 Europe/Berlin] Items del pedido insertados
 [22-Apr-2025 22:04:01 Europe/Berlin] Factura generada - ID: 7
 [22-Apr-2025 22:04:01 Europe/Berlin] Transacción completada con éxito
->>>>>>> ec2f04956901ebdfac720db8bfd6b1270edf2729
+[30-Apr-2025 03:20:32 Europe/Berlin] === Inicio del proceso de pago ===
+[30-Apr-2025 03:20:32 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150253.92,"metodo_pago":"casa","direccion":"ssss","telefono":"sssss","envio":0,"impuestos":11129.92}
+[30-Apr-2025 03:20:32 Europe/Berlin] Conexión a BD establecida
+[30-Apr-2025 03:20:32 Europe/Berlin] Pedido creado - ID: 18
+[30-Apr-2025 03:20:32 Europe/Berlin] Items del pedido insertados
+[30-Apr-2025 03:20:32 Europe/Berlin] Factura generada - ID: 8
+[30-Apr-2025 03:20:32 Europe/Berlin] Transacción completada con éxito
+[30-Apr-2025 04:05:22 Europe/Berlin] === Inicio del proceso de pago ===
+[30-Apr-2025 04:05:22 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":2,"nombre":"Nike SB Dunk Low Verdy Visty","precio":1730200,"cantidad":1,"color":null,"talla":null}],"total":1868616,"metodo_pago":"casa","direccion":"rfd","telefono":"ddd","envio":0,"impuestos":138416}
+[30-Apr-2025 04:05:22 Europe/Berlin] Conexión a BD establecida
+[30-Apr-2025 04:05:22 Europe/Berlin] Pedido creado - ID: 19
+[30-Apr-2025 04:05:22 Europe/Berlin] Items del pedido insertados
+[30-Apr-2025 04:05:22 Europe/Berlin] Factura generada - ID: 9
+[30-Apr-2025 04:05:22 Europe/Berlin] Transacción completada con éxito
+[30-Apr-2025 04:06:45 Europe/Berlin] === Inicio del proceso de pago ===
+[30-Apr-2025 04:06:45 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150253.92,"metodo_pago":"casa","direccion":"yyydy","telefono":"ydddd","envio":0,"impuestos":11129.92}
+[30-Apr-2025 04:06:45 Europe/Berlin] Conexión a BD establecida
+[30-Apr-2025 04:06:45 Europe/Berlin] Pedido creado - ID: 20
+[30-Apr-2025 04:06:45 Europe/Berlin] Items del pedido insertados
+[30-Apr-2025 04:06:45 Europe/Berlin] Factura generada - ID: 10
+[30-Apr-2025 04:06:45 Europe/Berlin] Transacción completada con éxito

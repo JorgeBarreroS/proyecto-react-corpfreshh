@@ -51,6 +51,12 @@ const VisualizarProducto = () => {
                 if (!response.ok) throw new Error("No se pudo cargar el producto.");
                 const data = await response.json();
                 setProducto(data.error ? null : data);
+                // Si se carga el producto correctamente, verifica que la cantidad no exceda el stock
+                if (data && !data.error && data.stock > 0) {
+                    setCantidad(1); // Inicializa con 1 si hay stock
+                } else if (data && !data.error && data.stock <= 0) {
+                    setCantidad(0); // Inicializa con 0 si no hay stock
+                }
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -66,6 +72,12 @@ const VisualizarProducto = () => {
         e.preventDefault();
         if (cantidad < 1) {
             Swal.fire('Error', 'La cantidad debe ser al menos 1', 'error');
+            return;
+        }
+
+        // Validación de stock
+        if (cantidad > producto.stock) {
+            Swal.fire('Error', `No hay suficiente stock. Stock disponible: ${producto.stock}`, 'error');
             return;
         }
         
@@ -244,6 +256,10 @@ const VisualizarProducto = () => {
         </div>
     );
 
+    // Determinar si hay suficiente stock para mostrar la UI adecuada
+    const hayStock = producto.stock > 0;
+    const stockBajo = hayStock && producto.stock <= 5;
+
     return (
         <div className="product-view-page">
             <Navbar />
@@ -269,6 +285,13 @@ const VisualizarProducto = () => {
                         <p className="product-text"><strong>Marca:</strong> {producto.nombre_marca}</p>
                         <p className="product-text"><strong>Talla:</strong> {producto.talla}</p>
                         
+                        {/* Mostrar información de stock */}
+                        <p className={`product-text ${!hayStock ? 'text-danger' : (stockBajo ? 'text-warning' : 'text-success')}`}>
+                            <strong>Stock disponible:</strong> {producto.stock}
+                            {!hayStock && <span> - Agotado</span>}
+                            {stockBajo && hayStock && <span> - ¡Últimas unidades!</span>}
+                        </p>
+                        
                         <form onSubmit={handleAddToCart} className="product-form">
                             <div className="product-form-group">
                                 <label className="product-form-label">Cantidad:</label>
@@ -276,13 +299,28 @@ const VisualizarProducto = () => {
                                     type="number" 
                                     className="product-form-control" 
                                     value={cantidad} 
-                                    onChange={(e) => setCantidad(parseInt(e.target.value) || 0)} 
-                                    min="1" 
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value) || 0;
+                                        // Limitar la cantidad al stock disponible
+                                        if (value <= producto.stock) {
+                                            setCantidad(value);
+                                        } else {
+                                            setCantidad(producto.stock);
+                                            Swal.fire('Aviso', `Solo hay ${producto.stock} unidades disponibles.`, 'info');
+                                        }
+                                    }}
+                                    min="1"
+                                    max={producto.stock} 
                                     required 
+                                    disabled={!hayStock}
                                 />
                             </div>
-                            <button type="submit" className="product-btn btn-primary">
-                                Añadir al carrito
+                            <button 
+                                type="submit" 
+                                className="product-btn btn-primary"
+                                disabled={!hayStock || cantidad <= 0}
+                            >
+                                {hayStock ? 'Añadir al carrito' : 'Producto agotado'}
                             </button>
                         </form>
                     </div>
