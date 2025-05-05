@@ -11,8 +11,10 @@ const Carrito = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [total, setTotal] = useState(0);
+    const [stockLimits, setStockLimits] = useState({});
     const { authState } = useAuth();
     const navigate = useNavigate();
+    const MAX_PRODUCTO_CANTIDAD = 10; // Límite máximo global
 
     // Función para obtener la fuente de la imagen
     const getImageSource = (imagePath) => {
@@ -25,6 +27,31 @@ const Carrito = () => {
         }
         
         return `http://localhost/corpfresh-php/${imagePath}`;
+    };
+
+    // Función para formatear precios en pesos colombianos
+    const formatPrecio = (precio) => {
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0
+        }).format(precio);
+    };
+
+    // Función para obtener el stock actual del producto
+    const fetchProductStock = async (id_producto) => {
+        try {
+            const response = await fetch(`http://localhost/corpfresh-php/visualizarProducto.php?id=${id_producto}`);
+            if (!response.ok) throw new Error("No se pudo cargar el producto.");
+            const data = await response.json();
+            if (data.error) {
+                return null;
+            }
+            return data.stock;
+        } catch (err) {
+            console.error("Error al obtener stock:", err);
+            return null;
+        }
     };
 
     const fetchCarrito = async () => {
@@ -54,6 +81,14 @@ const Carrito = () => {
             } else {
                 setProductos(data);
                 calcularTotal(data);
+                
+                // Obtener límites de stock para cada producto
+                const stockData = {};
+                for (const producto of data) {
+                    const stock = await fetchProductStock(producto.id_producto);
+                    stockData[producto.id_producto] = stock !== null ? stock : MAX_PRODUCTO_CANTIDAD;
+                }
+                setStockLimits(stockData);
             }
         } catch (err) {
             setError(err.message);
@@ -71,10 +106,20 @@ const Carrito = () => {
         fetchCarrito();
     }, [authState]);
 
-    const actualizarCantidad = async (id_carrito, nuevaCantidad) => {
+    const actualizarCantidad = async (id_carrito, nuevaCantidad, id_producto) => {
+        // Verificar que la cantidad sea al menos 1
         if (nuevaCantidad < 1) {
             Swal.fire('Error', 'La cantidad debe ser al menos 1', 'error');
             return;
+        }
+
+        // Verificar el límite de stock
+        const stockLimit = stockLimits[id_producto] || MAX_PRODUCTO_CANTIDAD;
+        if (nuevaCantidad > stockLimit) {
+            Swal.fire('Error', `No hay suficiente stock. Máximo disponible: ${stockLimit}`, 'error');
+            
+            // Actualizar la cantidad al máximo disponible en stock
+            nuevaCantidad = stockLimit;
         }
 
         try {
@@ -279,71 +324,83 @@ const Carrito = () => {
                             <div className="row">
                                 <div className="col-lg-8">
                                     <div className="cart-items-container">
-                                        {productos.map(producto => (
-                                            <div className="cart-item" key={producto.id_carrito}>
-                                                <div className="cart-item-image">
-                                                    <img 
-                                                        src={getImageSource(producto.imagen)} 
-                                                        alt={producto.nombre}
-                                                        onError={(e) => {
-                                                            e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div className="cart-item-details">
-                                                    <Link to={`/producto/${producto.id_producto}`} className="cart-item-name">
-                                                        {producto.nombre}
-                                                    </Link>
-                                                    <div className="cart-item-info">
-                                                        <span className="cart-item-price">${producto.precio}</span>
-                                                        {producto.talla && <span className="cart-item-size">Talla: {producto.talla}</span>}
-                                                        {producto.color && <span className="cart-item-color">Color: {producto.color}</span>}
+                                        {productos.map(producto => {
+                                            const stockLimit = stockLimits[producto.id_producto] || MAX_PRODUCTO_CANTIDAD;
+                                            const stockWarning = producto.cantidad >= stockLimit;
+                                            
+                                            return (
+                                                <div className="cart-item" key={producto.id_carrito}>
+                                                    <div className="cart-item-image">
+                                                        <img 
+                                                            src={getImageSource(producto.imagen)} 
+                                                            alt={producto.nombre}
+                                                            onError={(e) => {
+                                                                e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="cart-item-details">
+                                                        <Link to={`/producto/${producto.id_producto}`} className="cart-item-name">
+                                                            {producto.nombre}
+                                                        </Link>
+                                                        <div className="cart-item-info">
+                                                            <span className="cart-item-price">{formatPrecio(producto.precio)}</span>
+                                                            {stockWarning && (
+                                                                <span className="cart-item-stock-warning text-warning">
+                                                                    <i className="fas fa-exclamation-triangle"></i> Máx: {stockLimit}
+                                                                </span>
+                                                            )}
+                                                            {producto.talla && <span className="cart-item-size">Talla: {producto.talla}</span>}
+                                                            {producto.color && <span className="cart-item-color">Color: {producto.color}</span>}
+                                                        </div>
+                                                        <button 
+                                                            className="btn btn-outline-danger btn-sm cart-item-remove-mobile d-lg-none mt-2"
+                                                            onClick={() => eliminarProducto(producto.id_carrito, producto.nombre, producto.imagen)}
+                                                        >
+                                                            <i className="fas fa-trash me-1"></i> Eliminar
+                                                        </button>
+                                                    </div>
+                                                    <div className="cart-item-quantity">
+                                                        <button 
+                                                            className="quantity-btn" 
+                                                            onClick={() => actualizarCantidad(producto.id_carrito, producto.cantidad - 1, producto.id_producto)}
+                                                            disabled={producto.cantidad <= 1}
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <input 
+                                                            type="number" 
+                                                            className="quantity-value" 
+                                                            value={producto.cantidad}
+                                                            min="1"
+                                                            max={stockLimits[producto.id_producto] || MAX_PRODUCTO_CANTIDAD}
+                                                            onChange={(e) => {
+                                                                const newValue = parseInt(e.target.value);
+                                                                if (!isNaN(newValue)) {
+                                                                    actualizarCantidad(producto.id_carrito, newValue, producto.id_producto);
+                                                                }
+                                                            }}
+                                                        />
+                                                        <button 
+                                                            className="quantity-btn"
+                                                            onClick={() => actualizarCantidad(producto.id_carrito, producto.cantidad + 1, producto.id_producto)}
+                                                            disabled={producto.cantidad >= (stockLimits[producto.id_producto] || MAX_PRODUCTO_CANTIDAD)}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                    <div className="cart-item-subtotal">
+                                                        {formatPrecio(producto.precio * producto.cantidad)}
                                                     </div>
                                                     <button 
-                                                        className="btn btn-outline-danger btn-sm cart-item-remove-mobile d-lg-none mt-2"
+                                                        className="btn btn-outline-danger btn-sm cart-item-remove d-none d-lg-block"
                                                         onClick={() => eliminarProducto(producto.id_carrito, producto.nombre, producto.imagen)}
                                                     >
                                                         <i className="fas fa-trash me-1"></i> Eliminar
                                                     </button>
                                                 </div>
-                                                <div className="cart-item-quantity">
-                                                    <button 
-                                                        className="quantity-btn" 
-                                                        onClick={() => actualizarCantidad(producto.id_carrito, producto.cantidad - 1)}
-                                                        disabled={producto.cantidad <= 1}
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <input 
-                                                        type="number" 
-                                                        className="quantity-value" 
-                                                        value={producto.cantidad}
-                                                        min="1"
-                                                        onChange={(e) => {
-                                                            const newValue = parseInt(e.target.value);
-                                                            if (!isNaN(newValue)) {
-                                                                actualizarCantidad(producto.id_carrito, newValue);
-                                                            }
-                                                        }}
-                                                    />
-                                                    <button 
-                                                        className="quantity-btn"
-                                                        onClick={() => actualizarCantidad(producto.id_carrito, producto.cantidad + 1)}
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
-                                                <div className="cart-item-subtotal">
-                                                    ${(producto.precio * producto.cantidad).toFixed(2)}
-                                                </div>
-                                                <button 
-                                                    className="btn btn-outline-danger btn-sm cart-item-remove d-none d-lg-block"
-                                                    onClick={() => eliminarProducto(producto.id_carrito, producto.nombre, producto.imagen)}
-                                                >
-                                                    <i className="fas fa-trash me-1"></i> Eliminar
-                                                </button>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                     <div className="cart-actions">
                                         <Link to="/" className="btn btn-outline-primary">
@@ -362,7 +419,7 @@ const Carrito = () => {
                                         <div className="summary-items">
                                             <div className="summary-item">
                                                 <span>Subtotal</span>
-                                                <span>${total.toFixed(2)}</span>
+                                                <span>{formatPrecio(total)}</span>
                                             </div>
                                             <div className="summary-item">
                                                 <span>Envío</span>
@@ -375,7 +432,7 @@ const Carrito = () => {
                                         </div>
                                         <div className="summary-total">
                                             <span>Total</span>
-                                            <span className="total-amount">${total.toFixed(2)}</span>
+                                            <span className="total-amount">{formatPrecio(total)}</span>
                                         </div>
                                         <button 
                                             className="btn btn-primary w-100 checkout-btn"

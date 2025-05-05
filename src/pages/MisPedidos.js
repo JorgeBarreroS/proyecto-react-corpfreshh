@@ -235,6 +235,15 @@ const MisPedidos = () => {
         return (order.total - (order.costo_envio || 0) - (order.impuestos || 0)).toFixed(2);
     };
 
+    // Función para formatear precios en pesos colombianos
+    const formatPrecio = (precio) => {
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0
+        }).format(precio);
+    };
+
     const formatDate = (dateString) => {
         const options = {
             year: 'numeric',
@@ -332,19 +341,19 @@ const MisPedidos = () => {
                                                     <h5 className="mb-3"><i className="fas fa-receipt me-2"></i>Resumen</h5>
                                                     <div className="d-flex justify-content-between mb-2">
                                                         <span>Subtotal:</span>
-                                                        <span>${calculateSubtotal(order)}</span>
+                                                        <span>{formatPrecio(calculateSubtotal(order))}</span>
                                                     </div>
                                                     <div className="d-flex justify-content-between mb-2">
                                                         <span>Envío:</span>
-                                                        <span>${order.costo_envio?.toFixed(2) || '0.00'}</span>
+                                                        <span>{formatPrecio(order.costo_envio || 0)}</span>
                                                     </div>
                                                     <div className="d-flex justify-content-between mb-2">
                                                         <span>Impuestos:</span>
-                                                        <span>${order.impuestos?.toFixed(2) || '0.00'}</span>
+                                                        <span>{formatPrecio(order.impuestos || 0)}</span>
                                                     </div>
                                                     <div className="d-flex justify-content-between fw-bold mt-2 pt-2 border-top">
                                                         <span>Total:</span>
-                                                        <span>${order.total.toFixed(2)}</span>
+                                                        <span>{formatPrecio(order.total)}</span>
                                                     </div>
                                                 </div>
                                             </div>

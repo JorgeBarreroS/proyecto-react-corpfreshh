@@ -56,6 +56,15 @@ const ProductsPage = () => {
     return `http://localhost/corpfresh-php/${imagePath}`;
   };
 
+  // Función para formatear precios en pesos colombianos
+  const formatPrecio = (precio) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0
+    }).format(precio);
+  };
+
   useEffect(() => {
     fetchAllProducts();
     fetchAllCategories();
@@ -102,7 +111,7 @@ const ProductsPage = () => {
                   />
                 </div>
                 <h3>{product.nombre_producto}</h3>
-                <p>${product.precio_producto}</p>
+                <p className="precio">{formatPrecio(product.precio_producto)}</p>
                 <a href={`/producto/${product.id_producto}`} className="btn btn-dark w-100">Ver Producto</a>
               </li>
             ))

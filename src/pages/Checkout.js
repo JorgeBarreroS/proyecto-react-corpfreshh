@@ -18,6 +18,15 @@ const Checkout = () => {
     const { authState } = useAuth();
     const navigate = useNavigate();
 
+    // Función para formatear precios en pesos colombianos
+    const formatPrecio = (precio) => {
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0
+        }).format(precio);
+    };
+
     useEffect(() => {
         if (!authState || !authState.email) {
             navigate('/login');
@@ -51,7 +60,7 @@ const Checkout = () => {
         const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.precio) * parseInt(item.cantidad)), 0);
         const shippingCost = subtotal > 100 ? 0 : 10;
         const taxRate = 0.08;
-        const taxes = subtotal * taxRate;
+        const taxes = Math.round(subtotal * taxRate); // Redondeamos el valor de impuestos a entero
 
         const calculatedTotal = subtotal + shippingCost + taxes;
         
@@ -87,12 +96,12 @@ const Checkout = () => {
                     color: item.color || null,
                     talla: item.talla || null
                 })),
-                total: parseFloat(total.toFixed(2)),
+                total: parseFloat(total.toFixed(0)),
                 metodo_pago: method,
                 direccion: String(address),
                 telefono: String(phone),
-                envio: parseFloat(shipping.toFixed(2)),
-                impuestos: parseFloat(taxes.toFixed(2))
+                envio: parseFloat(shipping.toFixed(0)),
+                impuestos: parseFloat(taxes.toFixed(0))
             };
 
             console.log('Datos a enviar al servidor:', JSON.stringify(paymentData, null, 2));
@@ -242,7 +251,7 @@ const Checkout = () => {
                                     {cartItems.map(item => (
                                         <div key={item.id_carrito} className="summary-item">
                                             <span>{item.nombre} x {item.cantidad}</span>
-                                            <span>${(parseFloat(item.precio) * parseInt(item.cantidad)).toFixed(2)}</span>
+                                            <span>{formatPrecio(parseFloat(item.precio) * parseInt(item.cantidad))}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -250,19 +259,19 @@ const Checkout = () => {
                                 <div className="summary-totals">
                                     <div className="summary-total">
                                         <span>Subtotal</span>
-                                        <span>${(total - shipping - taxes).toFixed(2)}</span>
+                                        <span>{formatPrecio(total - shipping - taxes)}</span>
                                     </div>
                                     <div className="summary-total">
                                         <span>Envío</span>
-                                        <span>${shipping.toFixed(2)}</span>
+                                        <span>{formatPrecio(shipping)}</span>
                                     </div>
                                     <div className="summary-total">
                                         <span>Impuestos</span>
-                                        <span>${taxes.toFixed(2)}</span>
+                                        <span>{formatPrecio(taxes)}</span>
                                     </div>
                                     <div className="summary-total grand-total">
                                         <span>Total</span>
-                                        <span>${total.toFixed(2)}</span>
+                                        <span>{formatPrecio(total)}</span>
                                     </div>
                                 </div>
                                 

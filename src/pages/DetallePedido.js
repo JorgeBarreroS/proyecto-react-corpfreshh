@@ -35,6 +35,15 @@ const DetallePedido = () => {
         fetchPedido();
     }, [id]);
 
+    // Función para formatear precios en pesos colombianos
+    const formatPrecio = (precio) => {
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0
+        }).format(precio);
+    };
+
     if (loading) {
         return (
             <div>
@@ -72,8 +81,12 @@ const DetallePedido = () => {
                 <div className="card mt-4">
                     <div className="card-body">
                         <h5 className="card-title">Información del Pedido</h5>
-                        <p><strong>Fecha:</strong> {new Date(pedido.fecha_pedido).toLocaleDateString()}</p>
-                        <p><strong>Total:</strong> ${pedido.total.toFixed(2)}</p>
+                        <p><strong>Fecha:</strong> {new Date(pedido.fecha_pedido).toLocaleDateString('es-CO', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}</p>
+                        <p><strong>Total:</strong> {formatPrecio(pedido.total)}</p>
                         <p><strong>Estado:</strong> {pedido.estado}</p>
                         <p><strong>Método de Pago:</strong> {pedido.metodo_pago}</p>
                         
@@ -81,7 +94,7 @@ const DetallePedido = () => {
                         <ul className="list-group">
                             {pedido.items.map(item => (
                                 <li key={item.id} className="list-group-item">
-                                    {item.nombre_producto} - ${(parseFloat(item.precio_unitario) || 0).toFixed(2)} x {item.cantidad}
+                                    {item.nombre_producto} - {formatPrecio(parseFloat(item.precio_unitario) || 0)} x {item.cantidad}
                                 </li>
                             ))}
                         </ul>

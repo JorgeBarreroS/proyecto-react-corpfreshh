@@ -6,7 +6,7 @@ header("Content-Type: application/json");
 include 'conexion.php';
 
 // Inicializar variables con valores predeterminados
-$productos_por_pagina = 10; // Número de productos por página
+$productos_por_pagina = 12; // Número de productos por página
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1; // Página actual (predeterminada: 1)
 $categoria = isset($_GET['categoria']) ? (int)$_GET['categoria'] : 0; // Categoría (predeterminada: 0)
 $offset = ($pagina_actual - 1) * $productos_por_pagina; // Calcular el desplazamiento para la consulta

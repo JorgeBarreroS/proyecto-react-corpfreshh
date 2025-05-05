@@ -22,6 +22,15 @@ const VisualizarProducto = () => {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingCommentText, setEditingCommentText] = useState('');
 
+    // Función para formatear precios en pesos colombianos
+    const formatPrecio = (precio) => {
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0
+        }).format(precio);
+    };
+
     const getImageSource = (imagePath) => {
         if (!imagePath) return "http://localhost/corpfresh-php/imagenes/1.jpg";
         if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
@@ -279,7 +288,7 @@ const VisualizarProducto = () => {
                     </div>
                     <div className="product-info-col">
                         <h2 className="product-title">{producto.nombre_producto}</h2>
-                        <p className="product-text"><strong>Precio:</strong> ${producto.precio_producto}</p>
+                        <p className="product-text"><strong>Precio:</strong> {formatPrecio(producto.precio_producto)}</p>
                         <p className="product-text"><strong>Descripción:</strong> {producto.descripcion_producto}</p>
                         <p className="product-text"><strong>Color:</strong> {producto.color_producto}</p>
                         <p className="product-text"><strong>Marca:</strong> {producto.nombre_marca}</p>
