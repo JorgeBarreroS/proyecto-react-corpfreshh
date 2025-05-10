@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-04-2025 a las 04:23:29
+-- Tiempo de generación: 10-05-2025 a las 23:11:02
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -213,6 +213,25 @@ CREATE TABLE `comentarios` (
 
 INSERT INTO `comentarios` (`id_comentario`, `id_usuario`, `id_producto`, `comentario`, `puntuacion`, `fecha`) VALUES
 (7, 1, 3, 'ddd ssss', 5, '2025-03-11 01:18:01');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `contactos`
+--
+
+DROP TABLE IF EXISTS `contactos`;
+CREATE TABLE `contactos` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `mensaje` text NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `contactos`:
+--
 
 -- --------------------------------------------------------
 
@@ -661,6 +680,12 @@ ALTER TABLE `comentarios`
   ADD KEY `producto` (`id_producto`);
 
 --
+-- Indices de la tabla `contactos`
+--
+ALTER TABLE `contactos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `facturas`
 --
 ALTER TABLE `facturas`
@@ -742,6 +767,12 @@ ALTER TABLE `codigos_reset`
 --
 ALTER TABLE `comentarios`
   MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT de la tabla `contactos`
+--
+ALTER TABLE `contactos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `facturas`

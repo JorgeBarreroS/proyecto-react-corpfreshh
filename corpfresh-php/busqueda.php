@@ -10,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-include 'conexion.php';
+// Incluir el archivo de conexión
+include 'conexiones.php';
 
 // Configurar encabezado para JSON
 header('Content-Type: application/json');
@@ -20,34 +21,33 @@ $productos = [];
 
 // Manejo de errores
 try {
+    // Obtener la conexión utilizando la clase Conexion
+    $conn = Conexion::getConexion();
+    
     // Comprobar si se ha pasado un término de búsqueda
     if (isset($_GET['q']) && !empty($_GET['q'])) {
         // Buscar productos por nombre
         $busqueda = $_GET['q'];
         $sql = "SELECT id_producto, nombre_producto, precio_producto, imagen_producto 
                 FROM producto 
-                WHERE nombre_producto LIKE ?";
+                WHERE nombre_producto LIKE :busqueda";
         $stmt = $conn->prepare($sql);
         $searchTerm = '%' . $busqueda . '%';
-        $stmt->bind_param('s', $searchTerm);
+        $stmt->bindParam(':busqueda', $searchTerm, PDO::PARAM_STR);
         $stmt->execute();
-        $result = $stmt->get_result();
-        while ($producto = $result->fetch_assoc()) {
-            $productos[] = $producto;
-        }
+        $productos = $stmt->fetchAll();
     } else {
-        // Mostrar los primeros 6 productos si no hay búsqueda
+        // Mostrar los primeros 5 productos si no hay búsqueda
         $sql = "SELECT id_producto, nombre_producto, precio_producto, imagen_producto 
                 FROM producto 
                 LIMIT 5";
-        $result = $conn->query($sql);
-        while ($producto = $result->fetch_assoc()) {
-            $productos[] = $producto;
-        }
+        $stmt = $conn->query($sql);
+        $productos = $stmt->fetchAll();
     }
 
-    // Devolver los productos como JSON (asegurar que es un array válido)
+    // Devolver los productos como JSON
     echo json_encode($productos, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    
 } catch (Exception $e) {
     // En caso de error, devolver un mensaje de error en JSON
     http_response_code(500);
