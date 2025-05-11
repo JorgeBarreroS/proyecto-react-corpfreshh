@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-05-2025 a las 23:11:02
+-- Tiempo de generación: 11-05-2025 a las 22:42:09
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -226,12 +226,20 @@ CREATE TABLE `contactos` (
   `nombre` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `mensaje` text NOT NULL,
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `estado` enum('Pendiente','Respondido') NOT NULL DEFAULT 'Pendiente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- RELACIONES PARA LA TABLA `contactos`:
 --
+
+--
+-- Volcado de datos para la tabla `contactos`
+--
+
+INSERT INTO `contactos` (`id`, `nombre`, `email`, `mensaje`, `fecha_creacion`, `estado`) VALUES
+(1, 'ss', 'jorgebarrero44@gmail.com', 'ssss', '2025-05-11 20:09:58', 'Pendiente');
 
 -- --------------------------------------------------------
 
@@ -268,7 +276,8 @@ INSERT INTO `facturas` (`id`, `pedido_id`, `correo_usuario`, `id_usuario`, `fech
 (4, 12, 'jorgebarrero44@gmail.com', 0, '2025-04-21 21:14:36', 139124.00, 0.00, 11129.92, 150253.92, 'casa'),
 (5, 14, 'jorgebarrero44@gmail.com', 0, '2025-04-21 22:05:32', 139124.00, 0.00, 11129.92, 150253.92, 'casa'),
 (6, 15, 'jorgebarrero44@gmail.com', 0, '2025-04-21 23:21:58', 1730200.00, 0.00, 138416.00, 1868616.00, 'nequi'),
-(9, 19, 'jorgebarrero44@gmail.com', 0, '2025-04-29 21:05:22', 1730200.00, 0.00, 138416.00, 1868616.00, 'casa');
+(9, 19, 'jorgebarrero44@gmail.com', 0, '2025-04-29 21:05:22', 1730200.00, 0.00, 138416.00, 1868616.00, 'casa'),
+(11, 21, 'jorgebarrero44@gmail.com', 0, '2025-05-11 13:41:00', 139124.00, 0.00, 11130.00, 150254.00, 'casa');
 
 -- --------------------------------------------------------
 
@@ -304,64 +313,6 @@ INSERT INTO `ofertas_especiales` (`id_oferta`, `titulo`, `descripcion`, `porcent
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `ordenes`
---
-
-DROP TABLE IF EXISTS `ordenes`;
-CREATE TABLE `ordenes` (
-  `id_venta` int(11) NOT NULL,
-  `fecha_venta` date DEFAULT NULL,
-  `impuesto_venta` varchar(10) DEFAULT NULL,
-  `total_venta` decimal(10,2) DEFAULT NULL,
-  `estado_venta` varchar(50) DEFAULT NULL,
-  `id_usuario` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- RELACIONES PARA LA TABLA `ordenes`:
---   `id_usuario`
---       `usuario` -> `id_usuario`
---
-
---
--- Volcado de datos para la tabla `ordenes`
---
-
-INSERT INTO `ordenes` (`id_venta`, `fecha_venta`, `impuesto_venta`, `total_venta`, `estado_venta`, `id_usuario`) VALUES
-(1, '2023-01-01', '19%', 59500.00, 'Completada', 1),
-(2, '2023-01-15', '19%', 120000.00, 'Completado', 1),
-(3, '2023-03-01', '19%', 178500.00, 'Completado', 2),
-(4, '2023-04-01', '19%', 142800.00, 'Completado', 2),
-(5, '2023-05-01', '19%', 47600.00, 'Completado', 3),
-(6, '2023-05-15', '19%', 93000.00, 'Completado', 3),
-(7, '2023-07-01', '19%', 95200.00, 'Completado', 7),
-(8, '2023-08-01', '19%', 71400.00, 'Completado', 8),
-(9, '2023-09-01', '19%', 53550.00, 'Completado', 9),
-(10, '2023-10-01', '19%', 68000.00, 'Completado', 10),
-(11, '2023-10-15', '19%', 55000.00, 'Completado', 11),
-(12, '2023-11-01', '19%', 77000.00, 'Completado', 12),
-(13, '2023-11-15', '19%', 102000.00, 'Completado', 13),
-(14, '2023-12-01', '19%', 86000.00, 'Completado', 14),
-(15, '2023-12-15', '19%', 91000.00, 'Completado', 15),
-(16, '2024-01-01', '19%', 83000.00, 'Completado', 16),
-(17, '2024-01-15', '19%', 57000.00, 'Completado', 17),
-(18, '2024-02-01', '19%', 103000.00, 'Completado', 18),
-(19, '2024-02-15', '19%', 75000.00, 'Completado', 19),
-(20, '2024-03-01', '19%', 92000.00, 'Completado', 20),
-(21, '2024-03-15', '19%', 65000.00, 'Completado', 21),
-(22, '2024-04-01', '19%', 48000.00, 'Completado', 22),
-(23, '2024-04-15', '19%', 76000.00, 'Completado', 23),
-(24, '2024-05-01', '19%', 55000.00, 'Completado', 24),
-(25, '2024-05-15', '19%', 89000.00, 'Completado', 25),
-(26, '2024-06-01', '19%', 110000.00, 'Completado', 26),
-(27, '2024-06-15', '19%', 68000.00, 'Completado', 27),
-(28, '2024-07-01', '19%', 73000.00, 'Completado', 28),
-(29, '2024-07-15', '19%', 120000.00, 'Completado', 29),
-(30, '2024-08-01', '19%', 80000.00, 'Completado', 30);
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `pedidos`
 --
 
@@ -393,7 +344,8 @@ INSERT INTO `pedidos` (`id`, `correo_usuario`, `id_usuario`, `fecha_pedido`, `to
 (12, 'jorgebarrero44@gmail.com', 0, '2025-04-21 21:14:36', 150253.92, 'casa', 'ssss', 'ssss', 0.00, 11129.92, 'pendiente'),
 (14, 'jorgebarrero44@gmail.com', 0, '2025-04-21 22:05:32', 150253.92, 'casa', 'ssss', '3343434', 0.00, 11129.92, 'pendiente'),
 (15, 'jorgebarrero44@gmail.com', 0, '2025-04-21 23:21:58', 1868616.00, 'nequi', '1111', '22321312323131', 0.00, 138416.00, 'completado'),
-(19, 'jorgebarrero44@gmail.com', 0, '2025-04-29 21:05:22', 1868616.00, 'casa', 'rfd', 'ddd', 0.00, 138416.00, 'pendiente');
+(19, 'jorgebarrero44@gmail.com', 0, '2025-04-29 21:05:22', 1868616.00, 'casa', 'rfd', 'ddd', 0.00, 138416.00, 'pendiente'),
+(21, 'jorgebarrero44@gmail.com', 0, '2025-05-11 13:41:00', 150254.00, 'casa', 'sssswew', 'wwewe', 0.00, 11130.00, 'pendiente');
 
 --
 -- Disparadores `pedidos`
@@ -457,7 +409,8 @@ INSERT INTO `pedidos_detalle` (`id`, `pedido_id`, `producto_id`, `nombre_product
 (11, 12, 1, 'Camisa polo verde', 139124.00, 1, 139124.00, NULL, NULL),
 (12, 14, 1, 'Camisa polo verde', 139124.00, 1, 139124.00, NULL, NULL),
 (13, 15, 2, 'Nike SB Dunk Low Verdy Visty', 1730200.00, 1, 1730200.00, NULL, NULL),
-(18, 19, 2, 'Nike SB Dunk Low Verdy Visty', 1730200.00, 1, 1730200.00, NULL, NULL);
+(18, 19, 2, 'Nike SB Dunk Low Verdy Visty', 1730200.00, 1, 1730200.00, NULL, NULL),
+(20, 21, 1, 'Camisa polo verde', 139124.00, 1, 139124.00, NULL, NULL);
 
 --
 -- Disparadores `pedidos_detalle`
@@ -522,8 +475,8 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`id_producto`, `nombre_producto`, `descripcion_producto`, `color_producto`, `precio_producto`, `imagen_producto`, `nombre_marca`, `talla`, `stock`, `id_categoria`) VALUES
-(1, 'Camisa polo verde', 'Algodón', 'Rojo', 139124.00, 'imagenes/42631_10.webp', 'polo', 'M', 10, 1),
-(2, 'Nike SB Dunk Low Verdy Visty', 'Cuero', 'Negro', 1730200.00, 'imagenes/zapatosPP.png', 'Nike', '42', 0, 3),
+(1, 'Camisa polo verde', 'Algodón', 'Rojo', 139124.00, 'imagenes/42631_10.webp', 'polo', 'M', 9, 1),
+(2, 'Nike SB Dunk Low Verdy Visty', 'Cuero', 'Negro', 1730200.00, 'imagenes/zapatosPP.png', 'Nike', '42', 1, 3),
 (3, 'Conjunto Nba Baloncesto Jordan 23 Blanco (S)', 'conjunto blanco', 'blanco', 70000.00, 'imagenes/conjuntojordan.webp', 'Jordan', 'S', 0, 4),
 (4, 'Camisa polo club blanca', 'Algodón', 'Blanco', 116278.00, 'imagenes/40963_10.webp', 'Polo', 'S', 0, 1),
 (5, 'Pantalón chino verde oscuro Polo', 'Mezclilla', 'verde oscuro ', 371773.00, 'imagenes/pantalon chivo verde.webp', 'Polo', '32', 0, 2),
@@ -700,13 +653,6 @@ ALTER TABLE `ofertas_especiales`
   ADD PRIMARY KEY (`id_oferta`);
 
 --
--- Indices de la tabla `ordenes`
---
-ALTER TABLE `ordenes`
-  ADD PRIMARY KEY (`id_venta`),
-  ADD KEY `usuarios` (`id_usuario`);
-
---
 -- Indices de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
@@ -748,7 +694,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria`
@@ -772,13 +718,13 @@ ALTER TABLE `comentarios`
 -- AUTO_INCREMENT de la tabla `contactos`
 --
 ALTER TABLE `contactos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `facturas`
 --
 ALTER TABLE `facturas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `ofertas_especiales`
@@ -787,22 +733,16 @@ ALTER TABLE `ofertas_especiales`
   MODIFY `id_oferta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT de la tabla `ordenes`
---
-ALTER TABLE `ordenes`
-  MODIFY `id_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
-
---
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos_detalle`
 --
 ALTER TABLE `pedidos_detalle`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `producto`
@@ -838,12 +778,6 @@ ALTER TABLE `comentarios`
 --
 ALTER TABLE `facturas`
   ADD CONSTRAINT `facturas_ibfk_1` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`);
-
---
--- Filtros para la tabla `ordenes`
---
-ALTER TABLE `ordenes`
-  ADD CONSTRAINT `usuarios` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `pedidos_detalle`

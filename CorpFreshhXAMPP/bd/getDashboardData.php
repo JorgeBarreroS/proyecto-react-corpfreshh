@@ -11,7 +11,7 @@ include 'conexion.php'; // Asegúrate que la ruta sea correcta respecto a donde 
 // Inicializar el array de respuesta
 $data = [
     "producto" => [],
-    "ordenes" => [],
+    "pedidos" => [],
     "usuario" => 0
 ];
 
@@ -27,8 +27,8 @@ try {
 
     // Consulta 2: Órdenes por mes
     $stmt2 = $pdo->query("
-        SELECT DATE_FORMAT(fecha_venta, '%Y-%m') AS mes, COUNT(*) AS total 
-        FROM ordenes 
+        SELECT DATE_FORMAT(fecha_pedido, '%Y-%m') AS mes, COUNT(*) AS total 
+        FROM pedidos 
         GROUP BY mes
     ");
     $data["ordenes"] = $stmt2->fetchAll(PDO::FETCH_ASSOC);

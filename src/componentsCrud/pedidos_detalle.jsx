@@ -2,87 +2,81 @@ import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
 
-
-export default function Productos() {
-  const [productos, setProductos] = useState([]);
-  const [categorias, setCategorias] = useState([]);
+export default function PedidosDetalle() {
+  const [detalles, setDetalles] = useState([]);
   const [error, setError] = useState(null);
-  const [editingProductoId, setEditingProductoId] = useState(null);
-  const [editedProducto, setEditedProducto] = useState({});
+  const [editingDetalleId, setEditingDetalleId] = useState(null);
+  const [editedDetalle, setEditedDetalle] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newProducto, setNewProducto] = useState({
+  const [newDetalle, setNewDetalle] = useState({
+    pedido_id: "",
+    producto_id: "",
     nombre_producto: "",
-    descripcion_producto: "",
-    color_producto: "",
-    precio_producto: "",
-    imagen_producto: "",
-    nombre_marca: "",
-    talla: "",
-    stock: "",
-    id_categoria: ""
+    precio_unitario: "",
+    cantidad: "",
+    subtotal: "",
+    color: "",
+    talla: ""
   });
 
-  const fetchProductos = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerProductos.php")
+  const fetchDetalles = () => {
+    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerPedidosDetalle.php")
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Error al obtener productos");
+          throw new Error("Error al obtener detalles de pedidos");
         }
         return response.json();
       })
-      .then((data) => setProductos(data))
-      .catch((err) => setError(err.message));
-  };
-
-  const fetchCategorias = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerCategorias.php")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al obtener categorías");
-        }
-        return response.json();
+      .then((data) => {
+        setDetalles(Array.isArray(data) ? data : []);
       })
-      .then((data) => setCategorias(data))
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        setError(err.message);
+        setDetalles([]);
+      });
   };
 
   useEffect(() => {
-    fetchProductos();
-    fetchCategorias();
+    fetchDetalles();
   }, []);
 
-  const handleEdit = (producto) => {
-    setEditingProductoId(producto.id_producto);
-    setEditedProducto(producto);
+  const handleEdit = (detalle) => {
+    setEditingDetalleId(detalle.id);
+    setEditedDetalle({...detalle});
   };
 
   const handleSave = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarProducto.php", {
+    // Calcular el subtotal basado en precio y cantidad
+    const subtotal = parseFloat(editedDetalle.precio_unitario) * parseInt(editedDetalle.cantidad);
+    const detalleToSave = {
+      ...editedDetalle,
+      subtotal: subtotal.toFixed(2)
+    };
+
+    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarPedidoDetalle.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(editedProducto),
+      body: JSON.stringify(detalleToSave),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setProductos((prevProductos) =>
-            prevProductos.map((producto) =>
-              producto.id_producto === editedProducto.id_producto
-                ? editedProducto
-                : producto
+          setDetalles((prevDetalles) =>
+            prevDetalles.map((d) =>
+              d.id === detalleToSave.id ? detalleToSave : d
             )
           );
-          setEditingProductoId(null);
-          setEditedProducto({});
+          setEditingDetalleId(null);
+          setEditedDetalle({});
           Swal.fire({
             icon: "success",
             title: "¡Éxito!",
-            text: "Producto actualizado correctamente",
+            text: "Detalle de pedido actualizado correctamente",
             timer: 2000,
             showConfirmButton: false,
           });
@@ -90,7 +84,7 @@ export default function Productos() {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Error al actualizar el producto",
+            text: "Error al actualizar el detalle de pedido: " + (data.message || ""),
           });
         }
       });
@@ -108,23 +102,23 @@ export default function Productos() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarProducto.php", {
+        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarPedidoDetalle.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ id_producto: id }),
+          body: JSON.stringify({ id_detalle: id }),
         })
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
-              setProductos((prevProductos) =>
-                prevProductos.filter((producto) => producto.id_producto !== id)
+              setDetalles((prevDetalles) =>
+                prevDetalles.filter((d) => d.id !== id)
               );
               Swal.fire({
                 icon: "success",
                 title: "Eliminado",
-                text: "El producto ha sido eliminado correctamente",
+                text: "El detalle del pedido ha sido eliminado correctamente",
                 timer: 2000,
                 showConfirmButton: false,
               });
@@ -132,7 +126,7 @@ export default function Productos() {
               Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: "Error al eliminar el producto: " + (data.message || ""),
+                text: "Error al eliminar el detalle del pedido: " + (data.message || ""),
               });
             }
           })
@@ -149,61 +143,88 @@ export default function Productos() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedProducto((prev) => ({ ...prev, [name]: value }));
+    setEditedDetalle((prev) => {
+      const updatedDetalle = { ...prev, [name]: value };
+      
+      // Actualizar el subtotal automáticamente cuando cambie precio o cantidad
+      if (name === "precio_unitario" || name === "cantidad") {
+        const precio = name === "precio_unitario" ? value : updatedDetalle.precio_unitario;
+        const cantidad = name === "cantidad" ? value : updatedDetalle.cantidad;
+        
+        if (precio && cantidad) {
+          const subtotal = parseFloat(precio) * parseInt(cantidad);
+          updatedDetalle.subtotal = subtotal.toFixed(2);
+        }
+      }
+      
+      return updatedDetalle;
+    });
   };
 
   const handleAddFormChange = (e) => {
     const { name, value } = e.target;
-    setNewProducto((prev) => ({ ...prev, [name]: value }));
+    setNewDetalle((prev) => {
+      const updatedDetalle = { ...prev, [name]: value };
+      
+      // Actualizar el subtotal automáticamente cuando cambie precio o cantidad
+      if (name === "precio_unitario" || name === "cantidad") {
+        const precio = name === "precio_unitario" ? value : updatedDetalle.precio_unitario;
+        const cantidad = name === "cantidad" ? value : updatedDetalle.cantidad;
+        
+        if (precio && cantidad) {
+          const subtotal = parseFloat(precio) * parseInt(cantidad);
+          updatedDetalle.subtotal = subtotal.toFixed(2);
+        }
+      }
+      
+      return updatedDetalle;
+    });
   };
 
-  const handleAddProduct = (e) => {
+  const handleAddDetalle = (e) => {
     e.preventDefault();
     
-    // Validar campos requeridos
-    if (!newProducto.nombre_producto || !newProducto.precio_producto) {
+    if (!newDetalle.pedido_id || !newDetalle.producto_id) {
       Swal.fire({
         icon: "warning",
         title: "Campos requeridos",
-        text: "El nombre y precio del producto son obligatorios",
+        text: "El ID de pedido y el ID de producto son obligatorios",
       });
       return;
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarProducto.php", {
+    // Calcular subtotal si no se ha hecho ya
+    if (!newDetalle.subtotal && newDetalle.precio_unitario && newDetalle.cantidad) {
+      newDetalle.subtotal = (parseFloat(newDetalle.precio_unitario) * parseInt(newDetalle.cantidad)).toFixed(2);
+    }
+
+    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarPedidoDetalle.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newProducto),
+      body: JSON.stringify(newDetalle),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          // Agregar el nuevo producto con el ID generado
-          const productoConId = { ...newProducto, id_producto: data.id_producto };
-          setProductos((prevProductos) => [...prevProductos, productoConId]);
-          
-          // Resetear el formulario
-          setNewProducto({
+          const detalleConId = { ...newDetalle, id: data.id_detalle };
+          setDetalles((prevDetalles) => [...prevDetalles, detalleConId]);
+          setNewDetalle({
+            pedido_id: "",
+            producto_id: "",
             nombre_producto: "",
-            descripcion_producto: "",
-            color_producto: "",
-            precio_producto: "",
-            imagen_producto: "",
-            nombre_marca: "",
-            talla: "",
-            stock: "",
-            id_categoria: ""
+            precio_unitario: "",
+            cantidad: "",
+            subtotal: "",
+            color: "",
+            talla: ""
           });
-          
-          // Cerrar el formulario
           setShowAddForm(false);
-          
           Swal.fire({
             icon: "success",
             title: "¡Éxito!",
-            text: "Producto agregado correctamente",
+            text: "Detalle de pedido agregado correctamente",
             timer: 2000,
             showConfirmButton: false,
           });
@@ -211,7 +232,7 @@ export default function Productos() {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Error al agregar el producto: " + (data.message || ""),
+            text: "Error al agregar el detalle de pedido: " + (data.message || ""),
           });
         }
       })
@@ -224,58 +245,45 @@ export default function Productos() {
       });
   };
 
-  // Función para obtener el nombre de la categoría según el ID
-  const getNombreCategoria = (id_categoria) => {
-    const categoria = categorias.find(cat => cat.id_categoria === id_categoria);
-    return categoria ? categoria.nombre_categoria : "Sin categoría";
-  };
-
-  // Filtrar productos por búsqueda
-  const filteredProductos = productos.filter((producto) =>
-    producto.nombre_producto.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredDetalles = detalles.filter((detalle) =>
+    Object.values(detalle).some((value) =>
+      String(value).toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
-  // Paginación
-  const indexOfLastProducto = currentPage * itemsPerPage;
-  const indexOfFirstProducto = indexOfLastProducto - itemsPerPage;
-  const currentProductos = filteredProductos.slice(
-    indexOfFirstProducto,
-    indexOfLastProducto
-  );
+  const indexOfLastDetalle = currentPage * itemsPerPage;
+  const indexOfFirstDetalle = indexOfLastDetalle - itemsPerPage;
+  const currentDetalles = filteredDetalles.slice(indexOfFirstDetalle, indexOfLastDetalle);
 
-  // Cambiar página
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Calcular el total de páginas
-  const totalPages = Math.ceil(filteredProductos.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredDetalles.length / itemsPerPage);
 
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-grisOscuro">Productos</h2>
+        <h2 className="text-xl font-semibold text-grisOscuro">Detalles de Pedidos</h2>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="bg-azulOscuroMate text-black px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-700"
         >
-          <FaPlus /> {showAddForm ? "Cancelar" : "Agregar Producto"}
+          <FaPlus /> {showAddForm ? "Cancelar" : "Agregar Detalle"}
         </button>
       </div>
 
-      {/* Formulario para agregar producto */}
       {showAddForm && (
         <div className="bg-white p-4 mb-6 rounded-lg shadow-md">
           <h3 className="text-lg font-medium mb-4 text-grisOscuro">
-            Agregar Nuevo Producto
+            Agregar Nuevo Detalle de Pedido
           </h3>
-          <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <form onSubmit={handleAddDetalle} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre *
+                ID Pedido *
               </label>
               <input
                 type="text"
-                name="nombre_producto"
-                value={newProducto.nombre_producto}
+                name="pedido_id"
+                value={newDetalle.pedido_id}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
                 required
@@ -283,14 +291,66 @@ export default function Productos() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Descripción
+                ID Producto *
               </label>
               <input
                 type="text"
-                name="descripcion_producto"
-                value={newProducto.descripcion_producto}
+                name="producto_id"
+                value={newDetalle.producto_id}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nombre Producto
+              </label>
+              <input
+                type="text"
+                name="nombre_producto"
+                value={newDetalle.nombre_producto}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Precio Unitario
+              </label>
+              <input
+                type="number"
+                name="precio_unitario"
+                value={newDetalle.precio_unitario}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Cantidad
+              </label>
+              <input
+                type="number"
+                name="cantidad"
+                value={newDetalle.cantidad}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Subtotal
+              </label>
+              <input
+                type="number"
+                name="subtotal"
+                value={newDetalle.subtotal}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                step="0.01"
+                readOnly
               />
             </div>
             <div>
@@ -299,59 +359,8 @@ export default function Productos() {
               </label>
               <input
                 type="text"
-                name="color_producto"
-                value={newProducto.color_producto}
-                onChange={handleAddFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Precio *
-              </label>
-              <input
-                type="number"
-                name="precio_producto"
-                value={newProducto.precio_producto}
-                onChange={handleAddFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-                required
-                step="0.01"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Stock
-              </label>
-              <input
-                type="number"
-                name="stock"
-                value={newProducto.stock}
-                onChange={handleAddFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-                min="0"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                URL de Imagen
-              </label>
-              <input
-                type="text"
-                name="imagen_producto"
-                value={newProducto.imagen_producto}
-                onChange={handleAddFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Marca
-              </label>
-              <input
-                type="text"
-                name="nombre_marca"
-                value={newProducto.nombre_marca}
+                name="color"
+                value={newDetalle.color}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
               />
@@ -363,30 +372,12 @@ export default function Productos() {
               <input
                 type="text"
                 name="talla"
-                value={newProducto.talla}
+                value={newDetalle.talla}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Categoría
-              </label>
-              <select
-                name="id_categoria"
-                value={newProducto.id_categoria}
-                onChange={handleAddFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              >
-                <option value="">Selecciona una categoría</option>
-                {categorias.map((categoria) => (
-                  <option key={categoria.id_categoria} value={categoria.id_categoria}>
-                    {categoria.nombre_categoria}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="md:col-span-2 lg:col-span-3 flex justify-end mt-4">
+            <div className="md:col-span-2 flex justify-end mt-4">
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
@@ -398,177 +389,156 @@ export default function Productos() {
                 type="submit"
                 className="px-4 py-2 bg-azulOscuroMate text-black rounded hover:bg-blue-700"
               >
-                Guardar Producto
+                Guardar Detalle
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Buscador */}
       <input
         type="text"
-        placeholder="Buscar productos..."
+        placeholder="Buscar detalles de pedidos..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="mb-4 p-2 border border-gray-300 w-full"
       />
 
-      {/* Tabla de productos con responsive */}
       {error ? (
         <p className="text-red-600">{error}</p>
       ) : (
-        <div className="overflow-x-auto relative shadow-md sm:rounded-lg table-responsive">
-          <table className="w-full text-sm text-left bg-white ">
+        <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left bg-white">
             <thead className="bg-grisOscuro text-dark">
               <tr>
                 <th className="py-3 px-4">ID</th>
-                <th className="py-3 px-4">Nombre</th>
-                <th className="py-3 px-4">Descripción</th>
+                <th className="py-3 px-4">ID Pedido</th>
+                <th className="py-3 px-4">ID Producto</th>
+                <th className="py-3 px-4">Nombre Producto</th>
+                <th className="py-3 px-4">Precio Unitario</th>
+                <th className="py-3 px-4">Cantidad</th>
+                <th className="py-3 px-4">Subtotal</th>
                 <th className="py-3 px-4">Color</th>
-                <th className="py-3 px-4">Precio</th>
-                <th className="py-3 px-4">Stock</th>
-                <th className="py-3 px-4">Imagen</th>
-                <th className="py-3 px-4">Marca</th>
                 <th className="py-3 px-4">Talla</th>
-                <th className="py-3 px-4">Categoría</th>
                 <th className="py-3 px-4">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {currentProductos.length > 0 ? (
-                currentProductos.map((producto, index) => (
+              {currentDetalles.length > 0 ? (
+                currentDetalles.map((detalle, index) => (
                   <tr
-                    key={producto.id_producto}
+                    key={detalle.id}
                     className={index % 2 === 0 ? "bg-grisClaro" : "bg-white"}
                   >
-                    <td className="py-3 px-4">{producto.id_producto}</td>
+                    <td className="py-3 px-4">{detalle.id}</td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingDetalleId === detalle.id ? (
+                        <input
+                          type="text"
+                          name="pedido_id"
+                          value={editedDetalle.pedido_id || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                        />
+                      ) : (
+                        detalle.pedido_id
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingDetalleId === detalle.id ? (
+                        <input
+                          type="text"
+                          name="producto_id"
+                          value={editedDetalle.producto_id || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                        />
+                      ) : (
+                        detalle.producto_id
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingDetalleId === detalle.id ? (
                         <input
                           type="text"
                           name="nombre_producto"
-                          value={editedProducto.nombre_producto}
+                          value={editedDetalle.nombre_producto || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        producto.nombre_producto
+                        detalle.nombre_producto
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
-                        <input
-                          type="text"
-                          name="descripcion_producto"
-                          value={editedProducto.descripcion_producto}
-                          onChange={handleChange}
-                          className="w-full border px-2 py-1"
-                        />
-                      ) : (
-                        producto.descripcion_producto
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
-                        <input
-                          type="text"
-                          name="color_producto"
-                          value={editedProducto.color_producto}
-                          onChange={handleChange}
-                          className="w-full border px-2 py-1"
-                        />
-                      ) : (
-                        producto.color_producto
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingDetalleId === detalle.id ? (
                         <input
                           type="number"
-                          name="precio_producto"
-                          value={editedProducto.precio_producto}
+                          name="precio_unitario"
+                          value={editedDetalle.precio_unitario || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
+                          step="0.01"
                         />
                       ) : (
-                        producto.precio_producto
+                        detalle.precio_unitario
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingDetalleId === detalle.id ? (
                         <input
                           type="number"
-                          name="stock"
-                          value={editedProducto.stock}
+                          name="cantidad"
+                          value={editedDetalle.cantidad || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
-                          min="0"
                         />
                       ) : (
-                        producto.stock
+                        detalle.cantidad
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingDetalleId === detalle.id ? (
+                        <input
+                          type="number"
+                          name="subtotal"
+                          value={editedDetalle.subtotal || ""}
+                          className="w-full border px-2 py-1"
+                          step="0.01"
+                          readOnly
+                        />
+                      ) : (
+                        detalle.subtotal
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingDetalleId === detalle.id ? (
                         <input
                           type="text"
-                          name="imagen_producto"
-                          value={editedProducto.imagen_producto}
+                          name="color"
+                          value={editedDetalle.color || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        producto.imagen_producto
+                        detalle.color
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
-                        <input
-                          type="text"
-                          name="nombre_marca"
-                          value={editedProducto.nombre_marca}
-                          onChange={handleChange}
-                          className="w-full border px-2 py-1"
-                        />
-                      ) : (
-                        producto.nombre_marca
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingDetalleId === detalle.id ? (
                         <input
                           type="text"
                           name="talla"
-                          value={editedProducto.talla}
+                          value={editedDetalle.talla || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        producto.talla
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
-                        <select
-                          name="id_categoria"
-                          value={editedProducto.id_categoria}
-                          onChange={handleChange}
-                          className="w-full border px-2 py-1"
-                        >
-                          <option value="">Selecciona una categoría</option>
-                          {categorias.map((categoria) => (
-                            <option key={categoria.id_categoria} value={categoria.id_categoria}>
-                              {categoria.nombre_categoria}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        getNombreCategoria(producto.id_categoria)
+                        detalle.talla
                       )}
                     </td>
                     <td className="py-3 px-4 flex items-center space-x-2">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingDetalleId === detalle.id ? (
                         <button
                           onClick={handleSave}
                           className="text-azulOscuroMate hover:text-blue-500"
@@ -578,14 +548,14 @@ export default function Productos() {
                       ) : (
                         <>
                           <button
-                            onClick={() => handleEdit(producto)}
+                            onClick={() => handleEdit(detalle)}
                             className="text-azulOscuroMate hover:text-blue-500"
                             title="Editar"
                           >
                             <FaEdit size={20} />
                           </button>
                           <button
-                            onClick={() => handleDelete(producto.id_producto)}
+                            onClick={() => handleDelete(detalle.id)}
                             className="text-red-600 hover:text-red-800"
                             title="Eliminar"
                           >
@@ -598,8 +568,8 @@ export default function Productos() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="11" className="py-4 px-4 text-center text-gray-500">
-                    No se encontraron productos
+                  <td colSpan="10" className="py-4 px-4 text-center text-gray-500">
+                    No se encontraron detalles de pedidos
                   </td>
                 </tr>
               )}
@@ -608,8 +578,7 @@ export default function Productos() {
         </div>
       )}
 
-      {/* Paginación */}
-      {filteredProductos.length > 0 && (
+      {filteredDetalles.length > 0 && (
         <div className="flex justify-center mt-4">
           <button
             onClick={() => paginate(currentPage - 1)}

@@ -28,6 +28,7 @@ if (isset($data->nombre_producto) && isset($data->precio_producto)) {
                 imagen_producto, 
                 nombre_marca, 
                 talla,
+                stock,
                 id_categoria
             ) VALUES (
                 :nombre_producto,
@@ -37,6 +38,7 @@ if (isset($data->nombre_producto) && isset($data->precio_producto)) {
                 :imagen_producto,
                 :nombre_marca,
                 :talla,
+                :stock,
                 :id_categoria
             )";
 
@@ -48,6 +50,7 @@ if (isset($data->nombre_producto) && isset($data->precio_producto)) {
     $stmt->bindParam(':imagen_producto', $data->imagen_producto);
     $stmt->bindParam(':nombre_marca', $data->nombre_marca);
     $stmt->bindParam(':talla', $data->talla);
+    $stmt->bindParam(':stock', $data->stock);
     $stmt->bindParam(':id_categoria', $data->id_categoria);
 
     // Ejecutar la consulta

@@ -2,87 +2,76 @@ import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
 
-
-export default function Productos() {
-  const [productos, setProductos] = useState([]);
-  const [categorias, setCategorias] = useState([]);
+export default function Facturas() {
+  const [facturas, setFacturas] = useState([]);
   const [error, setError] = useState(null);
-  const [editingProductoId, setEditingProductoId] = useState(null);
-  const [editedProducto, setEditedProducto] = useState({});
+  const [editingFacturaId, setEditingFacturaId] = useState(null);
+  const [editedFactura, setEditedFactura] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newProducto, setNewProducto] = useState({
-    nombre_producto: "",
-    descripcion_producto: "",
-    color_producto: "",
-    precio_producto: "",
-    imagen_producto: "",
-    nombre_marca: "",
-    talla: "",
-    stock: "",
-    id_categoria: ""
+  const [newFactura, setNewFactura] = useState({
+    id: "",
+    pedido_id: "",
+    correo_usuario: "",
+    id_usuario: "",
+    fecha_factura: "",
+    subtotal: "",
+    envio: "",
+    impuestos: "",
+    total: "",
+    metodo_pago: ""
   });
 
-  const fetchProductos = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerProductos.php")
+  const fetchFacturas = () => {
+    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerFacturas.php")
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Error al obtener productos");
+          throw new Error("Error al obtener facturas");
         }
         return response.json();
       })
-      .then((data) => setProductos(data))
-      .catch((err) => setError(err.message));
-  };
-
-  const fetchCategorias = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerCategorias.php")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al obtener categorías");
-        }
-        return response.json();
+      .then((data) => {
+        setFacturas(Array.isArray(data) ? data : []);
       })
-      .then((data) => setCategorias(data))
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        setError(err.message);
+        setFacturas([]);
+      });
   };
 
   useEffect(() => {
-    fetchProductos();
-    fetchCategorias();
+    fetchFacturas();
   }, []);
 
-  const handleEdit = (producto) => {
-    setEditingProductoId(producto.id_producto);
-    setEditedProducto(producto);
+  const handleEdit = (factura) => {
+    setEditingFacturaId(factura.id);
+    setEditedFactura({...factura});
   };
 
   const handleSave = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarProducto.php", {
+    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarFactura.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(editedProducto),
+      body: JSON.stringify(editedFactura),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setProductos((prevProductos) =>
-            prevProductos.map((producto) =>
-              producto.id_producto === editedProducto.id_producto
-                ? editedProducto
-                : producto
+          setFacturas((prevFacturas) =>
+            prevFacturas.map((f) =>
+              f.id === editedFactura.id ? editedFactura : f
             )
           );
-          setEditingProductoId(null);
-          setEditedProducto({});
+          setEditingFacturaId(null);
+          setEditedFactura({});
           Swal.fire({
             icon: "success",
             title: "¡Éxito!",
-            text: "Producto actualizado correctamente",
+            text: "Factura actualizada correctamente",
             timer: 2000,
             showConfirmButton: false,
           });
@@ -90,7 +79,7 @@ export default function Productos() {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Error al actualizar el producto",
+            text: "Error al actualizar la factura",
           });
         }
       });
@@ -108,23 +97,23 @@ export default function Productos() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarProducto.php", {
+        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarFactura.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ id_producto: id }),
+          body: JSON.stringify({ id_factura: id }),
         })
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
-              setProductos((prevProductos) =>
-                prevProductos.filter((producto) => producto.id_producto !== id)
+              setFacturas((prevFacturas) =>
+                prevFacturas.filter((f) => f.id !== id)
               );
               Swal.fire({
                 icon: "success",
-                title: "Eliminado",
-                text: "El producto ha sido eliminado correctamente",
+                title: "Eliminada",
+                text: "La factura ha sido eliminada correctamente",
                 timer: 2000,
                 showConfirmButton: false,
               });
@@ -132,7 +121,7 @@ export default function Productos() {
               Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: "Error al eliminar el producto: " + (data.message || ""),
+                text: "Error al eliminar la factura: " + (data.message || ""),
               });
             }
           })
@@ -149,61 +138,55 @@ export default function Productos() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedProducto((prev) => ({ ...prev, [name]: value }));
+    setEditedFactura((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAddFormChange = (e) => {
     const { name, value } = e.target;
-    setNewProducto((prev) => ({ ...prev, [name]: value }));
+    setNewFactura((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddProduct = (e) => {
+  const handleAddFactura = (e) => {
     e.preventDefault();
     
-    // Validar campos requeridos
-    if (!newProducto.nombre_producto || !newProducto.precio_producto) {
+    if (!newFactura.correo_usuario || !newFactura.id_usuario) {
       Swal.fire({
         icon: "warning",
         title: "Campos requeridos",
-        text: "El nombre y precio del producto son obligatorios",
+        text: "El correo y el ID de usuario son obligatorios",
       });
       return;
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarProducto.php", {
+    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarFactura.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newProducto),
+      body: JSON.stringify(newFactura),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          // Agregar el nuevo producto con el ID generado
-          const productoConId = { ...newProducto, id_producto: data.id_producto };
-          setProductos((prevProductos) => [...prevProductos, productoConId]);
-          
-          // Resetear el formulario
-          setNewProducto({
-            nombre_producto: "",
-            descripcion_producto: "",
-            color_producto: "",
-            precio_producto: "",
-            imagen_producto: "",
-            nombre_marca: "",
-            talla: "",
-            stock: "",
-            id_categoria: ""
+          const facturaConId = { ...newFactura, id: data.id_factura };
+          setFacturas((prevFacturas) => [...prevFacturas, facturaConId]);
+          setNewFactura({
+            id: "",
+            pedido_id: "",
+            correo_usuario: "",
+            id_usuario: "",
+            fecha_factura: "",
+            subtotal: "",
+            envio: "",
+            impuestos: "",
+            total: "",
+            metodo_pago: ""
           });
-          
-          // Cerrar el formulario
           setShowAddForm(false);
-          
           Swal.fire({
             icon: "success",
             title: "¡Éxito!",
-            text: "Producto agregado correctamente",
+            text: "Factura agregada correctamente",
             timer: 2000,
             showConfirmButton: false,
           });
@@ -211,7 +194,7 @@ export default function Productos() {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Error al agregar el producto: " + (data.message || ""),
+            text: "Error al agregar la factura: " + (data.message || ""),
           });
         }
       })
@@ -224,58 +207,57 @@ export default function Productos() {
       });
   };
 
-  // Función para obtener el nombre de la categoría según el ID
-  const getNombreCategoria = (id_categoria) => {
-    const categoria = categorias.find(cat => cat.id_categoria === id_categoria);
-    return categoria ? categoria.nombre_categoria : "Sin categoría";
-  };
-
-  // Filtrar productos por búsqueda
-  const filteredProductos = productos.filter((producto) =>
-    producto.nombre_producto.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredFacturas = facturas.filter((factura) =>
+    Object.values(factura).some((value) =>
+      String(value).toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
-  // Paginación
-  const indexOfLastProducto = currentPage * itemsPerPage;
-  const indexOfFirstProducto = indexOfLastProducto - itemsPerPage;
-  const currentProductos = filteredProductos.slice(
-    indexOfFirstProducto,
-    indexOfLastProducto
-  );
+  const indexOfLastFactura = currentPage * itemsPerPage;
+  const indexOfFirstFactura = indexOfLastFactura - itemsPerPage;
+  const currentFacturas = filteredFacturas.slice(indexOfFirstFactura, indexOfLastFactura);
 
-  // Cambiar página
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Calcular el total de páginas
-  const totalPages = Math.ceil(filteredProductos.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredFacturas.length / itemsPerPage);
 
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-grisOscuro">Productos</h2>
+        <h2 className="text-xl font-semibold text-grisOscuro">Facturas</h2>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="bg-azulOscuroMate text-black px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-700"
         >
-          <FaPlus /> {showAddForm ? "Cancelar" : "Agregar Producto"}
+          <FaPlus /> {showAddForm ? "Cancelar" : "Agregar Factura"}
         </button>
       </div>
 
-      {/* Formulario para agregar producto */}
       {showAddForm && (
         <div className="bg-white p-4 mb-6 rounded-lg shadow-md">
           <h3 className="text-lg font-medium mb-4 text-grisOscuro">
-            Agregar Nuevo Producto
+            Agregar Nueva Factura
           </h3>
-          <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <form onSubmit={handleAddFactura} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre *
+                ID Pedido
               </label>
               <input
                 type="text"
-                name="nombre_producto"
-                value={newProducto.nombre_producto}
+                name="pedido_id"
+                value={newFactura.pedido_id}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Correo Usuario *
+              </label>
+              <input
+                type="email"
+                name="correo_usuario"
+                value={newFactura.correo_usuario}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
                 required
@@ -283,110 +265,94 @@ export default function Productos() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Descripción
+                ID Usuario *
               </label>
               <input
                 type="text"
-                name="descripcion_producto"
-                value={newProducto.descripcion_producto}
+                name="id_usuario"
+                value={newFactura.id_usuario}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fecha Factura
+              </label>
+              <input
+                type="date"
+                name="fecha_factura"
+                value={newFactura.fecha_factura}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Color
-              </label>
-              <input
-                type="text"
-                name="color_producto"
-                value={newProducto.color_producto}
-                onChange={handleAddFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Precio *
+                Subtotal
               </label>
               <input
                 type="number"
-                name="precio_producto"
-                value={newProducto.precio_producto}
+                name="subtotal"
+                value={newFactura.subtotal}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
-                required
                 step="0.01"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Stock
+                Envío
               </label>
               <input
                 type="number"
-                name="stock"
-                value={newProducto.stock}
+                name="envio"
+                value={newFactura.envio}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
-                min="0"
+                step="0.01"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                URL de Imagen
+                Impuestos
+              </label>
+              <input
+                type="number"
+                name="impuestos"
+                value={newFactura.impuestos}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Total
+              </label>
+              <input
+                type="number"
+                name="total"
+                value={newFactura.total}
+                onChange={handleAddFormChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Método de Pago
               </label>
               <input
                 type="text"
-                name="imagen_producto"
-                value={newProducto.imagen_producto}
+                name="metodo_pago"
+                value={newFactura.metodo_pago}
                 onChange={handleAddFormChange}
                 className="w-full p-2 border border-gray-300 rounded"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Marca
-              </label>
-              <input
-                type="text"
-                name="nombre_marca"
-                value={newProducto.nombre_marca}
-                onChange={handleAddFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Talla
-              </label>
-              <input
-                type="text"
-                name="talla"
-                value={newProducto.talla}
-                onChange={handleAddFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Categoría
-              </label>
-              <select
-                name="id_categoria"
-                value={newProducto.id_categoria}
-                onChange={handleAddFormChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              >
-                <option value="">Selecciona una categoría</option>
-                {categorias.map((categoria) => (
-                  <option key={categoria.id_categoria} value={categoria.id_categoria}>
-                    {categoria.nombre_categoria}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="md:col-span-2 lg:col-span-3 flex justify-end mt-4">
+            <div className="md:col-span-2 flex justify-end mt-4">
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
@@ -398,177 +364,172 @@ export default function Productos() {
                 type="submit"
                 className="px-4 py-2 bg-azulOscuroMate text-black rounded hover:bg-blue-700"
               >
-                Guardar Producto
+                Guardar Factura
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Buscador */}
       <input
         type="text"
-        placeholder="Buscar productos..."
+        placeholder="Buscar facturas..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="mb-4 p-2 border border-gray-300 w-full"
       />
 
-      {/* Tabla de productos con responsive */}
       {error ? (
         <p className="text-red-600">{error}</p>
       ) : (
-        <div className="overflow-x-auto relative shadow-md sm:rounded-lg table-responsive">
-          <table className="w-full text-sm text-left bg-white ">
+        <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left bg-white">
             <thead className="bg-grisOscuro text-dark">
               <tr>
                 <th className="py-3 px-4">ID</th>
-                <th className="py-3 px-4">Nombre</th>
-                <th className="py-3 px-4">Descripción</th>
-                <th className="py-3 px-4">Color</th>
-                <th className="py-3 px-4">Precio</th>
-                <th className="py-3 px-4">Stock</th>
-                <th className="py-3 px-4">Imagen</th>
-                <th className="py-3 px-4">Marca</th>
-                <th className="py-3 px-4">Talla</th>
-                <th className="py-3 px-4">Categoría</th>
+                <th className="py-3 px-4">ID Pedido</th>
+                <th className="py-3 px-4">Correo</th>
+                <th className="py-3 px-4">ID Usuario</th>
+                <th className="py-3 px-4">Fecha</th>
+                <th className="py-3 px-4">Subtotal</th>
+                <th className="py-3 px-4">Envío</th>
+                <th className="py-3 px-4">Impuestos</th>
+                <th className="py-3 px-4">Total</th>
+                <th className="py-3 px-4">Método Pago</th>
                 <th className="py-3 px-4">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {currentProductos.length > 0 ? (
-                currentProductos.map((producto, index) => (
+              {currentFacturas.length > 0 ? (
+                currentFacturas.map((factura, index) => (
                   <tr
-                    key={producto.id_producto}
+                    key={factura.id}
                     className={index % 2 === 0 ? "bg-grisClaro" : "bg-white"}
                   >
-                    <td className="py-3 px-4">{producto.id_producto}</td>
+                    <td className="py-3 px-4">{factura.id}</td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingFacturaId === factura.id ? (
                         <input
                           type="text"
-                          name="nombre_producto"
-                          value={editedProducto.nombre_producto}
+                          name="pedido_id"
+                          value={editedFactura.pedido_id || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        producto.nombre_producto
+                        factura.pedido_id
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingFacturaId === factura.id ? (
                         <input
-                          type="text"
-                          name="descripcion_producto"
-                          value={editedProducto.descripcion_producto}
+                          type="email"
+                          name="correo_usuario"
+                          value={editedFactura.correo_usuario || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        producto.descripcion_producto
+                        factura.correo_usuario
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingFacturaId === factura.id ? (
                         <input
                           type="text"
-                          name="color_producto"
-                          value={editedProducto.color_producto}
+                          name="id_usuario"
+                          value={editedFactura.id_usuario || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        producto.color_producto
+                        factura.id_usuario
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingFacturaId === factura.id ? (
+                        <input
+                          type="date"
+                          name="fecha_factura"
+                          value={editedFactura.fecha_factura || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                        />
+                      ) : (
+                        factura.fecha_factura
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingFacturaId === factura.id ? (
                         <input
                           type="number"
-                          name="precio_producto"
-                          value={editedProducto.precio_producto}
+                          name="subtotal"
+                          value={editedFactura.subtotal || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
+                          step="0.01"
                         />
                       ) : (
-                        producto.precio_producto
+                        factura.subtotal
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingFacturaId === factura.id ? (
                         <input
                           type="number"
-                          name="stock"
-                          value={editedProducto.stock}
+                          name="envio"
+                          value={editedFactura.envio || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
-                          min="0"
+                          step="0.01"
                         />
                       ) : (
-                        producto.stock
+                        factura.envio
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingFacturaId === factura.id ? (
+                        <input
+                          type="number"
+                          name="impuestos"
+                          value={editedFactura.impuestos || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                          step="0.01"
+                        />
+                      ) : (
+                        factura.impuestos
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingFacturaId === factura.id ? (
+                        <input
+                          type="number"
+                          name="total"
+                          value={editedFactura.total || ""}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                          step="0.01"
+                        />
+                      ) : (
+                        factura.total
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingFacturaId === factura.id ? (
                         <input
                           type="text"
-                          name="imagen_producto"
-                          value={editedProducto.imagen_producto}
+                          name="metodo_pago"
+                          value={editedFactura.metodo_pago || ""}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        producto.imagen_producto
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
-                        <input
-                          type="text"
-                          name="nombre_marca"
-                          value={editedProducto.nombre_marca}
-                          onChange={handleChange}
-                          className="w-full border px-2 py-1"
-                        />
-                      ) : (
-                        producto.nombre_marca
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
-                        <input
-                          type="text"
-                          name="talla"
-                          value={editedProducto.talla}
-                          onChange={handleChange}
-                          className="w-full border px-2 py-1"
-                        />
-                      ) : (
-                        producto.talla
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      {editingProductoId === producto.id_producto ? (
-                        <select
-                          name="id_categoria"
-                          value={editedProducto.id_categoria}
-                          onChange={handleChange}
-                          className="w-full border px-2 py-1"
-                        >
-                          <option value="">Selecciona una categoría</option>
-                          {categorias.map((categoria) => (
-                            <option key={categoria.id_categoria} value={categoria.id_categoria}>
-                              {categoria.nombre_categoria}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        getNombreCategoria(producto.id_categoria)
+                        factura.metodo_pago
                       )}
                     </td>
                     <td className="py-3 px-4 flex items-center space-x-2">
-                      {editingProductoId === producto.id_producto ? (
+                      {editingFacturaId === factura.id ? (
                         <button
                           onClick={handleSave}
                           className="text-azulOscuroMate hover:text-blue-500"
@@ -578,14 +539,14 @@ export default function Productos() {
                       ) : (
                         <>
                           <button
-                            onClick={() => handleEdit(producto)}
+                            onClick={() => handleEdit(factura)}
                             className="text-azulOscuroMate hover:text-blue-500"
                             title="Editar"
                           >
                             <FaEdit size={20} />
                           </button>
                           <button
-                            onClick={() => handleDelete(producto.id_producto)}
+                            onClick={() => handleDelete(factura.id)}
                             className="text-red-600 hover:text-red-800"
                             title="Eliminar"
                           >
@@ -599,7 +560,7 @@ export default function Productos() {
               ) : (
                 <tr>
                   <td colSpan="11" className="py-4 px-4 text-center text-gray-500">
-                    No se encontraron productos
+                    No se encontraron facturas
                   </td>
                 </tr>
               )}
@@ -608,8 +569,7 @@ export default function Productos() {
         </div>
       )}
 
-      {/* Paginación */}
-      {filteredProductos.length > 0 && (
+      {filteredFacturas.length > 0 && (
         <div className="flex justify-center mt-4">
           <button
             onClick={() => paginate(currentPage - 1)}

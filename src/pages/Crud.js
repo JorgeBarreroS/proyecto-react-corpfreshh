@@ -3,11 +3,14 @@ import "../styles/bootstrap.min.css.map";
 import "../styles/sidebar.css";
 import { useNavigate } from "react-router-dom";
 import Productos from "../componentsCrud/productos";
-import Categorias from "../componentsCrud/categorias";
-import Ordenes from "../componentsCrud/ordenes";
+import Categorias from "../componentsCrud/categorias"
 import Pedidos from "../componentsCrud/pedidos";
 import Usuarios from "../componentsCrud/usuarios";
 import AdminOfertas from "../componentsCrud/AdminOfertas";
+import PedidosDetalle from "../componentsCrud/pedidos_detalle";
+import Facturas from "../componentsCrud/facturas";
+import Contactos from "../componentsCrud/contactos";
+
 import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -62,7 +65,7 @@ export default function App() {
       labels: dashboardData.ordenes.map(o => o.mes),
       datasets: [
         {
-          label: "Órdenes por Mes",
+          label: "Pedidos por Mes",
           data: dashboardData.ordenes.map(o => o.total),
           fill: false,
           borderColor: "rgba(153, 102, 255, 1)"
@@ -105,6 +108,11 @@ export default function App() {
               </button>
             </li>
             <li className="sidebar-item">
+              <button onClick={() => setView("usuarios")} className="sidebar-btn">
+                Usuarios
+              </button>
+            </li>
+            <li className="sidebar-item">
               <button onClick={() => setView("productos")} className="sidebar-btn">
                 Productos
               </button>
@@ -115,18 +123,23 @@ export default function App() {
               </button>
             </li>
             <li className="sidebar-item">
-              <button onClick={() => setView("ordenes")} className="sidebar-btn">
-                Órdenes
-              </button>
-            </li>
-            <li className="sidebar-item">
               <button onClick={() => setView("pedidos")} className="sidebar-btn">
                 Pedidos
               </button>
             </li>
             <li className="sidebar-item">
-              <button onClick={() => setView("usuarios")} className="sidebar-btn">
-                Usuarios
+              <button onClick={() => setView("pedidosDetalle")} className="sidebar-btn">
+                Pedidos Detalle
+              </button>
+            </li>
+            <li className="sidebar-item">
+              <button onClick={() => setView("Facturas")} className="sidebar-btn">
+                Facturas
+              </button>
+            </li>
+            <li className="sidebar-item">
+              <button onClick={() => setView("Contactos")} className="sidebar-btn">
+                Contactos
               </button>
             </li>
           </ul>
@@ -147,8 +160,10 @@ export default function App() {
           {view === "AdminOfertas" && <AdminOfertas />}
           {view === "productos" && <Productos />}
           {view === "categorias" && <Categorias />}
-          {view === "ordenes" && <Ordenes />}
           {view === "pedidos" && <Pedidos />}
+          {view === "pedidosDetalle" && <PedidosDetalle />}
+          {view === "Facturas" && <Facturas />}
+          {view === "Contactos" && <Contactos />}
           {view === "usuarios" && <Usuarios />}
         </div>
       </main>

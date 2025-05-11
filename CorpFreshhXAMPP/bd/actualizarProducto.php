@@ -22,6 +22,7 @@ if (isset($data->id_producto)) {
             imagen_producto = :imagen_producto,
             nombre_marca = :nombre_marca,
             talla = :talla,
+            stock = :stock,
             id_categoria = :id_categoria
             WHERE id_producto = :id_producto";
 
@@ -34,6 +35,7 @@ if (isset($data->id_producto)) {
     $stmt->bindParam(':imagen_producto', $data->imagen_producto);
     $stmt->bindParam(':nombre_marca', $data->nombre_marca);
     $stmt->bindParam(':talla', $data->talla);
+    $stmt->bindParam(':stock', $data->stock);
     $stmt->bindParam(':id_categoria', $data->id_categoria);
 
     // Ejecutar la consulta

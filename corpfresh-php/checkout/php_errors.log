@@ -152,3 +152,10 @@ Stack trace:
 [10-May-2025 22:30:46 Europe/Berlin] Items del pedido insertados
 [10-May-2025 22:30:46 Europe/Berlin] Factura generada - ID: 11
 [10-May-2025 22:30:46 Europe/Berlin] Transacción completada con éxito
+[11-May-2025 20:41:00 Europe/Berlin] === Inicio del proceso de pago ===
+[11-May-2025 20:41:00 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":139124,"cantidad":1,"color":null,"talla":null}],"total":150254,"metodo_pago":"casa","direccion":"sssswew","telefono":"wwewe","envio":0,"impuestos":11130}
+[11-May-2025 20:41:00 Europe/Berlin] Conexión a BD establecida
+[11-May-2025 20:41:00 Europe/Berlin] Pedido creado - ID: 21
+[11-May-2025 20:41:00 Europe/Berlin] Items del pedido insertados
+[11-May-2025 20:41:00 Europe/Berlin] Factura generada - ID: 11
+[11-May-2025 20:41:00 Europe/Berlin] Transacción completada con éxito
