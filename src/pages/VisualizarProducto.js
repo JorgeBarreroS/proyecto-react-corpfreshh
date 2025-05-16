@@ -54,28 +54,54 @@ const VisualizarProducto = () => {
     };
 
     useEffect(() => {
-        const fetchProducto = async () => {
-            try {
-                const response = await fetch(`http://localhost/corpfresh-php/visualizarProducto.php?id=${id}`);
-                if (!response.ok) throw new Error("No se pudo cargar el producto.");
-                const data = await response.json();
-                setProducto(data.error ? null : data);
-                // Si se carga el producto correctamente, verifica que la cantidad no exceda el stock
-                if (data && !data.error && data.stock > 0) {
-                    setCantidad(1); // Inicializa con 1 si hay stock
-                } else if (data && !data.error && data.stock <= 0) {
-                    setCantidad(0); // Inicializa con 0 si no hay stock
-                }
-            } catch (err) {
-                setError(err.message);
-            } finally {
+    const fetchProducto = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            setProducto(null); // Resetear producto
+            
+            // Primero obtener el producto
+            const response = await fetch(`http://localhost/corpfresh-php/visualizarProducto.php?id=${id}`);
+            if (!response.ok) throw new Error("No se pudo cargar el producto.");
+            const data = await response.json();
+            
+            // Si hay error con el producto, no buscamos ofertas
+            if (data.error) {
+                setProducto(null);
                 setLoading(false);
+                return;
             }
-        };
+            
+            // Solo buscar oferta si tenemos un producto válido
+            const ofertaResponse = await fetch(`http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertaActiva.php?id_producto=${id}`);
+            let ofertaData = { success: false };
+            
+            if (ofertaResponse.ok) {
+                ofertaData = await ofertaResponse.json();
+            }
+            
+            // Establecer el producto con o sin oferta
+            setProducto({
+                ...data,
+                oferta: ofertaData.success ? ofertaData.data : null
+            });
+            
+            // Manejar cantidad según stock
+            if (data.stock > 0) {
+                setCantidad(1);
+            } else {
+                setCantidad(0);
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchProducto();
-        fetchComentarios();
-    }, [id]);
+    fetchProducto();
+    fetchComentarios();
+}, [id]);
 
     const handleAddToCart = async (e) => {
         e.preventDefault();
@@ -278,7 +304,7 @@ const VisualizarProducto = () => {
                         <div className="product-image-wrapper">
                             <img 
                                 src={getImageSource(producto.imagen_producto)} 
-                                className="product-image" 
+                                className="product-images" 
                                 alt={producto.nombre_producto}
                                 onError={(e) => {
                                     e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
@@ -288,7 +314,24 @@ const VisualizarProducto = () => {
                     </div>
                     <div className="product-info-col">
                         <h2 className="product-title">{producto.nombre_producto}</h2>
-                        <p className="product-text"><strong>Precio:</strong> {formatPrecio(producto.precio_producto)}</p>
+                        <p className="product-text">
+                            <strong>Precio:</strong> 
+                            {producto.oferta ? (
+                                <>
+                                    <span className="text-decoration-line-through text-muted">
+                                        {formatPrecio(producto.precio_producto)}
+                                    </span>
+                                    <span className="text-danger ms-2">
+                                        {formatPrecio(producto.precio_producto * (1 - producto.oferta.porcentaje_descuento / 100))}
+                                    </span>
+                                    <span className="badge bg-danger ms-2">
+                                        -{producto.oferta.porcentaje_descuento}%
+                                    </span>
+                                </>
+                            ) : (
+                                <span>{formatPrecio(producto.precio_producto)}</span>
+                            )}
+                        </p>
                         <p className="product-text"><strong>Descripción:</strong> {producto.descripcion_producto}</p>
                         <p className="product-text"><strong>Color:</strong> {producto.color_producto}</p>
                         <p className="product-text"><strong>Marca:</strong> {producto.nombre_marca}</p>

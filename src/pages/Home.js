@@ -85,37 +85,55 @@ const Home = () => {
 
     // Obtener la oferta activa desde la API
     useEffect(() => {
-        const fetchOfertaActiva = async () => {
-            try {
-                const response = await fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertaActiva.php");
-                const data = await response.json();
-                
-                if (data.success && data.data) {
-                    setOfertaActiva(data.data);
-                    
-                    // Calcular la diferencia de tiempo para la cuenta regresiva
-                    const fechaFin = new Date(data.data.fecha_fin);
-                    const ahora = new Date();
-                    const diferencia = fechaFin - ahora;
-                    
-                    if (diferencia > 0) {
-                        const days = Math.floor(diferencia / (1000 * 60 * 60 * 24));
-                        const hours = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                        const minutes = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-                        const seconds = Math.floor((diferencia % (1000 * 60)) / 1000);
-                        
-                        setCountdown({ days, hours, minutes, seconds });
-                    }
+    const fetchOfertaActiva = async () => {
+        try {
+            // URL relativa más confiable
+            const apiUrl = process.env.NODE_ENV === 'development' 
+                ? 'http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertasGenerales.php'
+                : '/bd/Ofertas/obtenerOfertasGenerales.php';
+
+            const response = await fetch(apiUrl, {
+                cache: 'no-cache',
+                headers: {
+                    'Accept': 'application/json',
                 }
-            } catch (error) {
-                console.error("Error al obtener oferta activa:", error);
-            } finally {
-                setLoading(false);
+            });
+
+            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+            
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                setOfertaActiva(result.data);
+                
+                // Calcular cuenta regresiva
+                const endDate = new Date(result.data.fecha_fin);
+                const now = new Date();
+                const diff = endDate - now;
+                
+                if (diff > 0) {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    setCountdown({ days, hours, minutes, seconds });
+                }
             }
-        };
-        
-        fetchOfertaActiva();
-    }, []);
+        } catch (error) {
+            console.error("Error al obtener oferta:", error);
+            Swal.fire({
+                title: 'Error',
+                text: 'No se pudo cargar la información de ofertas',
+                icon: 'error'
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchOfertaActiva();
+}, []);
 
     // Efecto para la cuenta regresiva
     useEffect(() => {

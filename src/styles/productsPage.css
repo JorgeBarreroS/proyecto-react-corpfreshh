@@ -53,6 +53,12 @@
   transform: scale(1.05);
 }
 
+/* Estilos para la paginación mejorada */
+.pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
 /* Estilo para los productos */
 .product-list {
   display: grid;
@@ -79,6 +85,53 @@
 .product-item:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Nuevos estilos para las tarjetas de productos */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #eee;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.product-image {
+  height: 200px;
+  object-fit: contain;
+  padding: 10px;
+}
+
+.price-container {
+  margin: 15px 0;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #6c757d;
+  margin-right: 10px;
+}
+
+.discounted-price {
+  font-weight: bold;
+  color: #dc3545;
+  font-size: 1.2em;
+}
+
+.discount-badge {
+  background-color: #dc3545;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.8em;
+  margin-left: 10px;
+}
+
+.normal-price {
+  font-weight: bold;
+  font-size: 1.2em;
 }
 
 .product-item h3 {

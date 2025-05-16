@@ -33,6 +33,14 @@ const ProductCard = ({ producto }) => {
     
     return `http://localhost/corpfresh-php/${imagePath}`;
   };
+  
+    const formatPrice = (price) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0
+    }).format(price);
+  };
 
   return (
     <div className="product-card22">
@@ -46,8 +54,8 @@ const ProductCard = ({ producto }) => {
         />
       </div>
       <h3>{producto.nombre_producto}</h3>
-      <p>Precio: ${isNaN(precio) ? 'N/A' : precio.toFixed(2)}</p>
-      <button onClick={() => (window.location.href = `/producto/${producto.id_producto}`)}>
+      <p>Precio:{formatPrice(precio)}</p>
+      <button className="btn btn-dark" onClick={() => (window.location.href = `/producto/${producto.id_producto}`)}>
         Ver Producto
       </button>
     </div>

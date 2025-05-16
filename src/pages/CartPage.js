@@ -54,6 +54,19 @@ const Carrito = () => {
         }
     };
 
+    // Función para verificar ofertas activas
+    const fetchOfertaActiva = async (id_producto) => {
+        try {
+            const response = await fetch(`http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertaActiva.php?id_producto=${id_producto}`);
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data.success ? data.data : null;
+        } catch (err) {
+            console.error("Error al verificar oferta:", err);
+            return null;
+        }
+    };
+
     const fetchCarrito = async () => {
         try {
             if (!authState || !authState.email) {
@@ -79,8 +92,20 @@ const Carrito = () => {
             if (data.error) {
                 setProductos([]);
             } else {
-                setProductos(data);
-                calcularTotal(data);
+                // Verificar ofertas para cada producto
+                const productosConOfertas = await Promise.all(data.map(async (producto) => {
+                    const oferta = await fetchOfertaActiva(producto.id_producto);
+                    return {
+                        ...producto,
+                        ofertaActual: oferta,
+                        precioMostrado: oferta 
+                            ? producto.precio * (1 - oferta.porcentaje_descuento / 100)
+                            : producto.precio
+                    };
+                }));
+
+                setProductos(productosConOfertas);
+                calcularTotal(productosConOfertas);
                 
                 // Obtener límites de stock para cada producto
                 const stockData = {};
@@ -89,6 +114,22 @@ const Carrito = () => {
                     stockData[producto.id_producto] = stock !== null ? stock : MAX_PRODUCTO_CANTIDAD;
                 }
                 setStockLimits(stockData);
+
+                // Notificar si hay cambios en los precios
+                if (productos.length > 0 && productosConOfertas.length > 0) {
+                    const preciosCambiaron = productos.some((prod, index) => {
+                        return prod.precioMostrado !== productosConOfertas[index].precioMostrado;
+                    });
+                    
+                    if (preciosCambiaron) {
+                        Swal.fire({
+                            title: '¡Atención!',
+                            text: 'Los precios de algunos productos han cambiado',
+                            icon: 'info',
+                            confirmButtonText: 'Entendido'
+                        });
+                    }
+                }
             }
         } catch (err) {
             setError(err.message);
@@ -98,12 +139,21 @@ const Carrito = () => {
     };
 
     const calcularTotal = (items) => {
-        const sum = items.reduce((acc, item) => acc + (parseFloat(item.precio) * item.cantidad), 0);
+        const sum = items.reduce((acc, item) => acc + (parseFloat(item.precioMostrado || item.precio) * item.cantidad), 0);
         setTotal(sum);
     };
 
     useEffect(() => {
         fetchCarrito();
+
+        // Actualizar periódicamente para reflejar cambios en ofertas
+        const interval = setInterval(() => {
+            if (authState?.email && productos.length > 0) {
+                fetchCarrito();
+            }
+        }, 300000); // Actualiza cada 5 minutos
+
+        return () => clearInterval(interval);
     }, [authState]);
 
     const actualizarCantidad = async (id_carrito, nuevaCantidad, id_producto) => {
@@ -184,7 +234,7 @@ const Carrito = () => {
                 const nuevosProductos = productos.filter(prod => prod.id_carrito !== id_carrito);
                 setProductos(nuevosProductos);
                 const productoEliminado = productos.find(p => p.id_carrito === id_carrito);
-                const nuevoTotal = total - (productoEliminado.precio * productoEliminado.cantidad);
+                const nuevoTotal = total - ((productoEliminado.precioMostrado || productoEliminado.precio) * productoEliminado.cantidad);
                 setTotal(nuevoTotal);
                 
                 Swal.fire(
@@ -344,7 +394,23 @@ const Carrito = () => {
                                                             {producto.nombre}
                                                         </Link>
                                                         <div className="cart-item-info">
-                                                            <span className="cart-item-price">{formatPrecio(producto.precio)}</span>
+                                                            <span className="cart-item-price">
+                                                                {producto.ofertaActual ? (
+                                                                    <>
+                                                                        <span className="text-decoration-line-through text-muted me-2">
+                                                                            {formatPrecio(producto.precio)}
+                                                                        </span>
+                                                                        <span className="text-danger">
+                                                                            {formatPrecio(producto.precioMostrado)}
+                                                                        </span>
+                                                                        <span className="badge bg-danger ms-2">
+                                                                            -{producto.ofertaActual.porcentaje_descuento}%
+                                                                        </span>
+                                                                    </>
+                                                                ) : (
+                                                                    formatPrecio(producto.precio)
+                                                                )}
+                                                            </span>
                                                             {stockWarning && (
                                                                 <span className="cart-item-stock-warning text-warning">
                                                                     <i className="fas fa-exclamation-triangle"></i> Máx: {stockLimit}
@@ -390,7 +456,7 @@ const Carrito = () => {
                                                         </button>
                                                     </div>
                                                     <div className="cart-item-subtotal">
-                                                        {formatPrecio(producto.precio * producto.cantidad)}
+                                                        {formatPrecio(producto.precioMostrado * producto.cantidad)}
                                                     </div>
                                                     <button 
                                                         className="btn btn-outline-danger btn-sm cart-item-remove d-none d-lg-block"

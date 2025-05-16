@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-05-2025 a las 22:42:09
+-- Tiempo de generación: 16-05-2025 a las 14:36:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -138,6 +138,14 @@ CREATE TABLE `carrito` (
 --
 -- RELACIONES PARA LA TABLA `carrito`:
 --
+
+--
+-- Volcado de datos para la tabla `carrito`
+--
+
+INSERT INTO `carrito` (`id_carrito`, `id_producto`, `nombre`, `precio`, `imagen`, `cantidad`, `usuario`, `color`, `talla`, `fecha_agregado`) VALUES
+(29, 2, 'Nike SB Dunk Low Verdy Visty', 1730200.00, 'imagenes/zapatosPP.png', 1, 'jorgebarrero44@gmail.com', NULL, NULL, '2025-05-15 18:27:24'),
+(30, 1, 'Camisa polo verde', 139124.00, 'imagenes/42631_10.webp', 2, 'jorgebarrero44@gmail.com', NULL, NULL, '2025-05-15 18:27:30');
 
 -- --------------------------------------------------------
 
@@ -277,7 +285,9 @@ INSERT INTO `facturas` (`id`, `pedido_id`, `correo_usuario`, `id_usuario`, `fech
 (5, 14, 'jorgebarrero44@gmail.com', 0, '2025-04-21 22:05:32', 139124.00, 0.00, 11129.92, 150253.92, 'casa'),
 (6, 15, 'jorgebarrero44@gmail.com', 0, '2025-04-21 23:21:58', 1730200.00, 0.00, 138416.00, 1868616.00, 'nequi'),
 (9, 19, 'jorgebarrero44@gmail.com', 0, '2025-04-29 21:05:22', 1730200.00, 0.00, 138416.00, 1868616.00, 'casa'),
-(11, 21, 'jorgebarrero44@gmail.com', 0, '2025-05-11 13:41:00', 139124.00, 0.00, 11130.00, 150254.00, 'casa');
+(11, 21, 'jorgebarrero44@gmail.com', 0, '2025-05-11 13:41:00', 139124.00, 0.00, 11130.00, 150254.00, 'casa'),
+(12, 22, 'jorgebarrero44@gmail.com', 0, '2025-05-14 20:53:00', 112690.00, 0.00, 9015.00, 121705.00, 'casa'),
+(13, 23, 'jorgebarrero44@gmail.com', 0, '2025-05-14 22:21:24', 450762.00, 0.00, 36061.00, 486823.00, 'casa');
 
 -- --------------------------------------------------------
 
@@ -296,19 +306,25 @@ CREATE TABLE `ofertas_especiales` (
   `activo` tinyint(1) NOT NULL DEFAULT 1,
   `texto_boton` varchar(100) DEFAULT 'Comprar Ahora',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `id_producto` int(11) DEFAULT NULL,
+  `id_categoria` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- RELACIONES PARA LA TABLA `ofertas_especiales`:
+--   `id_categoria`
+--       `producto` -> `id_categoria`
+--   `id_producto`
+--       `producto` -> `id_producto`
 --
 
 --
 -- Volcado de datos para la tabla `ofertas_especiales`
 --
 
-INSERT INTO `ofertas_especiales` (`id_oferta`, `titulo`, `descripcion`, `porcentaje_descuento`, `fecha_inicio`, `fecha_fin`, `activo`, `texto_boton`, `created_at`, `updated_at`) VALUES
-(7, 'descuentos de ultima hora', 'descuento en productos relacionados a camisas', 19, '2025-04-21 17:01:00', '2025-04-21 18:59:00', 1, 'Comprar Ahora', '2025-04-21 22:01:24', '2025-04-21 22:01:24');
+INSERT INTO `ofertas_especiales` (`id_oferta`, `titulo`, `descripcion`, `porcentaje_descuento`, `fecha_inicio`, `fecha_fin`, `activo`, `texto_boton`, `created_at`, `updated_at`, `id_producto`, `id_categoria`) VALUES
+(33, 'sss', 'sss555', 19, '2025-05-16 12:24:00', '2025-05-16 15:24:00', 1, 'Comprar Ahora', '2025-05-16 12:24:25', '2025-05-16 12:26:34', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -345,7 +361,9 @@ INSERT INTO `pedidos` (`id`, `correo_usuario`, `id_usuario`, `fecha_pedido`, `to
 (14, 'jorgebarrero44@gmail.com', 0, '2025-04-21 22:05:32', 150253.92, 'casa', 'ssss', '3343434', 0.00, 11129.92, 'pendiente'),
 (15, 'jorgebarrero44@gmail.com', 0, '2025-04-21 23:21:58', 1868616.00, 'nequi', '1111', '22321312323131', 0.00, 138416.00, 'completado'),
 (19, 'jorgebarrero44@gmail.com', 0, '2025-04-29 21:05:22', 1868616.00, 'casa', 'rfd', 'ddd', 0.00, 138416.00, 'pendiente'),
-(21, 'jorgebarrero44@gmail.com', 0, '2025-05-11 13:41:00', 150254.00, 'casa', 'sssswew', 'wwewe', 0.00, 11130.00, 'pendiente');
+(21, 'jorgebarrero44@gmail.com', 0, '2025-05-11 13:41:00', 150254.00, 'casa', 'sssswew', 'wwewe', 0.00, 11130.00, 'pendiente'),
+(22, 'jorgebarrero44@gmail.com', 0, '2025-05-14 20:53:00', 121705.00, 'casa', 'dd', 'dddd', 0.00, 9015.00, 'completado'),
+(23, 'jorgebarrero44@gmail.com', 0, '2025-05-14 22:21:24', 486823.00, 'casa', 'www', 'www', 0.00, 36061.00, 'pendiente');
 
 --
 -- Disparadores `pedidos`
@@ -410,7 +428,9 @@ INSERT INTO `pedidos_detalle` (`id`, `pedido_id`, `producto_id`, `nombre_product
 (12, 14, 1, 'Camisa polo verde', 139124.00, 1, 139124.00, NULL, NULL),
 (13, 15, 2, 'Nike SB Dunk Low Verdy Visty', 1730200.00, 1, 1730200.00, NULL, NULL),
 (18, 19, 2, 'Nike SB Dunk Low Verdy Visty', 1730200.00, 1, 1730200.00, NULL, NULL),
-(20, 21, 1, 'Camisa polo verde', 139124.00, 1, 139124.00, NULL, NULL);
+(20, 21, 1, 'Camisa polo verde', 139124.00, 1, 139124.00, NULL, NULL),
+(21, 22, 1, 'Camisa polo verde', 112690.44, 1, 112690.44, NULL, NULL),
+(22, 23, 1, 'Camisa polo verde', 112690.44, 4, 450761.76, NULL, NULL);
 
 --
 -- Disparadores `pedidos_detalle`
@@ -475,7 +495,7 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`id_producto`, `nombre_producto`, `descripcion_producto`, `color_producto`, `precio_producto`, `imagen_producto`, `nombre_marca`, `talla`, `stock`, `id_categoria`) VALUES
-(1, 'Camisa polo verde', 'Algodón', 'Rojo', 139124.00, 'imagenes/42631_10.webp', 'polo', 'M', 9, 1),
+(1, 'Camisa polo verde', 'Algodón', 'Rojo', 139124.00, 'imagenes/42631_10.webp', 'polo', 'M', 4, 1),
 (2, 'Nike SB Dunk Low Verdy Visty', 'Cuero', 'Negro', 1730200.00, 'imagenes/zapatosPP.png', 'Nike', '42', 1, 3),
 (3, 'Conjunto Nba Baloncesto Jordan 23 Blanco (S)', 'conjunto blanco', 'blanco', 70000.00, 'imagenes/conjuntojordan.webp', 'Jordan', 'S', 0, 4),
 (4, 'Camisa polo club blanca', 'Algodón', 'Blanco', 116278.00, 'imagenes/40963_10.webp', 'Polo', 'S', 0, 1),
@@ -650,7 +670,9 @@ ALTER TABLE `facturas`
 -- Indices de la tabla `ofertas_especiales`
 --
 ALTER TABLE `ofertas_especiales`
-  ADD PRIMARY KEY (`id_oferta`);
+  ADD PRIMARY KEY (`id_oferta`),
+  ADD KEY `productooferta` (`id_producto`),
+  ADD KEY `categoriaoferta` (`id_categoria`);
 
 --
 -- Indices de la tabla `pedidos`
@@ -694,7 +716,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria`
@@ -712,7 +734,7 @@ ALTER TABLE `codigos_reset`
 -- AUTO_INCREMENT de la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
-  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `contactos`
@@ -724,25 +746,25 @@ ALTER TABLE `contactos`
 -- AUTO_INCREMENT de la tabla `facturas`
 --
 ALTER TABLE `facturas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `ofertas_especiales`
 --
 ALTER TABLE `ofertas_especiales`
-  MODIFY `id_oferta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_oferta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos_detalle`
 --
 ALTER TABLE `pedidos_detalle`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `producto`
@@ -778,6 +800,13 @@ ALTER TABLE `comentarios`
 --
 ALTER TABLE `facturas`
   ADD CONSTRAINT `facturas_ibfk_1` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`);
+
+--
+-- Filtros para la tabla `ofertas_especiales`
+--
+ALTER TABLE `ofertas_especiales`
+  ADD CONSTRAINT `categoriaoferta` FOREIGN KEY (`id_categoria`) REFERENCES `producto` (`id_categoria`),
+  ADD CONSTRAINT `productooferta` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`);
 
 --
 -- Filtros para la tabla `pedidos_detalle`

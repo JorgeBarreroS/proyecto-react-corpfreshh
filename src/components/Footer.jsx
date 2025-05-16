@@ -77,7 +77,7 @@ const Footer = () => {
                                 onChange={handleEmailChange} // Maneja el cambio en el input
                             />
                             <button 
-                                className="btn btn-primary" 
+                                className="btn btn-dark" 
                                 type="button" 
                                 id="subscribeBtn"
                                 onClick={handleSubscribe} // Llama a la función de suscripción

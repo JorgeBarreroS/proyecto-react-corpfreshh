@@ -27,6 +27,19 @@ const Checkout = () => {
         }).format(precio);
     };
 
+    // Función para verificar ofertas activas
+    const fetchOfertaActiva = async (id_producto) => {
+        try {
+            const response = await fetch(`http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertaActiva.php?id_producto=${id_producto}`);
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data.success ? data.data : null;
+        } catch (err) {
+            console.error("Error al verificar oferta:", err);
+            return null;
+        }
+    };
+
     useEffect(() => {
         if (!authState || !authState.email) {
             navigate('/login');
@@ -43,8 +56,21 @@ const Checkout = () => {
                 }
 
                 const data = await response.json();
-                setCartItems(data);
-                calculateTotals(data);
+                
+                // Verificar ofertas para cada producto
+                const itemsConOfertas = await Promise.all(data.map(async (item) => {
+                    const oferta = await fetchOfertaActiva(item.id_producto);
+                    return {
+                        ...item,
+                        ofertaActual: oferta,
+                        precioMostrado: oferta 
+                            ? item.precio * (1 - oferta.porcentaje_descuento / 100)
+                            : item.precio
+                    };
+                }));
+
+                setCartItems(itemsConOfertas);
+                calculateTotals(itemsConOfertas);
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire('Error', 'No se pudo cargar el carrito', 'error');
@@ -57,7 +83,7 @@ const Checkout = () => {
     }, [authState, navigate]);
 
     const calculateTotals = (items) => {
-        const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.precio) * parseInt(item.cantidad)), 0);
+        const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.precioMostrado || item.precio) * parseInt(item.cantidad)), 0);
         const shippingCost = subtotal > 100 ? 0 : 10;
         const taxRate = 0.08;
         const taxes = Math.round(subtotal * taxRate); // Redondeamos el valor de impuestos a entero
@@ -91,7 +117,12 @@ const Checkout = () => {
                 items: cartItems.map(item => ({
                     id_producto: parseInt(item.id_producto),
                     nombre: String(item.nombre),
-                    precio: parseFloat(item.precio),
+                    precio: parseFloat(item.precioMostrado || item.precio), // Usar precioMostrado si existe
+                    precio_original: parseFloat(item.precio), // Guardar precio original
+                    oferta: item.ofertaActual ? {
+                        porcentaje_descuento: parseFloat(item.ofertaActual.porcentaje_descuento),
+                        fecha_fin: item.ofertaActual.fecha_fin
+                    } : null,
                     cantidad: parseInt(item.cantidad),
                     color: item.color || null,
                     talla: item.talla || null
@@ -106,7 +137,6 @@ const Checkout = () => {
 
             console.log('Datos a enviar al servidor:', JSON.stringify(paymentData, null, 2));
 
-            // URL CORREGIDA: usar http (no https) y ruta correcta
             const response = await fetch('http://localhost/corpfresh-php/checkout/process_payment.php', {
                 method: 'POST',
                 headers: { 
@@ -250,8 +280,18 @@ const Checkout = () => {
                                 <div className="summary-items">
                                     {cartItems.map(item => (
                                         <div key={item.id_carrito} className="summary-item">
-                                            <span>{item.nombre} x {item.cantidad}</span>
-                                            <span>{formatPrecio(parseFloat(item.precio) * parseInt(item.cantidad))}</span>
+                                            <div>
+                                                <span>{item.nombre} x {item.cantidad}</span>
+                                                {item.ofertaActual && (
+                                                    <small className="text-muted d-block">
+                                                        <s>{formatPrecio(item.precio * item.cantidad)}</s>
+                                                        <span className="text-danger ms-2">
+                                                            -{item.ofertaActual.porcentaje_descuento}%
+                                                        </span>
+                                                    </small>
+                                                )}
+                                            </div>
+                                            <span>{formatPrecio((item.precioMostrado || item.precio) * parseInt(item.cantidad))}</span>
                                         </div>
                                     ))}
                                 </div>

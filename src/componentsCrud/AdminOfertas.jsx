@@ -14,8 +14,10 @@ export default function AdminOfertas() {
     porcentaje_descuento: 0,
     fecha_inicio: "",
     fecha_fin: "",
-    activo: 1,
-    texto_boton: "Comprar Ahora"
+    activo: "1",
+    texto_boton: "Comprar Ahora",
+    id_producto: null,
+    id_categoria: null
   });
 
   const fetchOfertas = () => {
@@ -27,20 +29,22 @@ export default function AdminOfertas() {
         return response.json();
       })
       .then((data) => {
-        // Convertir la propiedad activo a string para asegurar consistencia
         const ofertasFormateadas = data.map(oferta => ({
           ...oferta,
-          activo: String(oferta.activo)
+          activo: String(oferta.activo),
+          fecha_inicio: formatDateForDisplay(oferta.fecha_inicio),
+          fecha_fin: formatDateForDisplay(oferta.fecha_fin)
         }));
         setOfertas(ofertasFormateadas);
-        
-        // Log para debugging
-        if (ofertasFormateadas.length > 0) {
-          console.log("Primer oferta activo:", ofertasFormateadas[0].activo);
-          console.log("Tipo de activo:", typeof ofertasFormateadas[0].activo);
-        }
       })
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        setError(err.message);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Error al cargar las ofertas: " + err.message,
+        });
+      });
   };
 
   useEffect(() => {
@@ -48,50 +52,90 @@ export default function AdminOfertas() {
   }, []);
 
   const handleEdit = (oferta) => {
-    // Aseguramos que activo sea string para el formulario de edición
-    setEditingOfertaId(oferta.id_oferta);
-    setEditedOferta({
-      ...oferta,
-      activo: String(oferta.activo)
-    });
-  };
+  setEditingOfertaId(oferta.id_oferta);
+  setEditedOferta({
+    ...oferta,
+    // Asegurar que activo sea string "1" o "0"
+    activo: oferta.activo === "1" ? "1" : "0",
+    // Formatear fechas para el input
+    fecha_inicio: formatDateForInput(oferta.fecha_inicio),
+    fecha_fin: formatDateForInput(oferta.fecha_fin),
+    // Manejar valores nulos para id_producto e id_categoria
+    id_producto: oferta.id_producto || null,
+    id_categoria: oferta.id_categoria || null
+  });
+};
 
-  const handleSave = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/actualizarOferta.php", {
+  const handleSave = async () => {
+  // Validación reforzada
+  if (!editedOferta.titulo || !editedOferta.fecha_fin) {
+    Swal.fire({
+      icon: "warning",
+      title: "Campos requeridos",
+      text: "El título y fecha de finalización son obligatorios",
+    });
+    return;
+  }
+
+  try {
+    // Preparar datos para enviar
+    const ofertaToSend = {
+      ...editedOferta,
+      activo: editedOferta.activo === "1" ? "1" : "0", // Forzar string "1" o "0"
+      fecha_inicio: editedOferta.fecha_inicio || new Date().toISOString().slice(0, 16),
+      fecha_fin: editedOferta.fecha_fin,
+      id_producto: editedOferta.id_producto || null,
+      id_categoria: editedOferta.id_categoria || null
+    };
+
+    // Debug: Mostrar datos que se enviarán
+    console.log("Datos a enviar:", ofertaToSend);
+
+    const response = await fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/actualizarOferta.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(editedOferta),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setOfertas((prevOfertas) =>
-            prevOfertas.map((oferta) =>
-              oferta.id_oferta === editedOferta.id_oferta
-                ? {...editedOferta, activo: String(editedOferta.activo)}
-                : oferta
-            )
-          );
-          setEditingOfertaId(null);
-          setEditedOferta({});
-          Swal.fire({
-            icon: "success",
-            title: "¡Éxito!",
-            text: "Oferta actualizada correctamente",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Error al actualizar la oferta",
-          });
-        }
-      });
-  };
+      body: JSON.stringify(ofertaToSend),
+    });
+
+    const data = await response.json();
+    console.log("Respuesta del servidor:", data);
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || "Error al actualizar la oferta");
+    }
+
+    // Actualización optimista del estado local
+    setOfertas(ofertas.map(oferta => 
+      oferta.id_oferta === editingOfertaId ? { 
+        ...oferta,
+        ...editedOferta,
+        activo: data.activo_actualizado !== undefined ? String(data.activo_actualizado) : editedOferta.activo,
+        fecha_inicio: formatDateForDisplay(editedOferta.fecha_inicio),
+        fecha_fin: formatDateForDisplay(editedOferta.fecha_fin)
+      } : oferta
+    ));
+
+    setEditingOfertaId(null);
+    setEditedOferta({});
+    
+    Swal.fire({
+      icon: "success",
+      title: "¡Éxito!",
+      text: "Oferta actualizada correctamente",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  } catch (error) {
+    console.error("Error al actualizar:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.message || "Ocurrió un error al actualizar la oferta",
+    });
+  }
+};
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -115,9 +159,7 @@ export default function AdminOfertas() {
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
-              setOfertas((prevOfertas) =>
-                prevOfertas.filter((oferta) => oferta.id_oferta !== id)
-              );
+              fetchOfertas(); // Recargar las ofertas
               Swal.fire({
                 icon: "success",
                 title: "Eliminado",
@@ -126,61 +168,61 @@ export default function AdminOfertas() {
                 showConfirmButton: false,
               });
             } else {
-              Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Error al eliminar la oferta: " + (data.message || ""),
-              });
+              throw new Error(data.message || "Error al eliminar la oferta");
             }
           })
           .catch((error) => {
             Swal.fire({
               icon: "error",
               title: "Error",
-              text: "Error al procesar la solicitud: " + error.message,
+              text: error.message,
             });
           });
       }
     });
   };
 
-  const handleToggleActive = (id, currentState) => {
-    // Convertir el nuevo estado a string para consistencia
-    const newState = currentState === "1" ? "0" : "1";
-    
-    fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/toggleOfertaActiva.php", {
+const handleToggleActive = async (id, currentState) => {
+  const newState = currentState === "1" ? "0" : "1";
+  
+  try {
+    const response = await fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/toggleOfertaActiva.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id_oferta: id, activo: newState }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setOfertas((prevOfertas) =>
-            prevOfertas.map((oferta) =>
-              oferta.id_oferta === id
-                ? { ...oferta, activo: newState }
-                : oferta
-            )
-          );
-          Swal.fire({
-            icon: "success",
-            title: "¡Éxito!",
-            text: `Oferta ${newState === "1" ? "activada" : "desactivada"} correctamente`,
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Error al cambiar el estado de la oferta",
-          });
-        }
-      });
-  };
+      body: JSON.stringify({ 
+        id_oferta: id, 
+        activo: newState 
+      }),
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || "Error al cambiar el estado");
+    }
+
+    // Actualizar el estado local directamente para mejor rendimiento
+    setOfertas(ofertas.map(oferta => 
+      oferta.id_oferta === id ? { ...oferta, activo: newState } : oferta
+    ));
+
+    Swal.fire({
+      icon: "success",
+      title: "¡Éxito!",
+      text: `Oferta ${newState === "1" ? "activada" : "desactivada"} correctamente`,
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.message,
+    });
+  }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -189,13 +231,17 @@ export default function AdminOfertas() {
 
   const handleAddFormChange = (e) => {
     const { name, value } = e.target;
-    setNewOferta((prev) => ({ ...prev, [name]: value }));
+    setNewOferta((prev) => ({ 
+      ...prev, 
+      [name]: name === "porcentaje_descuento" || name === "id_producto" || name === "id_categoria" 
+        ? (value === "" ? null : parseInt(value)) 
+        : value 
+    }));
   };
 
   const handleAddOferta = (e) => {
     e.preventDefault();
     
-    // Validar campos requeridos
     if (!newOferta.titulo || !newOferta.fecha_fin) {
       Swal.fire({
         icon: "warning",
@@ -205,41 +251,45 @@ export default function AdminOfertas() {
       return;
     }
 
+    // Validar rango de descuento
+    if (newOferta.porcentaje_descuento < 0 || newOferta.porcentaje_descuento > 100) {
+      Swal.fire({
+        icon: "warning",
+        title: "Valor inválido",
+        text: "El porcentaje de descuento debe estar entre 0 y 100",
+      });
+      return;
+    }
+
+    const ofertaToSend = {
+      ...newOferta,
+      fecha_inicio: newOferta.fecha_inicio || new Date().toISOString().slice(0, 16),
+      activo: String(newOferta.activo)
+    };
+
     fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/agregarOferta.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        ...newOferta,
-        activo: String(newOferta.activo) // Asegurar que activo sea string
-      }),
+      body: JSON.stringify(ofertaToSend),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          // Agregar la nueva oferta con el ID generado y asegurar activo como string
-          const ofertaConId = { 
-            ...newOferta, 
-            id_oferta: data.id_oferta,
-            activo: String(newOferta.activo)
-          };
-          setOfertas((prevOfertas) => [...prevOfertas, ofertaConId]);
-          
-          // Resetear el formulario
+          fetchOfertas();
           setNewOferta({
             titulo: "",
             descripcion: "",
             porcentaje_descuento: 0,
             fecha_inicio: "",
             fecha_fin: "",
-            activo: 1,
-            texto_boton: "Comprar Ahora"
+            activo: "1",
+            texto_boton: "Comprar Ahora",
+            id_producto: null,
+            id_categoria: null
           });
-          
-          // Cerrar el formulario
           setShowAddForm(false);
-          
           Swal.fire({
             icon: "success",
             title: "¡Éxito!",
@@ -248,18 +298,14 @@ export default function AdminOfertas() {
             showConfirmButton: false,
           });
         } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Error al agregar la oferta: " + (data.message || ""),
-          });
+          throw new Error(data.message || "Error al agregar la oferta");
         }
       })
       .catch((error) => {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: "Error al procesar la solicitud: " + error.message,
+          text: error.message,
         });
       });
   };
@@ -269,6 +315,19 @@ export default function AdminOfertas() {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date.toISOString().slice(0, 16);
+  };
+
+  // Formatear fecha para visualización
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return "";
+    const options = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit', 
+      minute: '2-digit' 
+    };
+    return new Date(dateString).toLocaleString('es-ES', options);
   };
 
   return (
@@ -367,6 +426,32 @@ export default function AdminOfertas() {
               />
             </div>
             <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                    ID Producto (opcional)
+                </label>
+                <input
+                    type="number"
+                    name="id_producto"
+                    value={newOferta.id_producto || ''}
+                    onChange={handleAddFormChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    min="1"
+                />
+            </div>
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                    ID Categoría (opcional)
+                </label>
+                <input
+                    type="number"
+                    name="id_categoria"
+                    value={newOferta.id_categoria || ''}
+                    onChange={handleAddFormChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    min="1"
+                />
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Estado
               </label>
@@ -411,6 +496,9 @@ export default function AdminOfertas() {
                 <th className="py-3 px-4">Título</th>
                 <th className="py-3 px-4">Descripción</th>
                 <th className="py-3 px-4">Descuento</th>
+                <th className="py-3 px-4">Texto Botón</th>
+                <th className="py-3 px-4">ID Producto</th>
+                <th className="py-3 px-4">ID Categoría</th>
                 <th className="py-3 px-4">Fecha Inicio</th>
                 <th className="py-3 px-4">Fecha Fin</th>
                 <th className="py-3 px-4">Estado</th>
@@ -433,6 +521,7 @@ export default function AdminOfertas() {
                           value={editedOferta.titulo}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
+                          required
                         />
                       ) : (
                         oferta.titulo
@@ -469,14 +558,55 @@ export default function AdminOfertas() {
                     <td className="py-3 px-4">
                       {editingOfertaId === oferta.id_oferta ? (
                         <input
-                          type="datetime-local"
-                          name="fecha_inicio"
-                          value={formatDateForInput(editedOferta.fecha_inicio)}
+                          type="text"
+                          name="texto_boton"
+                          value={editedOferta.texto_boton}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
                         />
                       ) : (
-                        new Date(oferta.fecha_inicio).toLocaleString()
+                        oferta.texto_boton
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingOfertaId === oferta.id_oferta ? (
+                        <input
+                          type="number"
+                          name="id_producto"
+                          value={editedOferta.id_producto || ''}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                          min="1"
+                        />
+                      ) : (
+                        oferta.id_producto || '-'
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingOfertaId === oferta.id_oferta ? (
+                        <input
+                          type="number"
+                          name="id_categoria"
+                          value={editedOferta.id_categoria || ''}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                          min="1"
+                        />
+                      ) : (
+                        oferta.id_categoria || '-'
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {editingOfertaId === oferta.id_oferta ? (
+                        <input
+                          type="datetime-local"
+                          name="fecha_inicio"
+                          value={editedOferta.fecha_inicio}
+                          onChange={handleChange}
+                          className="w-full border px-2 py-1"
+                        />
+                      ) : (
+                        oferta.fecha_inicio
                       )}
                     </td>
                     <td className="py-3 px-4">
@@ -484,12 +614,13 @@ export default function AdminOfertas() {
                         <input
                           type="datetime-local"
                           name="fecha_fin"
-                          value={formatDateForInput(editedOferta.fecha_fin)}
+                          value={editedOferta.fecha_fin}
                           onChange={handleChange}
                           className="w-full border px-2 py-1"
+                          required
                         />
                       ) : (
-                        new Date(oferta.fecha_fin).toLocaleString()
+                        oferta.fecha_fin
                       )}
                     </td>
                     <td className="py-3 px-4">
@@ -517,12 +648,22 @@ export default function AdminOfertas() {
                     </td>
                     <td className="py-3 px-4 flex items-center space-x-2">
                       {editingOfertaId === oferta.id_oferta ? (
-                        <button
-                          onClick={handleSave}
-                          className="text-azulOscuroMate hover:text-blue-500"
-                        >
-                          Guardar
-                        </button>
+                        <>
+                          <button
+                            onClick={handleSave}
+                            className="text-green-600 hover:text-green-800"
+                            title="Guardar"
+                          >
+                            Guardar
+                          </button>
+                          <button
+                            onClick={() => setEditingOfertaId(null)}
+                            className="text-red-600 hover:text-red-800"
+                            title="Cancelar"
+                          >
+                            Cancelar
+                          </button>
+                        </>
                       ) : (
                         <>
                           <button
@@ -553,7 +694,7 @@ export default function AdminOfertas() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="py-4 px-4 text-center text-gray-500">
+                  <td colSpan="11" className="py-4 px-4 text-center text-gray-500">
                     No se encontraron ofertas
                   </td>
                 </tr>

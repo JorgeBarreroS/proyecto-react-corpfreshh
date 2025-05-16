@@ -159,3 +159,17 @@ Stack trace:
 [11-May-2025 20:41:00 Europe/Berlin] Items del pedido insertados
 [11-May-2025 20:41:00 Europe/Berlin] Factura generada - ID: 11
 [11-May-2025 20:41:00 Europe/Berlin] Transacción completada con éxito
+[15-May-2025 03:53:00 Europe/Berlin] === Inicio del proceso de pago ===
+[15-May-2025 03:53:00 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":112690.44,"precio_original":139124,"oferta":{"porcentaje_descuento":19,"fecha_fin":"2025-05-14 22:46:00"},"cantidad":1,"color":null,"talla":null}],"total":121705,"metodo_pago":"casa","direccion":"dd","telefono":"dddd","envio":0,"impuestos":9015}
+[15-May-2025 03:53:00 Europe/Berlin] Conexión a BD establecida
+[15-May-2025 03:53:00 Europe/Berlin] Pedido creado - ID: 22
+[15-May-2025 03:53:00 Europe/Berlin] Items del pedido insertados
+[15-May-2025 03:53:00 Europe/Berlin] Factura generada - ID: 12
+[15-May-2025 03:53:00 Europe/Berlin] Transacción completada con éxito
+[15-May-2025 05:21:24 Europe/Berlin] === Inicio del proceso de pago ===
+[15-May-2025 05:21:24 Europe/Berlin] Datos recibidos: {"correo_usuario":"jorgebarrero44@gmail.com","items":[{"id_producto":1,"nombre":"Camisa polo verde","precio":112690.44,"precio_original":139124,"oferta":{"porcentaje_descuento":19,"fecha_fin":"2025-05-14 23:05:00"},"cantidad":4,"color":null,"talla":null}],"total":486823,"metodo_pago":"casa","direccion":"www","telefono":"www","envio":0,"impuestos":36061}
+[15-May-2025 05:21:24 Europe/Berlin] Conexión a BD establecida
+[15-May-2025 05:21:24 Europe/Berlin] Pedido creado - ID: 23
+[15-May-2025 05:21:24 Europe/Berlin] Items del pedido insertados
+[15-May-2025 05:21:24 Europe/Berlin] Factura generada - ID: 13
+[15-May-2025 05:21:24 Europe/Berlin] Transacción completada con éxito
