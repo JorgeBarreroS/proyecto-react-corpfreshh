@@ -12,6 +12,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false); 
   const menuRef = useRef(null); 
   const [cartCount, setCartCount] = useState(0);
+  const [rol, setRol] = useState(null); // ⬅️ Nuevo estado para guardar el rol
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -23,18 +24,14 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch del carrito solo si hay sesión
   useEffect(() => {
     const fetchCartCount = async () => {
+      if (!authState || !authState.email) {
+        setCartCount(0);
+        return;
+      }
+
       try {
-        // Verificar si hay un usuario autenticado y obtener su email
-        if (!authState || !authState.email) {
-          setCartCount(0);
-          return;
-        }
-
-        console.log("Fetching cart count for user:", authState.email);
-
         const response = await fetch(`http://localhost/corpfresh-php/carrito/carrito.php?usuario=${authState.email}`, {
           method: 'GET',
           credentials: 'include',
@@ -44,34 +41,17 @@ const Navbar = () => {
           }
         });
 
-        // Verificar que la respuesta sea válida
-        if (!response.ok) {
-          console.error("Error en la respuesta del servidor:", response.status);
-          return;
-        }
+        if (!response.ok) return;
 
-        // Verificar que el content-type sea JSON
         const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          console.error("La respuesta no es JSON, content-type:", contentType);
-          const textResponse = await response.text();
-          console.error("Respuesta como texto:", textResponse);
-          return;
-        }
+        if (!contentType || !contentType.includes("application/json")) return;
 
-        // Intentar parsear como JSON
-        try {
-          const data = await response.json();
-          
-          if (Array.isArray(data)) {
-            const totalCantidad = data.reduce((acc, item) => acc + (parseInt(item.cantidad) || 0), 0);
-            setCartCount(totalCantidad);
-          } else {
-            console.error("La respuesta no es un array:", data);
-            setCartCount(0);
-          }
-        } catch (parseError) {
-          console.error("Error al parsear JSON:", parseError);
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+          const totalCantidad = data.reduce((acc, item) => acc + (parseInt(item.cantidad) || 0), 0);
+          setCartCount(totalCantidad);
+        } else {
           setCartCount(0);
         }
       } catch (error) {
@@ -80,17 +60,49 @@ const Navbar = () => {
       }
     };
 
-    if (authState && authState.email) {
+    if (authState?.email) {
       fetchCartCount();
     } else {
       setCartCount(0);
     }
   }, [authState]);
 
+  // 👇 NUEVO: Traer el rol del usuario desde getuserdata.php
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (!authState?.email) return;
+
+      try {
+        const response = await fetch('http://localhost/corpfresh-php/getUserData.php', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email: authState.email })
+        });
+
+        const data = await response.json();
+        if (data.success && data.user && data.user.rol !== undefined) {
+          setRol(data.user.rol);
+        }
+      } catch (error) {
+        console.error("Error al obtener el rol del usuario:", error);
+      }
+    };
+
+    fetchUserRole();
+  }, [authState]);
+
+  useEffect(() => {
+    console.log("ROL del usuario:", rol);
+  }, [rol]);
+  
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+  
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -146,6 +158,13 @@ const Navbar = () => {
                   <div className="dropdown-menu show position-absolute end-0 mt-2 shadow bg-white rounded p-2" style={{ right: 0, zIndex: 10 }}>
                     <button className="dropdown-item" onClick={() => navigate("/mis-pedidos")}>Mis Pedidos</button>
                     <button className="dropdown-item" onClick={() => navigate("/perfil")}>Editar Información</button>
+
+                    
+                    {rol == 1 && (
+  <button className="dropdown-item" onClick={() => navigate("/crud")}>CRUD</button>
+)}
+
+
                     <button className="dropdown-item text-danger" onClick={handleLogout}>Cerrar Sesión</button>
                   </div>
                 )}

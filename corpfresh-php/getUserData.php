@@ -1,14 +1,33 @@
 <?php
-header("Content-Type: application/json; charset=UTF-8");
+// CONFIGURAR CORS PARA PETICIONES DESDE REACT
 header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 
+// Manejo de la solicitud preflight (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
-    exit;
+    exit();
 }
 
+session_start();
+
+// Limpiar el buffer de salida antes de enviar JSON
+ob_clean();
+header('Content-Type: application/json');
+
+// Si es una solicitud GET, solo se pide el rol
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (isset($_SESSION['usuario_id'])) {
+        echo json_encode(['rol' => $_SESSION['rol']]);
+    } else {
+        echo json_encode(['rol' => null]);
+    }
+    exit();
+}
+
+// Si es POST, se procesa la búsqueda del usuario
 require 'conexiones.php';
 $response = ["success" => false, "message" => "Error al obtener datos"];
 
@@ -43,7 +62,6 @@ try {
     if ($stmt->rowCount() > 0) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        // Para usuarios de Google con datos incompletos
         if ($isGoogleRequest && empty($user['telefono']) && empty($user['direccion1'])) {
             $response = [
                 "success" => true,
@@ -59,7 +77,6 @@ try {
             ];
         }
     } else {
-        // Si es una petición de Google y el usuario no existe, devolver un objeto vacío
         if ($isGoogleRequest) {
             $response = [
                 "success" => true,
@@ -86,5 +103,7 @@ try {
     $response["message"] = $e->getMessage();
 }
 
+// Imprimir un único JSON
 echo json_encode($response);
+exit();
 ?>
