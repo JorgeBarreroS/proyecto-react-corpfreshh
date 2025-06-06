@@ -61,12 +61,12 @@ try {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = '';
-        $mail->Password = ''; // Reemplaza por tu clave real
+        $mail->Username = 'corpfreshh@gmail.com';
+        $mail->Password = 'lklt lvgr czyq xgog'; // Reemplaza por tu clave real
         $mail->SMTPSecure = 'ssl';
         $mail->Port = 465;
 
-        $mail->setFrom('', 'Corpfreshh');
+        $mail->setFrom('corpfreshh@gmail.com', 'Corpfreshh');
         $mail->addAddress($email);
         $mail->isHTML(true);
         $mail->Subject = 'Recuperación de contraseña - Corpfreshh';

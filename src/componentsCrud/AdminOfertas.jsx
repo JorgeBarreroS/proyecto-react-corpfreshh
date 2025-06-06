@@ -21,31 +21,68 @@ export default function AdminOfertas() {
   });
 
   const fetchOfertas = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertas.php")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al obtener ofertas");
+  fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertas.php")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Error al obtener ofertas");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const now = new Date();
+
+      const ofertasFormateadas = data.map((oferta) => {
+        const fechaFin = new Date(oferta.fecha_fin);
+        const isExpired = fechaFin < now;
+        const estabaActiva = oferta.activo === "1";
+
+        // Si la oferta venció y aún está activa, cambiar estado
+        if (isExpired && estabaActiva) {
+          desactivarOfertaAutomatica(oferta.id_oferta);
+          oferta.activo = "0";
         }
-        return response.json();
-      })
-      .then((data) => {
-        const ofertasFormateadas = data.map(oferta => ({
+
+        return {
           ...oferta,
           activo: String(oferta.activo),
           fecha_inicio: formatDateForDisplay(oferta.fecha_inicio),
           fecha_fin: formatDateForDisplay(oferta.fecha_fin)
-        }));
-        setOfertas(ofertasFormateadas);
-      })
-      .catch((err) => {
-        setError(err.message);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Error al cargar las ofertas: " + err.message,
-        });
+        };
       });
-  };
+
+      setOfertas(ofertasFormateadas);
+    })
+    .catch((err) => {
+      setError(err.message);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error al cargar las ofertas: " + err.message,
+      });
+    });
+};
+const desactivarOfertaAutomatica = async (id_oferta) => {
+  try {
+    const response = await fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/toggleOfertaActiva.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id_oferta,
+        activo: "0",
+      }),
+    });
+
+    const data = await response.json();
+    if (!data.success) {
+      console.error("No se pudo desactivar oferta vencida:", data.message);
+    }
+  } catch (error) {
+    console.error("Error desactivando oferta vencida:", error);
+  }
+};
+
 
   useEffect(() => {
     fetchOfertas();
