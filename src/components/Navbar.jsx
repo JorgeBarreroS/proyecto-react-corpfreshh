@@ -94,9 +94,6 @@ const Navbar = () => {
     fetchUserRole();
   }, [authState]);
 
-  useEffect(() => {
-    console.log("ROL del usuario:", rol);
-  }, [rol]);
   
   const handleLogout = () => {
     logout();
@@ -160,7 +157,7 @@ const Navbar = () => {
                     <button className="dropdown-item" onClick={() => navigate("/perfil")}>Editar Información</button>
 
                     
-                    {rol == 1 && (
+                    {rol === 1 && (
   <button className="dropdown-item" onClick={() => navigate("/crud")}>CRUD</button>
 )}
 
