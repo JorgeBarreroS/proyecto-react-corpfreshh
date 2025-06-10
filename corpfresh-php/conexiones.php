@@ -1,33 +1,34 @@
-<?php
+<?php 
 class Conexion {
     public static function getConexion() {
         try {
-            // Configura tu conexión a la base de datos
-            $host = 'localhost';
-            $db = 'corpfreshh';
-            $user = 'root';
-            $pass = '';
+            // Datos de tu base de datos en Render
+            $host = 'dpg-d136bj3uibrs73fs0t7g-a.oregon-postgres.render.com';
+            $db   = 'corpfreshh';
+            $user = 'corpfreshh_user';
+            $pass = '6qrthNQk8tRMDSLe6e5YAWdLEYqU1H1N';
+            $port = '5432';
 
-            // Crea la conexión PDO
-            $dsn = "mysql:host=$host;dbname=$db;charset=utf8";
+            // DSN para PostgreSQL
+            $dsn = "pgsql:host=$host;port=$port;dbname=$db";
+
             $options = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ];
 
-            // Crea la instancia PDO y retorna la conexión
             $pdo = new PDO($dsn, $user, $pass, $options);
 
-            return $pdo; // Retorna la conexión
+            return $pdo;
         } catch (PDOException $e) {
-            // En caso de error, muestra el mensaje
             echo json_encode([
                 'success' => false,
-                'message' => 'Error en la conexión a la base de datos: ' . $e->getMessage()
+                'message' => 'Error en la conexión a PostgreSQL: ' . $e->getMessage()
             ]);
             exit;
         }
     }
 }
 ?>
+
