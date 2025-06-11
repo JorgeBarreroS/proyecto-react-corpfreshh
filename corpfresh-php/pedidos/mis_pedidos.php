@@ -15,7 +15,7 @@ ini_set('display_errors', 1);
 $host = 'corpfresh2025.mysql.database.azure.com';
 $dbname = 'corpfreshh';
 $username = 'admin_corpfreshh';
-$password = 'Corp2025@';
+$password = 'Corp2027@';
 
 try {
     $conn = new mysqli($host, $username, $password, $dbname);

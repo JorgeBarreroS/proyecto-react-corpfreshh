@@ -80,7 +80,7 @@ if (!is_numeric($data->total) || $data->total <= 0) {
 $host = 'corpfresh2025.mysql.database.azure.com';
 $dbname = 'corpfreshh';
 $username = 'admin_corpfreshh';
-$password = 'Corp2025@';
+$password = 'Corp2027@';
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);

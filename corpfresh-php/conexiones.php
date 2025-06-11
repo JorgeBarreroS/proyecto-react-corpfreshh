@@ -6,7 +6,7 @@ class Conexion {
             $host = 'corpfresh2025.mysql.database.azure.com';
             $db = 'corpfreshh';
             $user = 'admin_corpfreshh';
-            $pass = 'Corp2025@';
+            $pass = 'Corp2027@';
 
             // Crea la conexión PDO
             $dsn = "mysql:host=$host;dbname=$db;charset=utf8";

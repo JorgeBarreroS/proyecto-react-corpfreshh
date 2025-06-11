@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $host = 'corpfresh2025.mysql.database.azure.com';
 $dbname = 'corpfreshh';
 $username = 'admin_corpfreshh';
-$password = 'Corp2025@';
+$password = 'Corp2027@';
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);

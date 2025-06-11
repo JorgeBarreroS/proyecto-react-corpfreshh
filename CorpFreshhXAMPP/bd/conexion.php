@@ -2,7 +2,7 @@
 $host = 'corpfresh2025.mysql.database.azure.com';
 $dbname = 'corpfreshh';
 $user = 'admin_corpfreshh';
-$password = 'Corp2025@';
+$password = 'Corp2027@';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
