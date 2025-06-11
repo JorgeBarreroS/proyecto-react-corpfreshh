@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import "../styles/Login.css";
@@ -203,8 +203,8 @@ const Login = () => {
             </div>
           </form>
           <div className="text-center mt-3 small-text">
-            <p>No tienes cuenta? <a href="/register">Regístrate</a></p>
-            <p>¿Olvidaste tu contraseña? <a href="/reset-password">Recuperar Contraseña</a></p>
+            <p>No tienes cuenta? <Link to="/register">Regístrate</Link></p>
+            <p>¿Olvidaste tu contraseña? <Link to="/reset-password">Recuperar Contraseña</Link></p>
             <p><a href="/">Página Principal</a></p>
           </div>
           <div className="social-login text-center">
