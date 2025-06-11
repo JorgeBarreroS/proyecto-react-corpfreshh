@@ -1,23 +1,10 @@
 <?php
 // Configuración de encabezados
-$allowedOrigins = [
-    'https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net',
-    'http://localhost:3000'
-];
-
-if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
-    header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
-}
-
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 header("Access-Control-Allow-Credentials: true");
-
-// Manejar preflight request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
 
 // Configuración de errores
 ini_set('display_errors', 0);
@@ -37,6 +24,11 @@ function jsonResponse($success, $data = [], $error = '', $code = 200) {
     exit;
 }
 
+// Manejar preflight request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit();
+}
+
 // Registrar inicio
 error_log("=== Inicio del proceso de pago ===");
 
@@ -51,44 +43,40 @@ if (empty($json_input)) {
 }
 
 // Decodificar JSON
-$data = json_decode($json_input, true);
-if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+$data = json_decode($json_input);
+if (json_last_error() !== JSON_ERROR_NONE) {
     error_log("Error JSON: " . json_last_error_msg());
     jsonResponse(false, [], 'Datos JSON inválidos: ' . json_last_error_msg(), 400);
 }
 
-// Validar campos requeridos
+// Validar campos requeridos (id_usuario no es requerido)
 $required_fields = ['correo_usuario', 'items', 'total', 'metodo_pago', 'direccion', 'telefono', 'envio', 'impuestos'];
 foreach ($required_fields as $field) {
-    if (!isset($data[$field])) {
+    if (!isset($data->$field)) {
         error_log("Error: Falta campo requerido - $field");
         jsonResponse(false, [], "Falta el campo requerido: $field", 400);
     }
 }
 
 // Validar formato de email
-if (!filter_var($data['correo_usuario'], FILTER_VALIDATE_EMAIL)) {
-    error_log("Error: Email inválido - " . $data['correo_usuario']);
+if (!filter_var($data->correo_usuario, FILTER_VALIDATE_EMAIL)) {
+    error_log("Error: Email inválido - " . $data->correo_usuario);
     jsonResponse(false, [], "El formato del correo electrónico no es válido", 400);
 }
 
+// Asignar id_usuario (0 si no está presente)
+$id_usuario = isset($data->id_usuario) && is_numeric($data->id_usuario) ? (int)$data->id_usuario : 0;
+error_log("ID Usuario: " . $id_usuario);
+
 // Validar items del carrito
-if (!is_array($data['items']) || count($data['items']) === 0) {
+if (!is_array($data->items) || count($data->items) === 0) {
     error_log("Error: Carrito vacío");
     jsonResponse(false, [], "El carrito no contiene productos", 400);
 }
 
-// Validar estructura de cada item
-foreach ($data['items'] as $item) {
-    if (!isset($item['id_producto'], $item['nombre'], $item['precio'], $item['cantidad'])) {
-        error_log("Error: Estructura de item inválida");
-        jsonResponse(false, [], "Estructura de items inválida", 400);
-    }
-}
-
 // Validar valores numéricos
-if (!is_numeric($data['total']) || $data['total'] <= 0) {
-    error_log("Error: Total inválido - " . $data['total']);
+if (!is_numeric($data->total) || $data->total <= 0) {
+    error_log("Error: Total inválido - " . $data->total);
     jsonResponse(false, [], "El total debe ser un número positivo", 400);
 }
 
@@ -101,14 +89,13 @@ $password = 'Corp2027@';
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-    $conn->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
     $conn->beginTransaction();
 
     error_log("Conexión a BD establecida");
 
     // 1. Insertar pedido
     $stmt = $conn->prepare("INSERT INTO pedidos (
+        id_usuario,
         correo_usuario, 
         fecha_pedido, 
         total, 
@@ -118,21 +105,22 @@ try {
         costo_envio,
         impuestos,
         estado
-    ) VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, 'pendiente')");
+    ) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?, ?, 'pendiente')");
 
     $stmt->execute([
-        $data['correo_usuario'],
-        $data['total'],
-        $data['metodo_pago'],
-        $data['direccion'],
-        $data['telefono'],
-        $data['envio'],
-        $data['impuestos']
+        $id_usuario,
+        $data->correo_usuario,
+        $data->total,
+        $data->metodo_pago,
+        $data->direccion,
+        $data->telefono,
+        $data->envio,
+        $data->impuestos
     ]);
 
     $pedido_id = $conn->lastInsertId();
     error_log("Pedido creado - ID: $pedido_id");
-
+    
     // 2. Insertar items del pedido
     $stmt = $conn->prepare("INSERT INTO pedidos_detalle (
         pedido_id, 
@@ -145,26 +133,27 @@ try {
         talla
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
-    foreach ($data['items'] as $item) {
-        $subtotal = $item['precio'] * $item['cantidad'];
+    foreach ($data->items as $item) {
+        $subtotal = $item->precio * $item->cantidad;
         $stmt->execute([
             $pedido_id,
-            $item['id_producto'],
-            $item['nombre'],
-            $item['precio'],
-            $item['cantidad'],
+            $item->id_producto,
+            $item->nombre,
+            $item->precio,
+            $item->cantidad,
             $subtotal,
-            $item['color'] ?? null,
-            $item['talla'] ?? null
+            $item->color ?? null,
+            $item->talla ?? null
         ]);
     }
 
     error_log("Items del pedido insertados");
 
     // 3. Generar factura
-    $subtotal = $data['total'] - $data['envio'] - $data['impuestos'];
+    $subtotal = $data->total - $data->envio - $data->impuestos;
     $stmt = $conn->prepare("INSERT INTO facturas (
         pedido_id,
+        id_usuario,
         correo_usuario,
         fecha_factura,
         subtotal,
@@ -172,16 +161,17 @@ try {
         impuestos,
         total,
         metodo_pago
-    ) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)");
+    ) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?)");
 
     $stmt->execute([
         $pedido_id,
-        $data['correo_usuario'],
+        $id_usuario,
+        $data->correo_usuario,
         $subtotal,
-        $data['envio'],
-        $data['impuestos'],
-        $data['total'],
-        $data['metodo_pago']
+        $data->envio,
+        $data->impuestos,
+        $data->total,
+        $data->metodo_pago
     ]);
 
     $factura_id = $conn->lastInsertId();
