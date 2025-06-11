@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 import "../styles/sytles2.css";
 import logo from "../imagenes/Corp.png";
-
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     return () => {
@@ -92,7 +93,7 @@ const Register = () => {
             title: "¡Éxito!",
             text: "Registro exitoso. Inicia sesión",
           }).then(() => {
-            window.location.href = "/login";
+            navigate("/login");
           });
         } else {
           Swal.fire({
@@ -164,8 +165,6 @@ const Register = () => {
               <input type="password" name="confirmPassword" className="form-control" placeholder="Confirmar contraseña" value={formData.confirmPassword} onChange={handleChange} />
             </div>
           </div>
-
-          
 
           <div className="d-grid mt-3">
             <button type="submit" className="btn btn-primary">Registrarme</button>

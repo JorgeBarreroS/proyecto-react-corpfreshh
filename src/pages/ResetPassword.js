@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -7,6 +8,7 @@ const ResetPassword = () => {
   const [nuevo, setNuevo] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [etapa, setEtapa] = useState(1);
+  const navigate = useNavigate();
 
   const enviarCodigo = async () => {
     try {
@@ -69,7 +71,7 @@ const ResetPassword = () => {
       const data = JSON.parse(text);
       if (data.success) {
         Swal.fire("Éxito", "Contraseña actualizada", "success").then(() => {
-          window.location.href = "/login";
+          navigate("/login");
         });
       } else {
         Swal.fire("Error", data.message, "error");
