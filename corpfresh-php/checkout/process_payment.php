@@ -1,6 +1,6 @@
 <?php
 // Configuración de encabezados
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
