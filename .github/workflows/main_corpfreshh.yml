@@ -74,11 +74,12 @@ jobs:
 
       - name: Create deployment structure
         run: |
-          mkdir -p deploy/public
+          mkdir -p deploy
           mkdir -p deploy/api
           
           if [ -d "build" ]; then
-            cp -r build/* deploy/public/
+            # Cambio clave: Copiar directamente a deploy/ en lugar de deploy/public/
+            cp -r build/* deploy/
             echo "✅ Build de React copiado correctamente"
           else
             echo "❌ Error: No se encontró la carpeta build/"
