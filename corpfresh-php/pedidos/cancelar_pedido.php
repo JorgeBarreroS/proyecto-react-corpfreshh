@@ -32,10 +32,10 @@ if (!isset($data['pedido_id']) || !isset($data['usuario'])) {
 }
 
 // Database connection parameters
-$host = 'localhost';
+$host = 'corpfresh2025.mysql.database.azure.com';
 $dbname = 'corpfreshh';
-$username = 'root';
-$password = '';
+$username = 'admin_corpfreshh';
+$password = 'Corp2025@';
 
 try {
     // Create database connection

@@ -1,7 +1,7 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
+$servername = "corpfresh2025.mysql.database.azure.com";
+$username = "admin_corpfreshh";
+$password = "Corp2025@";
 $dbname = "corpfreshh";
 
 // Crear conexión

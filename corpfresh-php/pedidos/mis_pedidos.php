@@ -12,10 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$host = 'localhost';
+$host = 'corpfresh2025.mysql.database.azure.com';
 $dbname = 'corpfreshh';
-$username = 'root';
-$password = '';
+$username = 'admin_corpfreshh';
+$password = 'Corp2025@';
 
 try {
     $conn = new mysqli($host, $username, $password, $dbname);

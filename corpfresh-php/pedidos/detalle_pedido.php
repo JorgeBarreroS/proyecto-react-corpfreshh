@@ -9,10 +9,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-$host = 'localhost';
+$host = 'corpfresh2025.mysql.database.azure.com';
 $dbname = 'corpfreshh';
-$username = 'root';
-$password = '';
+$username = 'admin_corpfreshh';
+$password = 'Corp2025@';
 
 $conn = new mysqli($host, $username, $password, $dbname);
 

@@ -77,10 +77,10 @@ if (!is_numeric($data->total) || $data->total <= 0) {
 }
 
 // Conexión a la base de datos
-$host = 'localhost';
+$host = 'corpfresh2025.mysql.database.azure.com';
 $dbname = 'corpfreshh';
-$username = 'root';
-$password = '';
+$username = 'admin_corpfreshh';
+$password = 'Corp2025@';
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
