@@ -41,7 +41,7 @@ export default function App() {
   const [dashboardData, setDashboardData] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/getDashboardData.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/getDashboardData.php")
       .then(res => res.json())
       .then(data => setDashboardData(data))
       .catch(err => console.error(err));

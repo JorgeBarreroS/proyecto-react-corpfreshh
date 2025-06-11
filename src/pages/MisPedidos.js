@@ -25,7 +25,7 @@ const MisPedidos = () => {
         try {
             setLoading(true);
             const response = await fetch(
-                `http://localhost/corpfresh-php/pedidos/mis_pedidos.php?usuario=${encodeURIComponent(authState.email)}`,
+                `https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/pedidos/mis_pedidos.php?usuario=${encodeURIComponent(authState.email)}`,
                 {
                     credentials: 'include'
                 }
@@ -68,7 +68,7 @@ const MisPedidos = () => {
             });
 
             const response = await fetch(
-                `http://localhost/corpfresh-php/facturas/generar_factura.php?pedido_id=${orderId}`,
+                `https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/facturas/generar_factura.php?pedido_id=${orderId}`,
                 {
                     method: 'GET',
                     credentials: 'include',
@@ -149,7 +149,7 @@ const MisPedidos = () => {
             let response;
             try {
                 response = await fetch(
-                    `http://localhost/corpfresh-php/pedidos/cancelar_pedido.php`,
+                    `https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/pedidos/cancelar_pedido.php`,
                     {
                         method: 'POST',
                         credentials: 'include',

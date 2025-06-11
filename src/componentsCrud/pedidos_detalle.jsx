@@ -23,7 +23,7 @@ export default function PedidosDetalle() {
   });
 
   const fetchDetalles = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerPedidosDetalle.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/obtenerPedidosDetalle.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener detalles de pedidos");
@@ -56,7 +56,7 @@ export default function PedidosDetalle() {
       subtotal: subtotal.toFixed(2)
     };
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarPedidoDetalle.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/actualizarPedidoDetalle.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export default function PedidosDetalle() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarPedidoDetalle.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/eliminarPedidoDetalle.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -198,7 +198,7 @@ export default function PedidosDetalle() {
       newDetalle.subtotal = (parseFloat(newDetalle.precio_unitario) * parseInt(newDetalle.cantidad)).toFixed(2);
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarPedidoDetalle.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/agregarPedidoDetalle.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

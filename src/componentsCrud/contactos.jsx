@@ -20,7 +20,7 @@ export default function Contactos() {
   });
 
   const fetchContactos = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerContactos.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/obtenerContactos.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener contactos");
@@ -46,7 +46,7 @@ export default function Contactos() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarContacto.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/actualizarContacto.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +92,7 @@ export default function Contactos() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarContacto.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/eliminarContacto.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -153,7 +153,7 @@ export default function Contactos() {
       return;
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarContacto.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/agregarContacto.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -200,7 +200,7 @@ export default function Contactos() {
   const handleToggleEstado = (contacto) => {
     const nuevoEstado = contacto.estado === "Pendiente" ? "Respondido" : "Pendiente";
     
-    fetch("http://localhost/CorpFreshhXAMPP/bd/cambiarEstadoContacto.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/cambiarEstadoContacto.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

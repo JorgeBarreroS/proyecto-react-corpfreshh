@@ -32,7 +32,7 @@ const Navbar = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost/corpfresh-php/carrito/carrito.php?usuario=${authState.email}`, {
+        const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php?usuario=${authState.email}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -73,7 +73,7 @@ const Navbar = () => {
       if (!authState?.email) return;
 
       try {
-        const response = await fetch('http://localhost/corpfresh-php/getUserData.php', {
+        const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/getUserData.php', {
           method: 'POST',
           credentials: 'include',
           headers: {

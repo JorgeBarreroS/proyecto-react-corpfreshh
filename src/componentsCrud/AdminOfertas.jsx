@@ -21,7 +21,7 @@ export default function AdminOfertas() {
   });
 
   const fetchOfertas = () => {
-  fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertas.php")
+  fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/obtenerOfertas.php")
     .then((response) => {
       if (!response.ok) {
         throw new Error("Error al obtener ofertas");
@@ -63,7 +63,7 @@ export default function AdminOfertas() {
 };
 const desactivarOfertaAutomatica = async (id_oferta) => {
   try {
-    const response = await fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/toggleOfertaActiva.php", {
+    const response = await fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/toggleOfertaActiva.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -128,7 +128,7 @@ const desactivarOfertaAutomatica = async (id_oferta) => {
     // Debug: Mostrar datos que se enviarán
     console.log("Datos a enviar:", ofertaToSend);
 
-    const response = await fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/actualizarOferta.php", {
+    const response = await fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/actualizarOferta.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -186,7 +186,7 @@ const desactivarOfertaAutomatica = async (id_oferta) => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/eliminarOferta.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/eliminarOferta.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -223,7 +223,7 @@ const handleToggleActive = async (id, currentState) => {
   const newState = currentState === "1" ? "0" : "1";
   
   try {
-    const response = await fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/toggleOfertaActiva.php", {
+    const response = await fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/toggleOfertaActiva.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -304,7 +304,7 @@ const handleToggleActive = async (id, currentState) => {
       activo: String(newOferta.activo)
     };
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/Ofertas/agregarOferta.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/agregarOferta.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

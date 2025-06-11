@@ -33,7 +33,7 @@ const CartItem = ({ producto, updateQuantity, removeItem }) => {
       <td>
         {/* Asegúrate de que la imagen tenga un tamaño uniforme */}
         <img
-          src={`http://localhost/corpfresh-php/${producto.imagen}`} // Asegúrate de que el campo imagen esté correctamente definido
+          src={`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/${producto.imagen}`} // Asegúrate de que el campo imagen esté correctamente definido
           alt={producto.nombre}
           width="80"
           height="80" // Establece el mismo valor para el alto

@@ -10,7 +10,7 @@ const ResetPassword = () => {
 
   const enviarCodigo = async () => {
     try {
-      const res = await fetch('http://localhost/corpfresh-php/sendCode.php', {
+      const res = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/sendCode.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -33,7 +33,7 @@ const ResetPassword = () => {
 
   const verificarCodigo = async () => {
     try {
-      const res = await fetch("http://localhost/corpfresh-php/verifyCode.php", {
+      const res = await fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/verifyCode.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo_usuario: email, codigo }),
@@ -59,7 +59,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const res = await fetch("http://localhost/corpfresh-php/updatePassword.php", {
+      const res = await fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/updatePassword.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo_usuario: email, nueva_contrasena: nuevo, codigo }),

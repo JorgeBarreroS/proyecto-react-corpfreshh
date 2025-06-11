@@ -19,14 +19,14 @@ const Carrito = () => {
     // Función para obtener la fuente de la imagen
     const getImageSource = (imagePath) => {
         if (!imagePath) {
-            return "http://localhost/corpfresh-php/imagenes/1.jpg";
+            return "https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/imagenes/1.jpg";
         }
         
         if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
             return imagePath;
         }
         
-        return `http://localhost/corpfresh-php/${imagePath}`;
+        return `https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/${imagePath}`;
     };
 
     // Función para formatear precios en pesos colombianos
@@ -41,7 +41,7 @@ const Carrito = () => {
     // Función para obtener el stock actual del producto
     const fetchProductStock = async (id_producto) => {
         try {
-            const response = await fetch(`http://localhost/corpfresh-php/visualizarProducto.php?id=${id_producto}`);
+            const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/visualizarProducto.php?id=${id_producto}`);
             if (!response.ok) throw new Error("No se pudo cargar el producto.");
             const data = await response.json();
             if (data.error) {
@@ -57,7 +57,7 @@ const Carrito = () => {
     // Función para verificar ofertas activas
     const fetchOfertaActiva = async (id_producto) => {
         try {
-            const response = await fetch(`http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertaActiva.php?id_producto=${id_producto}`);
+            const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/obtenerOfertaActiva.php?id_producto=${id_producto}`);
             if (!response.ok) return null;
             const data = await response.json();
             return data.success ? data.data : null;
@@ -75,7 +75,7 @@ const Carrito = () => {
                 return;
             }
 
-            const response = await fetch(`http://localhost/corpfresh-php/carrito/carrito.php?usuario=${authState.email}`);
+            const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php?usuario=${authState.email}`);
             const textResponse = await response.text();
 
             if (!response.ok) {
@@ -173,7 +173,7 @@ const Carrito = () => {
         }
 
         try {
-            const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+            const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id_carrito, cantidad: nuevaCantidad })
@@ -216,7 +216,7 @@ const Carrito = () => {
         if (!resultado.isConfirmed) return;
 
         try {
-            const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+            const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -273,7 +273,7 @@ const Carrito = () => {
         if (!resultado.isConfirmed) return;
 
         try {
-            const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+            const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ usuario: authState.email, vaciar: true })
@@ -385,7 +385,7 @@ const Carrito = () => {
                                                             src={getImageSource(producto.imagen)} 
                                                             alt={producto.nombre}
                                                             onError={(e) => {
-                                                                e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
+                                                                e.target.src = "https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/imagenes/1.jpg";
                                                             }}
                                                         />
                                                     </div>

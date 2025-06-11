@@ -30,7 +30,7 @@ const Checkout = () => {
     // Función para verificar ofertas activas
     const fetchOfertaActiva = async (id_producto) => {
         try {
-            const response = await fetch(`http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertaActiva.php?id_producto=${id_producto}`);
+            const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/obtenerOfertaActiva.php?id_producto=${id_producto}`);
             if (!response.ok) return null;
             const data = await response.json();
             return data.success ? data.data : null;
@@ -48,7 +48,7 @@ const Checkout = () => {
 
         const fetchCart = async () => {
             try {
-                const response = await fetch(`http://localhost/corpfresh-php/carrito/carrito.php?usuario=${encodeURIComponent(authState.email)}`);
+                const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php?usuario=${encodeURIComponent(authState.email)}`);
                 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -137,7 +137,7 @@ const Checkout = () => {
 
             console.log('Datos a enviar al servidor:', JSON.stringify(paymentData, null, 2));
 
-            const response = await fetch('http://localhost/corpfresh-php/checkout/process_payment.php', {
+            const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/checkout/process_payment.php', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ const Checkout = () => {
             }
 
             // Vaciar el carrito después del pago exitoso
-            const deleteResponse = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+            const deleteResponse = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 

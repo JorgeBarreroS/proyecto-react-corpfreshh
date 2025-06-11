@@ -24,14 +24,14 @@ const ProductCard = ({ producto }) => {
   // Función para determinar la fuente de la imagen
   const getImageSource = (imagePath) => {
     if (!imagePath) {
-      return "http://localhost/corpfresh-php/imagenes/1.jpg";
+      return "https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/imagenes/1.jpg";
     }
     
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;
     }
     
-    return `http://localhost/corpfresh-php/${imagePath}`;
+    return `https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/${imagePath}`;
   };
   
     const formatPrice = (price) => {
@@ -49,7 +49,7 @@ const ProductCard = ({ producto }) => {
           src={getImageSource(producto.imagen_producto)}
           alt={producto.nombre_producto}
           onError={(e) => {
-            e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
+            e.target.src = "https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/imagenes/1.jpg";
           }}
         />
       </div>
@@ -72,7 +72,7 @@ const Buscador = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch(`http://localhost/corpfresh-php/busqueda.php?q=${query}`);
+      const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/busqueda.php?q=${query}`);
       const data = await response.json();
       if (Array.isArray(data)) {
         setProductos(data);

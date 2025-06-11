@@ -26,7 +26,7 @@ const ContactForm = () => {
       });
     } else {
       try {
-        const response = await fetch("http://localhost/corpfresh-php/guardarContacto.php", {
+        const response = await fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/guardarContacto.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

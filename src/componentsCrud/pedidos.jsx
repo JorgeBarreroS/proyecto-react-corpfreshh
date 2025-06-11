@@ -25,7 +25,7 @@ export default function Pedidos() {
   });
 
   const fetchPedidos = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerPedidos.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/obtenerPedidos.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener pedidos");
@@ -51,7 +51,7 @@ export default function Pedidos() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarPedido.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/actualizarPedido.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -97,7 +97,7 @@ export default function Pedidos() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarPedido.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/eliminarPedido.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -158,7 +158,7 @@ export default function Pedidos() {
       return;
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarPedido.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/agregarPedido.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

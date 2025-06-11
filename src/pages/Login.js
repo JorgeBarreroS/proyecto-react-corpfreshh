@@ -30,7 +30,7 @@ const Login = () => {
         avatar: decodedToken.picture,
       };
 
-      const response = await fetch("http://localhost/corpfresh-php/authenticateGoogle.php", {
+      const response = await fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/authenticateGoogle.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -105,7 +105,7 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("http://localhost/corpfresh-php/authenticate.php", {
+      const response = await fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/authenticate.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

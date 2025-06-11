@@ -58,7 +58,7 @@ const Perfil = () => {
     }
 
     // Para usuarios normales
-    fetch("http://localhost/corpfresh-php/getUserData.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/getUserData.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: authState.email }),
@@ -108,7 +108,7 @@ const Perfil = () => {
       if (result.isConfirmed) {
         const emailChanged = formData.correo !== originalEmail;
 
-        fetch("http://localhost/corpfresh-php/updateUserData.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/updateUserData.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

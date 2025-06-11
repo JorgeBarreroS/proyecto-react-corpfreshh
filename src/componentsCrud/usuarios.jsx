@@ -27,7 +27,7 @@ export default function Usuarios() {
   });
 
   const fetchUsuarios = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerUsuarios.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/obtenerUsuarios.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener usuarios");
@@ -56,7 +56,7 @@ export default function Usuarios() {
     // Crear una copia del usuario editado para asegurarnos de que tiene el formato correcto
     const userToUpdate = { ...editedUser };
     
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarUsuario.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/actualizarUsuario.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -112,7 +112,7 @@ export default function Usuarios() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarUsuario.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/eliminarUsuario.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -174,7 +174,7 @@ export default function Usuarios() {
       return;
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarUsuario.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/agregarUsuario.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

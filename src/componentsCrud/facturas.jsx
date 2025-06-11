@@ -25,7 +25,7 @@ export default function Facturas() {
   });
 
   const fetchFacturas = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerFacturas.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/obtenerFacturas.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener facturas");
@@ -51,7 +51,7 @@ export default function Facturas() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarFactura.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/actualizarFactura.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -97,7 +97,7 @@ export default function Facturas() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarFactura.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/eliminarFactura.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -158,7 +158,7 @@ export default function Facturas() {
       return;
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarFactura.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/agregarFactura.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -32,15 +32,15 @@ const VisualizarProducto = () => {
     };
 
     const getImageSource = (imagePath) => {
-        if (!imagePath) return "http://localhost/corpfresh-php/imagenes/1.jpg";
+        if (!imagePath) return "https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/imagenes/1.jpg";
         if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
-        return `http://localhost/corpfresh-php/${imagePath}`;
+        return `https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/${imagePath}`;
     };
 
     const fetchComentarios = async () => {
         setLoadingComentarios(true);
         try {
-            const response = await fetch(`http://localhost/corpfresh-php/comentarios.php?id_producto=${id}`);
+            const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/comentarios.php?id_producto=${id}`);
             if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
             
             const data = await response.json();
@@ -61,7 +61,7 @@ const VisualizarProducto = () => {
             setProducto(null); // Resetear producto
             
             // Primero obtener el producto
-            const response = await fetch(`http://localhost/corpfresh-php/visualizarProducto.php?id=${id}`);
+            const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/visualizarProducto.php?id=${id}`);
             if (!response.ok) throw new Error("No se pudo cargar el producto.");
             const data = await response.json();
             
@@ -73,7 +73,7 @@ const VisualizarProducto = () => {
             }
             
             // Solo buscar oferta si tenemos un producto válido
-            const ofertaResponse = await fetch(`http://localhost/CorpFreshhXAMPP/bd/Ofertas/obtenerOfertaActiva.php?id_producto=${id}`);
+            const ofertaResponse = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/obtenerOfertaActiva.php?id_producto=${id}`);
             let ofertaData = { success: false };
             
             if (ofertaResponse.ok) {
@@ -156,7 +156,7 @@ const VisualizarProducto = () => {
         }
     
         try {
-            const response = await fetch('http://localhost/corpfresh-php/comentarios.php', {
+            const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/comentarios.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -202,7 +202,7 @@ const VisualizarProducto = () => {
         if (!confirmResult.isConfirmed) return;
 
         try {
-            const response = await fetch('http://localhost/corpfresh-php/comentarios.php', {
+            const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/comentarios.php', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id_comentario: idComentario })
@@ -243,7 +243,7 @@ const VisualizarProducto = () => {
         }
 
         try {
-            const response = await fetch('http://localhost/corpfresh-php/comentarios.php', {
+            const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/comentarios.php', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -307,7 +307,7 @@ const VisualizarProducto = () => {
                                 className="product-images" 
                                 alt={producto.nombre_producto}
                                 onError={(e) => {
-                                    e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
+                                    e.target.src = "https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/imagenes/1.jpg";
                                 }}
                             />
                         </div>

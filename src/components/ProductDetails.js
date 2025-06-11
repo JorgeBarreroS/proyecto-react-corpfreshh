@@ -7,7 +7,7 @@ const ProductDetails = ({ match }) => {
 
   useEffect(() => {
     // Obtener los detalles del producto usando fetch
-    fetch(`http://localhost/corpfresh-php/productos/${productId}`)
+    fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/productos/${productId}`)
       .then(response => response.json())
       .then(data => setProduct(data))
       .catch(error => {

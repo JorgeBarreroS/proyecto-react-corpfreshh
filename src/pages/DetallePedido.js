@@ -12,7 +12,7 @@ const DetallePedido = () => {
     useEffect(() => {
         const fetchPedido = async () => {
             try {
-                const response = await fetch(`http://localhost/corpfresh-php/pedidos/detalle_pedido.php?pedido_id=${id}`);
+                const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/pedidos/detalle_pedido.php?pedido_id=${id}`);
                 const data = await response.json();
                 if (response.ok) {
                     // Asegurarnos que total es un número

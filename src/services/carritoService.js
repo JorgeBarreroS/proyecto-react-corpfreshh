@@ -22,7 +22,7 @@ export const addToCart = async (productData) => {
           talla: productData.talla || null
       });
 
-      const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+      const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const getCart = async () => {
       
       console.log("Obteniendo carrito para usuario:", email);
       
-      const response = await fetch(`http://localhost/corpfresh-php/carrito/carrito.php?usuario=${email}`);
+      const response = await fetch(`https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php?usuario=${email}`);
       
       // Obtener la respuesta como texto primero para debugging
       const responseText = await response.text();
@@ -133,7 +133,7 @@ export const getCart = async () => {
 // Función para actualizar cantidad de un producto en el carrito
 export const updateCartItemQuantity = async (id_carrito, cantidad) => {
   try {
-      const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+      const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php', {
           method: 'PUT',
           headers: {
               'Content-Type': 'application/json',
@@ -178,7 +178,7 @@ export const updateCartItemQuantity = async (id_carrito, cantidad) => {
 // Función para eliminar un producto del carrito
 export const removeFromCart = async (id_carrito) => {
   try {
-      const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+      const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php', {
           method: 'DELETE',
           headers: {
               'Content-Type': 'application/json',
@@ -230,7 +230,7 @@ export const clearCart = async () => {
 
       const { email } = JSON.parse(authUser);
       
-      const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+      const response = await fetch('https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/carrito/carrito.php', {
           method: 'DELETE',
           headers: {
               'Content-Type': 'application/json',

@@ -19,7 +19,7 @@ const ProductsPage = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost/corpfresh-php/productos.php?pagina=${page}&categoria=${selectedCategory}`,
+        `https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/productos.php?pagina=${page}&categoria=${selectedCategory}`,
         {
           headers: {
             'Accept': 'application/json'
@@ -50,7 +50,7 @@ const ProductsPage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost/corpfresh-php/categorias.php");
+      const response = await fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/categorias.php");
       const data = await response.json();
       setCategories(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -67,9 +67,9 @@ const ProductsPage = () => {
   };
 
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return "http://localhost/corpfresh-php/imagenes/1.jpg";
+    if (!imagePath) return "https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/imagenes/1.jpg";
     if (imagePath.startsWith('http')) return imagePath;
-    return `http://localhost/corpfresh-php/${imagePath}`;
+    return `https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/${imagePath}`;
   };
 
   useEffect(() => {
@@ -139,7 +139,7 @@ const ProductsPage = () => {
                   className="card-img-top product-image"
                   alt={product.nombre_producto}
                   onError={(e) => {
-                    e.target.src = "http://localhost/corpfresh-php/imagenes/1.jpg";
+                    e.target.src = "https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/imagenes/1.jpg";
                   }}
                 />
                 <div className="card-body">

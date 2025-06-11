@@ -26,7 +26,7 @@ export default function Productos() {
   });
 
   const fetchProductos = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerProductos.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/obtenerProductos.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener productos");
@@ -38,7 +38,7 @@ export default function Productos() {
   };
 
   const fetchCategorias = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerCategorias.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/obtenerCategorias.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener categorías");
@@ -60,7 +60,7 @@ export default function Productos() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarProducto.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/actualizarProducto.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -108,7 +108,7 @@ export default function Productos() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarProducto.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/eliminarProducto.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -170,7 +170,7 @@ export default function Productos() {
       return;
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarProducto.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/agregarProducto.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

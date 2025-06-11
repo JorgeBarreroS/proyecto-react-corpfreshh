@@ -16,7 +16,7 @@ export default function Categorias() {
   });
 
   const fetchCategorias = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerCategorias.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/obtenerCategorias.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener categorías");
@@ -37,7 +37,7 @@ export default function Categorias() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarCategoria.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/actualizarCategoria.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export default function Categorias() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarCategoria.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/eliminarCategoria.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -147,7 +147,7 @@ export default function Categorias() {
       return;
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarCategoria.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/agregarCategoria.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

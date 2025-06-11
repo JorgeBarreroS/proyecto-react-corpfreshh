@@ -20,7 +20,7 @@ export default function Ordenes() {
   });
 
   const fetchOrdenes = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/obtenerOrdenes.php")
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/obtenerOrdenes.php")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error al obtener órdenes");
@@ -41,7 +41,7 @@ export default function Ordenes() {
   };
 
   const handleSave = () => {
-    fetch("http://localhost/CorpFreshhXAMPP/bd/actualizarOrden.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/actualizarOrden.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -98,7 +98,7 @@ export default function Ordenes() {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost/CorpFreshhXAMPP/bd/eliminarOrden.php", {
+        fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/eliminarOrden.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -152,7 +152,7 @@ export default function Ordenes() {
       return;
     }
 
-    fetch("http://localhost/CorpFreshhXAMPP/bd/agregarOrden.php", {
+    fetch("https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/agregarOrden.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

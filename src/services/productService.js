@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost/corpfresh-php/productos.php"; // Ajusta esto a tu servidor PHP
+const API_BASE_URL = "https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/app/productos.php"; // Ajusta esto a tu servidor PHP
 
 // Obtener productos con paginación y filtro de categoría
 export const fetchProducts = async (page = 1, category = 0) => {
