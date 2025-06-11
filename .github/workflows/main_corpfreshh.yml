@@ -78,7 +78,6 @@ jobs:
           mkdir -p deploy/api
           
           if [ -d "build" ]; then
-            # Cambio clave: Copiar directamente a deploy/ en lugar de deploy/public/
             cp -r build/* deploy/
             echo "✅ Build de React copiado correctamente"
           else
@@ -100,6 +99,11 @@ jobs:
           zip -r ../release.zip ./*
           cd ..
           ls -lh release.zip
+
+      - name: Verify ZIP contents
+        run: |
+          unzip -l release.zip
+          unzip -t release.zip || { echo "❌ Error en la integridad del ZIP"; exit 1; }
 
       - name: Upload combined artifact
         uses: actions/upload-artifact@v4
@@ -133,6 +137,12 @@ jobs:
           echo "Estructura final deploy/:"
           ls -la deploy/
 
+      - name: Verify deployment structure
+        run: |
+          [ -f "deploy/index.html" ] || { echo "❌ Falta index.html"; exit 1; }
+          [ -d "deploy/api" ] || { echo "❌ Falta directorio api"; exit 1; }
+          echo "✅ Estructura de despliegue verificada"
+
       - name: Login to Azure via OIDC
         uses: azure/login@v2
         with:
@@ -141,6 +151,9 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7264DBB69C224CA48FE55CA95E917A92 }}
           enable-AzPSSession: true
 
+      - name: Delay before deployment
+        run: sleep 30s  # Espera para evitar conflictos con reinicios del contenedor
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
@@ -148,3 +161,11 @@ jobs:
           app-name: 'Corpfreshh'
           slot-name: 'Production'
           package: deploy/
+          clean: false  # Evita limpieza agresiva
+          restart: false  # No reiniciar automáticamente
+
+      - name: Verify deployment status
+        run: |
+          echo "URL de la aplicación: ${{ steps.deploy-to-webapp.outputs.webapp-url }}"
+          echo "Esperando 15 segundos para que la aplicación se estabilice..."
+          sleep 15s
