@@ -90,7 +90,7 @@ const Home = () => {
             // URL relativa más confiable
             const apiUrl = process.env.NODE_ENV === 'development' 
                 ? 'https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/obtenerOfertasGenerales.php'
-                : '/bd/Ofertas/obtenerOfertasGenerales.php';
+                : 'https://corpfreshh-esetgjgec2c7grde.centralus-01.azurewebsites.net/api/xampp/bd/Ofertas/obtenerOfertasGenerales.php';
 
             const response = await fetch(apiUrl, {
                 cache: 'no-cache',
